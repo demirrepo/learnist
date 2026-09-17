@@ -48,6 +48,7 @@ const List<String> uzbekUniversities = [
   // Tashkent
   "Ajou University in Tashkent",
   "Amity University in Tashkent",
+  "Millat Umidi University",
   "Bucheon University in Tashkent",
   "Central Asian University in Tashkent (CAU)",
   "Inha University in Tashkent",

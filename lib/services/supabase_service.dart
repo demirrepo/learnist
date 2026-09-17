@@ -11,7 +11,7 @@ final supabaseServiceProvider = Provider<SupabaseService>((ref) {
   return service;
 });
 
-/// Wraps Supabase Auth. Notifies listeners on every auth state change so
+/// Wraps Supabase Auth and the user's `profiles` row. Notifies listeners on every auth state change so
 /// go_router can re-run its redirect.
 class SupabaseService extends ChangeNotifier {
   SupabaseService(this._supabase) {
@@ -33,8 +33,19 @@ class SupabaseService extends ChangeNotifier {
   bool get isSignedIn => _supabase.auth.currentSession != null;
 
   /// `full_name` saved in the sign-up metadata, if any.
-  String? get currentUserFullName =>
-      _supabase.auth.currentUser?.userMetadata?['full_name'] as String?;
+  String? get currentUserFullName => _metadataString('full_name');
+
+  /// `username` saved in the sign-up metadata, if any.
+  String? get currentUsername => _metadataString('username');
+
+  /// `university` saved in the sign-up metadata, if any.
+  String? get currentUserUniversity => _metadataString('university');
+
+  /// Blank values count as missing so the UI can show its fallback.
+  String? _metadataString(String key) {
+    final value = _supabase.auth.currentUser?.userMetadata?[key];
+    return value is String && value.trim().isNotEmpty ? value.trim() : null;
+  }
 
   /// True after the user opened a password reset link, until they save a new
   /// password or cancel. The router keeps them on /update-password meanwhile.
@@ -130,12 +141,47 @@ class SupabaseService extends ChangeNotifier {
 
   Future<void> signOut() => _supabase.auth.signOut();
 
+  /// Saves the editable profile fields to `public.profiles`, then mirrors
+  /// them into the auth metadata the UI reads from.
+  ///
+  /// RLS turns an update of someone else's (or a missing) row into a silent
+  /// no-op, so the updated row is selected back and an empty result throws
+  /// [ProfileNotFoundException].
+  Future<void> updateProfile({
+    required String fullName,
+    required String username,
+    required String university,
+  }) async {
+    final user = _supabase.auth.currentUser;
+    if (user == null) throw AuthSessionMissingException();
+
+    final values = {
+      'full_name': fullName,
+      'username': username,
+      'university': university,
+    };
+    final updated = await _supabase
+        .from('profiles')
+        .update(values)
+        .eq('id', user.id)
+        .select('id');
+    if (updated.isEmpty) throw const ProfileNotFoundException();
+
+    await _supabase.auth.updateUser(UserAttributes(data: values));
+    notifyListeners();
+  }
+
   @override
   void dispose() {
     _authSubscription.cancel();
     _authLinkErrors.close();
     super.dispose();
   }
+}
+
+/// The signed-in user has no `profiles` row, or RLS hid it.
+class ProfileNotFoundException implements Exception {
+  const ProfileNotFoundException();
 }
 
 const usernameTakenMessage =
@@ -168,6 +214,27 @@ bool isNetworkError(Object error) =>
 /// User-facing Uzbek message for any auth failure.
 String authErrorMessage(Object error) {
   if (isNetworkError(error)) return _networkMessage;
+  if (error is AuthException) return _authExceptionMessage(error);
+  return _genericMessage;
+}
+
+const profileUsernameTakenMessage = "Bu foydalanuvchi nomi band.";
+
+/// User-facing Uzbek message for a failed profile update.
+String profileUpdateErrorMessage(Object error) {
+  if (isNetworkError(error)) return _networkMessage;
+  if (error is ProfileNotFoundException) {
+    return "Profilingiz topilmadi. Tizimdan chiqib, qayta kiring.";
+  }
+  if (error is PostgrestException) {
+    return switch (error.code) {
+      // unique_violation: someone took the username after our pre-check.
+      '23505' => profileUsernameTakenMessage,
+      // insufficient_privilege, or an RLS policy rejected the row.
+      '42501' => "Profilni o'zgartirishga ruxsat yo'q.",
+      _ => _serverMessage,
+    };
+  }
   if (error is AuthException) return _authExceptionMessage(error);
   return _genericMessage;
 }

@@ -8,10 +8,16 @@ import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:learnist/main.dart';
+import 'package:learnist/screens/ai_lab_screen.dart';
 import 'package:learnist/screens/auth_screen.dart';
+import 'package:learnist/screens/edit_profile_screen.dart';
+import 'package:learnist/screens/error_map_screen.dart';
 import 'package:learnist/screens/home_screen.dart';
+import 'package:learnist/screens/lesson_detail_screen.dart';
+import 'package:learnist/screens/profile_screen.dart';
 import 'package:learnist/screens/update_password_screen.dart';
 import 'package:learnist/services/supabase_service.dart';
+import 'package:learnist/widgets/error_map/error_pattern_card.dart';
 import 'package:learnist/widgets/main_layout.dart';
 
 /// In-memory auth so tests never touch Supabase.
@@ -20,10 +26,16 @@ class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
     required bool signedIn,
     this.takenUsernames = const {},
     this.fullName,
+    this.username,
+    this.university,
   }) : _signedIn = signedIn;
 
   bool _signedIn;
-  final String? fullName;
+  String? fullName;
+  String? username;
+  String? university;
+  Object? updateProfileError;
+  Map<String, String>? lastProfileUpdate;
   bool _recovering = false;
   final Set<String> takenUsernames;
   final _linkErrors = StreamController<AuthException>.broadcast();
@@ -36,6 +48,12 @@ class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
 
   @override
   String? get currentUserFullName => fullName;
+
+  @override
+  String? get currentUsername => username;
+
+  @override
+  String? get currentUserUniversity => university;
 
   @override
   bool get isRecoveringPassword => _recovering;
@@ -94,6 +112,25 @@ class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
   Future<void> cancelPasswordRecovery() async {
     _recovering = false;
     await signOut();
+  }
+
+  @override
+  Future<void> updateProfile({
+    required String fullName,
+    required String username,
+    required String university,
+  }) async {
+    final error = updateProfileError;
+    if (error != null) throw error;
+    lastProfileUpdate = {
+      'full_name': fullName,
+      'username': username,
+      'university': university,
+    };
+    this.fullName = fullName;
+    this.username = username;
+    this.university = university;
+    notifyListeners();
   }
 
   @override
@@ -321,11 +358,304 @@ void main() {
 
     await tester.tap(find.text('Topics'));
     await tester.pumpAndSettle();
-    expect(find.text('Topics'), findsNWidgets(2));
+    expect(find.text('52-lesson pathway'), findsOneWidget);
+
+    // Lessons open inside the shell, so the nav bar stays visible.
+    await tester.tap(find.text('Lesson 1. Hello, everybody!'));
+    await tester.pumpAndSettle();
+    expect(find.text('Lesson 1: Hello, everybody!'), findsOneWidget);
+    expect(find.byType(LearnistNavBar), findsOneWidget);
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    expect(find.text('52-lesson pathway'), findsOneWidget);
 
     await tester.tap(find.text('Profile'));
     await tester.pumpAndSettle();
-    expect(find.text('Sign out'), findsOneWidget);
+    expect(find.text('Tizimdan chiqish'), findsOneWidget);
+  });
+
+  group('profile screen', () {
+    Future<void> openProfile(
+      WidgetTester tester,
+      _FakeSupabaseService auth,
+    ) async {
+      await tester.pumpWidget(_app(auth));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Profile'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('shows name, username and university from metadata',
+        (tester) async {
+      await openProfile(
+        tester,
+        _FakeSupabaseService(
+          signedIn: true,
+          fullName: 'Demirbek Razzaqov',
+          username: 'redscorpnoir',
+          university: 'Westminster International University in Tashkent',
+        ),
+      );
+
+      expect(find.text('Profil'), findsOneWidget);
+      expect(find.text('DR'), findsOneWidget);
+      expect(find.text('Demirbek Razzaqov'), findsOneWidget);
+      expect(find.text('@redscorpnoir'), findsOneWidget);
+      expect(
+        find.text('Westminster International University in Tashkent'),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.school), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(3));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('falls back when metadata is missing', (tester) async {
+      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+
+      expect(find.text('Foydalanuvchi'), findsOneWidget);
+      expect(find.text('Talaba'), findsOneWidget);
+      expect(find.textContaining('@'), findsNothing);
+    });
+
+    testWidgets('sign out returns to the auth screen', (tester) async {
+      final auth = _FakeSupabaseService(signedIn: true, fullName: 'A B');
+      await openProfile(tester, auth);
+
+      await _tapVisible(tester, find.text('Tizimdan chiqish'));
+
+      expect(auth.isSignedIn, isFalse);
+      expect(find.byType(AuthScreen), findsOneWidget);
+      expect(find.byType(LearnistNavBar), findsNothing);
+    });
+
+    testWidgets('language sheet updates the selection and closes',
+        (tester) async {
+      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+
+      expect(find.text("O'zbekcha"), findsOneWidget);
+      await _tapVisible(tester, find.text('Til'));
+
+      expect(find.text('Tilni tanlang'), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle), findsOneWidget);
+      expect(find.text("O'zbekcha"), findsNWidgets(2));
+
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Tilni tanlang'), findsNothing);
+      expect(find.text('English'), findsOneWidget);
+      expect(find.text("O'zbekcha"), findsNothing);
+      expect(find.byType(LearnistNavBar), findsOneWidget);
+    });
+
+    testWidgets('error map is a menu item, not embedded in the profile',
+        (tester) async {
+      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+
+      expect(find.text('Xatolar xaritasi'), findsOneWidget);
+      expect(find.byType(ErrorPatternCard), findsNothing);
+      expect(find.byIcon(Icons.troubleshoot), findsOneWidget);
+    });
+
+    testWidgets('error map lists recurring patterns and opens the lesson',
+        (tester) async {
+      // Tall view so the lazy ListView builds every card.
+      tester.view.physicalSize = const Size(800, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+      await _tapVisible(tester, find.text('Xatolar xaritasi'));
+
+      expect(find.byType(ErrorMapScreen), findsOneWidget);
+      expect(find.byType(LearnistNavBar), findsNothing);
+      expect(find.byType(ErrorPatternCard), findsNWidgets(3));
+      expect(find.text('Subject pronouns: am / is / are'), findsOneWidget);
+      expect(
+        find.text("So'nggi testlarda 4 marta xato qilingan"),
+        findsOneWidget,
+      );
+      // A one-off mistake is not a pattern.
+      expect(find.text('Articles: a / an'), findsNothing);
+
+      await _tapVisible(tester, find.text('Subject pronouns: am / is / are'));
+      expect(find.byType(LessonDetailScreen), findsOneWidget);
+
+      // Back returns to the map, not to a tab.
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.byType(ErrorMapScreen), findsOneWidget);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+      expect(find.byType(ProfileScreen), findsOneWidget);
+    });
+
+    test('only recurring patterns are kept, most frequent first', () {
+      ErrorPattern pattern(String rule, int count) => ErrorPattern(
+            rule: rule,
+            example: '',
+            correction: '',
+            mistakeCount: count,
+            lessonLabel: '',
+          );
+
+      final result = recurringPatterns([
+        pattern('once', 1),
+        pattern('twice', 2),
+        pattern('often', 5),
+      ]);
+
+      expect(result.map((p) => p.rule), ['often', 'twice']);
+      expect(result.first.severity, ErrorSeverity.high);
+      expect(result.last.severity, ErrorSeverity.medium);
+      expect(pattern('edge', 4).severity, ErrorSeverity.high);
+      expect(pattern('edge', 3).severity, ErrorSeverity.medium);
+    });
+
+    Future<void> openEditProfile(
+      WidgetTester tester,
+      _FakeSupabaseService auth,
+    ) async {
+      await openProfile(tester, auth);
+      await _tapVisible(tester, find.text('Tahrirlash'));
+      expect(find.byType(EditProfileScreen), findsOneWidget);
+    }
+
+    _FakeSupabaseService editableUser({Set<String> taken = const {}}) =>
+        _FakeSupabaseService(
+          signedIn: true,
+          takenUsernames: taken,
+          fullName: 'Aziz Karimov',
+          username: 'aziz',
+          university: 'Westminster International University in Tashkent',
+        );
+
+    FilledButton saveButton(WidgetTester tester) =>
+        tester.widget<FilledButton>(_byKey('edit-save'));
+
+    testWidgets('edit form is pre-filled and saving needs a change',
+        (tester) async {
+      await openEditProfile(tester, editableUser());
+
+      expect(find.text('Profilni tahrirlash'), findsOneWidget);
+      expect(find.widgetWithText(TextFormField, 'Aziz Karimov'),
+          findsOneWidget);
+      expect(find.widgetWithText(TextFormField, 'aziz'), findsOneWidget);
+      expect(saveButton(tester).onPressed, isNull);
+
+      await tester.enterText(_byKey('edit-full-name'), 'Aziz K.');
+      await tester.pump();
+      expect(saveButton(tester).onPressed, isNotNull);
+    });
+
+    testWidgets('empty metadata shows placeholder hints, not values',
+        (tester) async {
+      await openEditProfile(tester, _FakeSupabaseService(signedIn: true));
+
+      expect(find.text('Demir'), findsOneWidget);
+      expect(find.text('demir_dev'), findsOneWidget);
+      expect(find.text('Millat Umidi University'), findsOneWidget);
+      expect(
+        tester
+            .widget<EditableText>(
+              find.descendant(
+                of: _byKey('edit-username'),
+                matching: find.byType(EditableText),
+              ),
+            )
+            .controller
+            .text,
+        isEmpty,
+      );
+    });
+
+    testWidgets('a taken username blocks the save', (tester) async {
+      final auth = editableUser(taken: {'taken_name'});
+      await openEditProfile(tester, auth);
+
+      await tester.enterText(_byKey('edit-username'), 'Taken_Name');
+      await _tapVisible(tester, _byKey('edit-save'));
+
+      expect(find.text(profileUsernameTakenMessage), findsOneWidget);
+      expect(auth.lastProfileUpdate, isNull);
+      expect(find.byType(EditProfileScreen), findsOneWidget);
+    });
+
+    testWidgets('an unchanged username skips the availability check',
+        (tester) async {
+      // "aziz" is reported taken — by this same user.
+      final auth = editableUser(taken: {'aziz'});
+      await openEditProfile(tester, auth);
+
+      await tester.enterText(_byKey('edit-full-name'), 'Aziz Karimov Jr');
+      await _tapVisible(tester, _byKey('edit-save'));
+
+      expect(auth.lastProfileUpdate?['username'], 'aziz');
+    });
+
+    testWidgets('saving updates the profile and returns to it',
+        (tester) async {
+      final auth = editableUser();
+      await openEditProfile(tester, auth);
+
+      await tester.enterText(_byKey('edit-full-name'), '  Aziz Karimov Jr ');
+      await tester.enterText(_byKey('edit-username'), 'Aziz_K');
+      await tester.enterText(_byKey('edit-university'), 'My College');
+      await _tapVisible(tester, _byKey('edit-save'));
+
+      expect(auth.lastProfileUpdate, {
+        'full_name': 'Aziz Karimov Jr',
+        'username': 'aziz_k',
+        'university': 'My College',
+      });
+      expect(find.text(profileSavedMessage), findsOneWidget);
+      expect(find.byType(EditProfileScreen), findsNothing);
+      expect(find.text('@aziz_k'), findsOneWidget);
+      expect(find.text('My College'), findsOneWidget);
+    });
+
+    testWidgets('save failures stay on the form with an Uzbek message',
+        (tester) async {
+      final auth = editableUser()
+        ..updateProfileError = const PostgrestException(
+          message: 'duplicate key value violates unique constraint',
+          code: '23505',
+        );
+      await openEditProfile(tester, auth);
+
+      await tester.enterText(_byKey('edit-username'), 'aziz_new');
+      await _tapVisible(tester, _byKey('edit-save'));
+      expect(find.text(profileUsernameTakenMessage), findsOneWidget);
+
+      auth.updateProfileError = ClientException('offline');
+      await tester.enterText(_byKey('edit-full-name'), 'Aziz Karimov II');
+      await _tapVisible(tester, _byKey('edit-save'));
+      expect(find.textContaining("Internet aloqasi yo'q"), findsOneWidget);
+      expect(find.byType(EditProfileScreen), findsOneWidget);
+    });
+
+    test('profile errors map to Uzbek messages', () {
+      expect(
+        profileUpdateErrorMessage(const ProfileNotFoundException()),
+        contains('Profilingiz topilmadi'),
+      );
+      expect(
+        profileUpdateErrorMessage(
+          const PostgrestException(message: 'denied', code: '42501'),
+        ),
+        contains('ruxsat'),
+      );
+    });
+
+    test('initials use the first letters of up to two words', () {
+      expect(initialsFrom('demirbek razzaqov ogli'), 'DR');
+      expect(initialsFrom('  Aziz '), 'A');
+      expect(initialsFrom('   '), isNull);
+      expect(initialsFrom(null), isNull);
+    });
   });
 
   group('home screen', () {
@@ -358,7 +688,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await _tapVisible(tester, _byKey('home-open-ai-lab'));
-      expect(find.text('AI Laboratory'), findsOneWidget);
+      expect(find.byType(AiLabScreen), findsOneWidget);
     });
 
     test('greeting follows the time of day', () {
