@@ -2,68 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 import 'lesson_quiz.dart';
 
-// Placeholder content until lessons come from the backend.
-const _passage =
-    'Maya is taking part in an international summer school in Tashkent. '
-    'She is 19 and she is from Kraków, Poland. Her roommate is Dilnoza. '
-    'Dilnoza is from Samarkand and she is a medicine student. The other '
-    'students in their group are from Korea, Brazil and Egypt. Their teacher '
-    'is Mr Karimov. He is friendly and his classes are fun. Maya is happy, '
-    'but she is a little nervous about the first test on Friday.';
+const _noReadingMessage = "Ushbu darsda o'qish mashqi yo'q.";
 
-const _questions = [
-  QuizQuestion(
-    prompt: 'Where is Maya from?',
-    options: ['Tashkent', 'Kraków', 'Samarkand', 'Cairo'],
-    correctIndex: 1,
-  ),
-  QuizQuestion(
-    prompt: 'Who is Dilnoza?',
-    options: [
-      "Maya's teacher",
-      "Maya's sister",
-      "Maya's roommate",
-      'A student from Egypt',
-    ],
-    correctIndex: 2,
-  ),
-];
+typedef _VocabularyItem = ({String word, String? definition});
 
-const _vocabulary = [
-  (word: 'take part in', translation: 'qatnashmoq'),
-  (word: 'roommate', translation: 'xonadosh'),
-  (word: 'friendly', translation: 'samimiy, do\'stona'),
-  (word: 'nervous', translation: 'hayajonlangan'),
-];
+/// `{word, definition}` items from the JSONB column; entries without a word
+/// are skipped.
+List<_VocabularyItem> _parseVocabulary(List<dynamic> raw) {
+  String? text(Object? value) =>
+      value is String && value.trim().isNotEmpty ? value.trim() : null;
+
+  return [
+    for (final item in raw)
+      if (item is Map)
+        if (text(item['word']) case final word?)
+          (word: word, definition: text(item['definition'])),
+  ];
+}
 
 class ReadingTab extends StatelessWidget {
-  const ReadingTab({super.key});
+  const ReadingTab({super.key, required this.lesson});
+
+  final Lesson lesson;
 
   @override
   Widget build(BuildContext context) {
+    final passage = lesson.readingPassage;
+    final questions = QuizQuestion.listFrom(lesson.readingQuestions);
+    final vocabulary = _parseVocabulary(lesson.readingVocabulary);
+
     return LessonTabBody(
       children: [
-        LessonCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const LessonTag(icon: LucideIcons.bookOpen, label: 'Reading'),
-              const SizedBox(height: 14),
-              Text('A new start', style: lessonHeadingStyle),
-              const SizedBox(height: 10),
-              Text(
-                _passage,
-                style: lessonBodyStyle.copyWith(color: AppColors.textPrimary),
-              ),
-            ],
+        if (passage == null)
+          const LessonNotice(_noReadingMessage)
+        else
+          LessonCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const LessonTag(icon: LucideIcons.bookOpen, label: 'Reading'),
+                const SizedBox(height: 14),
+                Text(lesson.title, style: lessonHeadingStyle),
+                const SizedBox(height: 10),
+                Text(
+                  passage,
+                  style: lessonBodyStyle.copyWith(color: AppColors.textPrimary),
+                ),
+              ],
+            ),
           ),
-        ),
-        const LessonQuiz(questions: _questions),
-        const _VocabularyCard(),
+        // A quiz without its passage can't be answered.
+        if (passage != null && questions.isNotEmpty)
+          LessonQuiz(
+            key: ValueKey('reading-quiz-${lesson.lessonNumber}'),
+            questions: questions,
+          ),
+        if (vocabulary.isNotEmpty) _VocabularyCard(items: vocabulary),
       ],
     );
   }
@@ -71,7 +70,9 @@ class ReadingTab extends StatelessWidget {
 
 /// The web sidebar's "Lug'at" panel, collapsed under the quiz on mobile.
 class _VocabularyCard extends StatelessWidget {
-  const _VocabularyCard();
+  const _VocabularyCard({required this.items});
+
+  final List<_VocabularyItem> items;
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +83,9 @@ class _VocabularyCard extends StatelessWidget {
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           shape: const RoundedRectangleBorder(borderRadius: lessonCardRadius),
-          collapsedShape:
-              const RoundedRectangleBorder(borderRadius: lessonCardRadius),
+          collapsedShape: const RoundedRectangleBorder(
+            borderRadius: lessonCardRadius,
+          ),
           tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           childrenPadding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
           iconColor: AppColors.primary,
@@ -98,7 +100,7 @@ class _VocabularyCard extends StatelessWidget {
             ),
           ),
           subtitle: Text(
-            '${_vocabulary.length} key words',
+            '${items.length} key words',
             style: GoogleFonts.manrope(
               fontSize: 13,
               fontWeight: FontWeight.w500,
@@ -106,35 +108,33 @@ class _VocabularyCard extends StatelessWidget {
             ),
           ),
           children: [
-            for (var i = 0; i < _vocabulary.length; i++) ...[
+            for (var i = 0; i < items.length; i++) ...[
               if (i > 0) const Divider(height: 1, color: AppColors.border),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Text(
-                        _vocabulary[i].word,
-                        style: GoogleFonts.manrope(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
+                    Text(
+                      items[i].word,
+                      style: GoogleFonts.manrope(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _vocabulary[i].translation,
-                        textAlign: TextAlign.end,
+                    if (items[i].definition case final definition?) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        definition,
                         style: GoogleFonts.manrope(
-                          fontSize: 14.5,
+                          fontSize: 14,
+                          height: 1.4,
                           fontWeight: FontWeight.w500,
                           color: AppColors.textMuted,
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),

@@ -5,6 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// Account type chosen at sign-up and stored as `role` in the user metadata.
+enum UserRole {
+  student,
+  teacher;
+
+  /// Accounts created before roles existed have no `role` and are students.
+  static UserRole fromMetadata(Object? value) =>
+      value == 'teacher' ? UserRole.teacher : UserRole.student;
+}
+
 final supabaseServiceProvider = Provider<SupabaseService>((ref) {
   final service = SupabaseService(Supabase.instance.client);
   ref.onDispose(service.dispose);
@@ -40,6 +50,15 @@ class SupabaseService extends ChangeNotifier {
 
   /// `university` saved in the sign-up metadata, if any.
   String? get currentUserUniversity => _metadataString('university');
+
+  /// `role` saved in the sign-up metadata; students by default.
+  ///
+  /// User metadata is editable by the user, so this only gates the client
+  /// UI. Access to other students' data must be enforced by RLS.
+  UserRole get currentUserRole =>
+      UserRole.fromMetadata(_supabase.auth.currentUser?.userMetadata?['role']);
+
+  bool get isTeacher => currentUserRole == UserRole.teacher;
 
   /// Blank values count as missing so the UI can show its fallback.
   String? _metadataString(String key) {
@@ -106,6 +125,7 @@ class SupabaseService extends ChangeNotifier {
     required String fullName,
     required String username,
     required String university,
+    required UserRole role,
   }) {
     return _supabase.auth.signUp(
       email: email,
@@ -114,6 +134,7 @@ class SupabaseService extends ChangeNotifier {
         'full_name': fullName,
         'username': username,
         'university': university,
+        'role': role.name,
       },
     );
   }
@@ -272,8 +293,8 @@ String _authExceptionMessage(AuthException error) {
     'same_password' => "Yangi parol eskisidan farq qilishi kerak.",
     'session_not_found' || 'session_expired' || 'reauthentication_needed' =>
       "Sessiya muddati tugagan. Iltimos, yangi tiklash havolasini so'rang.",
-    'email_address_invalid' || 'validation_failed' =>
-      "Email manzili noto'g'ri kiritilgan.",
+    'email_address_invalid' ||
+    'validation_failed' => "Email manzili noto'g'ri kiritilgan.",
     'over_email_send_rate_limit' || 'over_request_rate_limit' =>
       "Juda ko'p urinish bo'ldi. Birozdan so'ng qayta urinib ko'ring.",
     'signup_disabled' => "Ro'yxatdan o'tish hozircha o'chirilgan.",

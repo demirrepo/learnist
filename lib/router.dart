@@ -10,6 +10,7 @@ import 'screens/home_screen.dart';
 import 'screens/lesson_detail_screen.dart';
 import 'screens/checkup_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/teacher_panel_screen.dart';
 import 'screens/topics_screen.dart';
 import 'screens/update_password_screen.dart';
 import 'services/supabase_service.dart';
@@ -24,16 +25,21 @@ abstract final class AppRoutes {
   static const updatePassword = '/update-password';
   static const home = '/home';
   static const topics = '/topics';
-  static const lesson = '/topics/lesson';
   static const aiLab = '/ai-lab';
   static const levelCheck = '/level-check';
   static const profile = '/profile';
   static const editProfile = '/edit-profile';
   static const errorMap = '/error-map';
 
+  /// Teachers only; the redirect sends students home.
+  static const teacherPanel = '/teacher-panel';
+
   /// Full-screen lesson above the tab shell, so Back returns to whatever
-  /// pushed it. [lesson] is the same screen inside the Topics tab.
-  static const lessonDetail = '/lesson-detail';
+  /// pushed it. Build locations with [lessonDetailFor].
+  static const lessonDetail = '/lesson-detail/:id';
+
+  static String lessonDetailFor(int lessonNumber) =>
+      '/lesson-detail/$lessonNumber';
 }
 
 /// Exposed as a provider so the redirect can read auth state.
@@ -60,8 +66,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!auth.isSignedIn) {
         return location == AppRoutes.auth ? null : AppRoutes.auth;
       }
-      if (location == AppRoutes.auth ||
-          location == AppRoutes.updatePassword) {
+      if (location == AppRoutes.auth || location == AppRoutes.updatePassword) {
+        return AppRoutes.home;
+      }
+      if (location == AppRoutes.teacherPanel && !auth.isTeacher) {
         return AppRoutes.home;
       }
       return null;
@@ -86,7 +94,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.lessonDetail,
-        builder: (context, state) => const LessonDetailScreen(),
+        // A malformed id (e.g. /lesson-detail/abc) goes back to the list.
+        redirect:
+            (context, state) =>
+                _lessonIdFrom(state) == null ? AppRoutes.topics : null,
+        builder:
+            (context, state) =>
+                LessonDetailScreen(lessonId: _lessonIdFrom(state)!),
       ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -94,34 +108,38 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: AppRoutes.home,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: HomeScreen()),
+            pageBuilder:
+                (context, state) => const NoTransitionPage(child: HomeScreen()),
           ),
           GoRoute(
             path: AppRoutes.topics,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: TopicsScreen()),
-            routes: [
-              GoRoute(
-                path: 'lesson',
-                builder: (context, state) => const LessonDetailScreen(),
-              ),
-            ],
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: TopicsScreen()),
           ),
           GoRoute(
             path: AppRoutes.aiLab,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: AiLabScreen()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: AiLabScreen()),
           ),
           GoRoute(
             path: AppRoutes.levelCheck,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: CheckUpScreen()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: CheckUpScreen()),
           ),
           GoRoute(
             path: AppRoutes.profile,
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: ProfileScreen()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: ProfileScreen()),
+          ),
+          GoRoute(
+            path: AppRoutes.teacherPanel,
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: TeacherPanelScreen()),
           ),
         ],
       ),
@@ -135,6 +153,12 @@ final routerProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
+/// Positive lesson number from `/lesson-detail/:id`, or null if malformed.
+int? _lessonIdFrom(GoRouterState state) {
+  final id = int.tryParse(state.pathParameters['id'] ?? '');
+  return id != null && id > 0 ? id : null;
+}
+
 /// Forwards [SupabaseService] notifications only when the redirect inputs
 /// change. Other auth events (e.g. a profile metadata update) must not
 /// refresh the router: a refresh racing a `context.pop()` restores the page
@@ -147,8 +171,10 @@ class _AuthRedirectListenable extends ChangeNotifier {
   final SupabaseService _auth;
   ({bool signedIn, bool recovering}) _state;
 
-  static ({bool signedIn, bool recovering}) _read(SupabaseService auth) =>
-      (signedIn: auth.isSignedIn, recovering: auth.isRecoveringPassword);
+  static ({bool signedIn, bool recovering}) _read(SupabaseService auth) => (
+    signedIn: auth.isSignedIn,
+    recovering: auth.isRecoveringPassword,
+  );
 
   void _onAuthChanged() {
     final next = _read(_auth);

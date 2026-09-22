@@ -16,6 +16,7 @@ const _patterns = [
     correction: 'She is a student.',
     mistakeCount: 4,
     lessonLabel: 'Lesson 1: Hello, everybody!',
+    lessonNumber: 1,
   ),
   ErrorPattern(
     rule: 'Questions with to be: Are you…? / Is he…?',
@@ -23,6 +24,7 @@ const _patterns = [
     correction: 'Are you from Tashkent?',
     mistakeCount: 3,
     lessonLabel: 'Lesson 1: Hello, everybody!',
+    lessonNumber: 1,
   ),
   ErrorPattern(
     rule: 'Contractions: I’m / you’re / it’s',
@@ -30,6 +32,7 @@ const _patterns = [
     correction: 'I’m a first-year student.',
     mistakeCount: 2,
     lessonLabel: 'Lesson 1: Hello, everybody!',
+    lessonNumber: 1,
   ),
   // A single slip — filtered out because it isn't a pattern yet.
   ErrorPattern(
@@ -38,6 +41,7 @@ const _patterns = [
     correction: 'He is an engineer.',
     mistakeCount: 1,
     lessonLabel: 'Lesson 1: Hello, everybody!',
+    lessonNumber: 1,
   ),
 ];
 
@@ -83,7 +87,10 @@ class ErrorMapScreen extends StatelessWidget {
               if (i > 0) const SizedBox(height: 12),
               ErrorPatternCard(
                 pattern: patterns[i],
-                onReview: () => context.push(AppRoutes.lessonDetail),
+                onReview:
+                    () => context.push(
+                      AppRoutes.lessonDetailFor(patterns[i].lessonNumber),
+                    ),
               ),
             ],
         ],

@@ -262,14 +262,32 @@ class LessonActionRow extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: LessonPrimaryButton(
-            label: primaryLabel,
-            onPressed: onPrimary,
-          ),
+          child: LessonPrimaryButton(label: primaryLabel, onPressed: onPrimary),
         ),
         const SizedBox(width: 10),
         AskAiButton(onPressed: onAskAi),
       ],
+    );
+  }
+}
+
+/// Card shown in place of a task the lesson doesn't have.
+class LessonNotice extends StatelessWidget {
+  const LessonNotice(this.message, {super.key});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return LessonCard(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(LucideIcons.info, size: 20, color: AppColors.hint),
+          const SizedBox(width: 12),
+          Expanded(child: Text(message, style: lessonBodyStyle)),
+        ],
+      ),
     );
   }
 }

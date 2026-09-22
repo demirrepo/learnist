@@ -31,6 +31,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _otherUniversityController = TextEditingController();
 
   _AuthMode _mode = _AuthMode.signIn;
+  UserRole _role = UserRole.student;
   String? _university;
   String? _universityError;
   bool _obscurePassword = true;
@@ -62,8 +63,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      builder: (_) =>
-          _ForgotPasswordSheet(initialEmail: _emailController.text.trim()),
+      builder:
+          (_) =>
+              _ForgotPasswordSheet(initialEmail: _emailController.text.trim()),
     );
     if (sent == true && mounted) _showMessage(passwordResetSentMessage);
   }
@@ -123,6 +125,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               _university == _otherUniversity
                   ? _otherUniversityController.text.trim()
                   : _university!,
+          role: _role,
         );
         // No session: the project requires email confirmation first.
         if (response.session == null && mounted) {
@@ -218,6 +221,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Only sign-up stores the role; on sign-in the account's saved
+              // role decides what the user sees.
+              _RoleToggle(
+                role: _role,
+                onChanged:
+                    _loading ? null : (role) => setState(() => _role = role),
+              ),
+              const SizedBox(height: 16),
               _AuthModeToggle(
                 mode: _mode,
                 onChanged: _loading ? null : _setMode,
@@ -640,15 +651,16 @@ class _ForgotPasswordSheetState extends ConsumerState<_ForgotPasswordSheet> {
             FilledButton(
               key: const ValueKey('forgot-submit'),
               onPressed: _sending ? null : _send,
-              child: _sending
-                  ? const SizedBox.square(
-                      dimension: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text('Havolani yuborish'),
+              child:
+                  _sending
+                      ? const SizedBox.square(
+                        dimension: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
+                      )
+                      : const Text('Havolani yuborish'),
             ),
           ],
         ),
@@ -775,6 +787,100 @@ class _AuthModeToggle extends StatelessWidget {
                 onTap: onChanged == null ? null : () => onChanged!(value),
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+/// "Talaba" / "O'qituvchi" picker. Styled as outlined tabs so it reads as a
+/// separate choice from the filled Sign In / Sign Up switch below it.
+class _RoleToggle extends StatelessWidget {
+  const _RoleToggle({required this.role, required this.onChanged});
+
+  final UserRole role;
+  final ValueChanged<UserRole>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.track,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          for (final (value, label, icon) in const [
+            (UserRole.student, 'Talaba', LucideIcons.graduationCap),
+            (UserRole.teacher, "O'qituvchi", LucideIcons.presentation),
+          ])
+            Expanded(
+              child: Semantics(
+                button: true,
+                selected: value == role,
+                child: GestureDetector(
+                  key: ValueKey('auth-role-${value.name}'),
+                  onTap: onChanged == null ? null : () => onChanged!(value),
+                  behavior: HitTestBehavior.opaque,
+                  child: _RoleSegment(
+                    label: label,
+                    icon: icon,
+                    selected: value == role,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RoleSegment extends StatelessWidget {
+  const _RoleSegment({
+    required this.label,
+    required this.icon,
+    required this.selected,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? AppColors.primary : AppColors.textMuted;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      decoration: BoxDecoration(
+        color: selected ? AppColors.surface : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: selected ? AppColors.primary : Colors.transparent,
+          width: 1.4,
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 17, color: color),
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.manrope(
+                fontSize: 14.5,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ),
         ],
       ),
     );

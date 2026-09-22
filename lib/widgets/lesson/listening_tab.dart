@@ -4,43 +4,41 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 import 'lesson_quiz.dart';
 
-// Placeholder content until lessons come from the backend.
-const _transcript =
-    "Hi, I'm Tom. I'm from Manchester in England. I'm 20 years old and I'm a "
-    "student at a university in Tashkent. My best friend here is Aziz. He's "
-    "from Bukhara. We're in the same English group, and our teacher is from "
-    'Canada.';
-
-const _questions = [
-  QuizQuestion(
-    prompt: 'How old is Tom?',
-    options: ['18', '19', '20', '21'],
-    correctIndex: 2,
-  ),
-  QuizQuestion(
-    prompt: 'Where is their teacher from?',
-    options: ['England', 'Canada', 'Uzbekistan', 'The USA'],
-    correctIndex: 1,
-  ),
-];
+const _noListeningMessage = "Ushbu darsda tinglab tushunish mashqi yo'q.";
 
 const _speeds = ['0.75x', '1x', '1.25x', '1.5x'];
 const _voices = ['US · Female', 'US · Male', 'UK · Female', 'UK · Male'];
 
 class ListeningTab extends StatelessWidget {
-  const ListeningTab({super.key});
+  const ListeningTab({super.key, required this.lesson});
+
+  final Lesson lesson;
 
   @override
   Widget build(BuildContext context) {
-    return const LessonTabBody(
+    final transcript = lesson.listeningTranscript;
+    if (transcript == null) {
+      return const LessonTabBody(children: [LessonNotice(_noListeningMessage)]);
+    }
+
+    final questions = QuizQuestion.listFrom(lesson.listeningQuestions);
+    return LessonTabBody(
       children: [
-        _AudioPlayerCard(),
-        _TranscriptCard(),
-        LessonQuiz(questions: _questions),
+        _AudioPlayerCard(title: lesson.title, format: lesson.listeningFormat),
+        _TranscriptCard(
+          transcript: transcript,
+          speakers: lesson.listeningSpeakers,
+        ),
+        if (questions.isNotEmpty)
+          LessonQuiz(
+            key: ValueKey('listening-quiz-${lesson.lessonNumber}'),
+            questions: questions,
+          ),
       ],
     );
   }
@@ -48,7 +46,12 @@ class ListeningTab extends StatelessWidget {
 
 /// Mock player: controls only change local UI state, nothing plays yet.
 class _AudioPlayerCard extends StatefulWidget {
-  const _AudioPlayerCard();
+  const _AudioPlayerCard({required this.title, required this.format});
+
+  final String title;
+
+  /// e.g. "two-speaker conversation".
+  final String? format;
 
   @override
   State<_AudioPlayerCard> createState() => _AudioPlayerCardState();
@@ -76,7 +79,18 @@ class _AudioPlayerCardState extends State<_AudioPlayerCard> {
             child: LessonTag(icon: LucideIcons.headphones, label: 'Listening'),
           ),
           const SizedBox(height: 14),
-          Text('Meet Tom', style: lessonHeadingStyle),
+          Text(widget.title, style: lessonHeadingStyle),
+          if (widget.format case final format?) ...[
+            const SizedBox(height: 4),
+            Text(
+              '${format[0].toUpperCase()}${format.substring(1)}',
+              style: GoogleFonts.manrope(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                color: AppColors.hint,
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           ClipRRect(
             borderRadius: BorderRadius.circular(99),
@@ -185,8 +199,10 @@ class _Dropdown extends StatelessWidget {
       icon: const Icon(LucideIcons.chevronDown, size: 18),
       decoration: InputDecoration(
         labelText: label,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
       ),
       items: [
         for (final item in items)
@@ -204,7 +220,11 @@ class _Dropdown extends StatelessWidget {
 
 /// Transcript is blurred until the learner chooses to reveal it.
 class _TranscriptCard extends StatefulWidget {
-  const _TranscriptCard();
+  const _TranscriptCard({required this.transcript, required this.speakers});
+
+  /// "Speaker: line" pairs separated by newlines.
+  final String transcript;
+  final List<String> speakers;
 
   @override
   State<_TranscriptCard> createState() => _TranscriptCardState();
@@ -215,9 +235,9 @@ class _TranscriptCardState extends State<_TranscriptCard> {
 
   @override
   Widget build(BuildContext context) {
-    final text = Text(
-      _transcript,
-      style: lessonBodyStyle.copyWith(color: AppColors.textPrimary),
+    final text = _TranscriptText(
+      transcript: widget.transcript,
+      speakers: widget.speakers,
     );
 
     return LessonCard(
@@ -254,19 +274,60 @@ class _TranscriptCardState extends State<_TranscriptCard> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.border),
             ),
-            child: _visible
-                ? text
-                // Blurred text is still in the tree; hide it from
-                // screen readers too.
-                : ExcludeSemantics(
-                    child: ImageFiltered(
-                      imageFilter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                      child: text,
+            child:
+                _visible
+                    ? text
+                    // Blurred text is still in the tree; hide it from
+                    // screen readers too.
+                    : ExcludeSemantics(
+                      child: ImageFiltered(
+                        imageFilter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: text,
+                      ),
                     ),
-                  ),
           ),
         ],
       ),
     );
+  }
+}
+
+/// Bolds a known speaker's name at the start of each line.
+class _TranscriptText extends StatelessWidget {
+  const _TranscriptText({required this.transcript, required this.speakers});
+
+  final String transcript;
+  final List<String> speakers;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = lessonBodyStyle.copyWith(color: AppColors.textPrimary);
+    final lines = transcript.split('\n');
+
+    return Text.rich(
+      TextSpan(
+        style: style,
+        children: [
+          for (final (i, line) in lines.indexed) ...[
+            if (i > 0) const TextSpan(text: '\n'),
+            ..._lineSpans(line),
+          ],
+        ],
+      ),
+    );
+  }
+
+  List<TextSpan> _lineSpans(String line) {
+    final colon = line.indexOf(': ');
+    if (colon > 0 && speakers.contains(line.substring(0, colon))) {
+      return [
+        TextSpan(
+          text: line.substring(0, colon + 1),
+          style: const TextStyle(fontWeight: FontWeight.w800),
+        ),
+        TextSpan(text: line.substring(colon + 1)),
+      ];
+    }
+    return [TextSpan(text: line)];
   }
 }

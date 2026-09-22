@@ -20,12 +20,52 @@ abstract final class AppColors {
   static const successSoft = Color(0xFFDCFCE7);
   static const successDark = Color(0xFF065F46);
 
+  /// Deep purple for loading states and live-data accents.
+  static const deepPurple = Color(0xFF5440D4);
+
+  /// Teacher panel accent and the wide-screen navigation sidebar.
+  static const teacherAccent = deepPurple;
+  static const teacherAccentSoft = Color(0xFFEDEAFD);
+  static const sidebar = Color(0xFF0D111D);
+  static const sidebarItemActive = Color(0xFF1B2133);
+  static const sidebarText = Color(0xFFB4B9C9);
+
   /// Dark "Today's focus" banner, top-left to bottom-right.
   static const midnightGradient = [
     Color(0xFF090D19),
     Color(0xFF111532),
     Color(0xFF161A47),
   ];
+}
+
+typedef PillColors = ({Color background, Color foreground});
+
+/// Badge colours per CEFR band: green for A, indigo for B1, amber for B2,
+/// purple for C. A null or unknown level is neutral grey.
+PillColors cefrColors(String? level) {
+  final band = level?.toUpperCase() ?? '';
+  if (band.startsWith('A')) {
+    return (
+      background: AppColors.successSoft,
+      foreground: AppColors.successDark,
+    );
+  }
+  if (band.startsWith('B2')) {
+    return (
+      background: const Color(0xFFFEF3C7),
+      foreground: const Color(0xFF92400E),
+    );
+  }
+  if (band.startsWith('B')) {
+    return (background: AppColors.primarySoft, foreground: AppColors.primary);
+  }
+  if (band.startsWith('C')) {
+    return (
+      background: AppColors.teacherAccentSoft,
+      foreground: AppColors.deepPurple,
+    );
+  }
+  return (background: AppColors.track, foreground: AppColors.textMuted);
 }
 
 abstract final class AppTheme {
@@ -54,8 +94,10 @@ abstract final class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 18,
+        ),
         hintStyle: GoogleFonts.manrope(
           color: AppColors.hint,
           fontSize: 15,
@@ -67,9 +109,10 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w600,
         ),
         prefixIconColor: WidgetStateColor.resolveWith(
-          (states) => states.contains(WidgetState.focused)
-              ? AppColors.primary
-              : AppColors.hint,
+          (states) =>
+              states.contains(WidgetState.focused)
+                  ? AppColors.primary
+                  : AppColors.hint,
         ),
         suffixIconColor: AppColors.hint,
         border: outline(AppColors.border),

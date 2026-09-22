@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 
-// Placeholder content until lessons come from the backend.
+const _noWritingMessage = "Ushbu darsda yozish mashqi yo'q.";
+
 const _lenses = [
-  (level: 'A1', focus: 'Short, correct sentences with am / is / are.'),
+  (level: 'A1', focus: "Short, correct sentences using the lesson's grammar."),
   (level: 'A2', focus: 'Link ideas with and, but and because.'),
   (level: 'B1', focus: 'Add details and reasons in clear paragraphs.'),
   (level: 'B2', focus: 'Vary your vocabulary and sentence structure.'),
@@ -17,7 +19,9 @@ const _minWords = 80;
 const _maxWords = 120;
 
 class WritingTab extends StatefulWidget {
-  const WritingTab({super.key});
+  const WritingTab({super.key, required this.lesson});
+
+  final Lesson lesson;
 
   @override
   State<WritingTab> createState() => _WritingTabState();
@@ -27,14 +31,18 @@ class _WritingTabState extends State<WritingTab> {
   int _wordCount = 0;
 
   void _onChanged(String text) {
-    final count = text.trim().isEmpty
-        ? 0
-        : text.trim().split(RegExp(r'\s+')).length;
+    final count =
+        text.trim().isEmpty ? 0 : text.trim().split(RegExp(r'\s+')).length;
     if (count != _wordCount) setState(() => _wordCount = count);
   }
 
   @override
   Widget build(BuildContext context) {
+    final prompt = widget.lesson.writingPrompt;
+    if (prompt == null) {
+      return const LessonTabBody(children: [LessonNotice(_noWritingMessage)]);
+    }
+
     final inRange = _wordCount >= _minWords && _wordCount <= _maxWords;
 
     return LessonTabBody(
@@ -43,18 +51,15 @@ class _WritingTabState extends State<WritingTab> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const LessonPrompt(
+              LessonPrompt(
                 tagIcon: LucideIcons.pencil,
                 tag: 'Writing task',
-                title: 'An email to your new group',
-                body: 'Write a short email to your new English group. '
-                    'Introduce yourself, describe your family and say what '
-                    'you like about your university. Write $_minWords–'
-                    '$_maxWords words.',
+                title: widget.lesson.title,
+                body: prompt,
               ),
               const SizedBox(height: 18),
               LessonTextField(
-                hint: 'Hi everyone, my name is…',
+                hint: 'Write your text here…',
                 minLines: 10,
                 maxLines: 20,
                 onChanged: _onChanged,

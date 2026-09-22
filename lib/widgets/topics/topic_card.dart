@@ -2,59 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 
-enum TopicStatus { mastered, inProgress, locked }
-
-/// One lesson in the 52-lesson pathway.
-class Topic {
-  const Topic({
-    required this.title,
-    required this.grammarFocus,
-    required this.semester,
-    required this.status,
-    this.masteryPercent = 0,
+/// White roadmap card: lesson number (or a lock) on the left; title, grammar
+/// focus, CEFR level and semester stacked on the right.
+///
+/// Locked cards stay tappable so the screen can explain why they're locked.
+class TopicCard extends StatelessWidget {
+  const TopicCard({
+    super.key,
+    required this.lesson,
+    required this.locked,
+    required this.onTap,
   });
 
-  final String title;
-  final String grammarFocus;
-  final int semester;
-  final TopicStatus status;
+  final Lesson lesson;
+  final bool locked;
+  final VoidCallback onTap;
 
-  /// 0 – 100; ignored when [status] is [TopicStatus.locked].
-  final int masteryPercent;
-
-  bool get isLocked => status == TopicStatus.locked;
-
-  String get statusLabel =>
-      isLocked ? 'Locked' : '${masteryPercent.clamp(0, 100)}% mastery';
-}
-
-/// White roadmap card: status circle on the left; title, grammar focus,
-/// mastery and semester pill stacked on the right.
-class TopicCard extends StatelessWidget {
-  const TopicCard({super.key, required this.topic, this.onTap});
-
-  final Topic topic;
-
-  /// Ignored for locked topics.
-  final VoidCallback? onTap;
+  String get displayTitle => '${lesson.lessonNumber}. ${lesson.title}';
 
   @override
   Widget build(BuildContext context) {
     const radius = BorderRadius.all(Radius.circular(16));
-    final locked = topic.isLocked;
 
     return Semantics(
-      button: !locked && onTap != null,
-      label: '${topic.title}. ${topic.grammarFocus}. '
-          '${topic.statusLabel}. Semester ${topic.semester}',
+      button: true,
+      label:
+          '$displayTitle. ${lesson.grammarFocus}. '
+          'CEFR ${lesson.cefrLevel}. Semester ${lesson.semester}'
+          '${locked ? '. Qulflangan' : ''}',
       excludeSemantics: true,
       child: Material(
         color: AppColors.surface,
         borderRadius: radius,
         child: InkWell(
-          onTap: locked ? null : onTap,
+          onTap: onTap,
           borderRadius: radius,
           child: Ink(
             padding: const EdgeInsets.all(16),
@@ -72,9 +56,15 @@ class TopicCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _StatusCircle(locked: locked),
+                _StatusCircle(number: lesson.lessonNumber, locked: locked),
                 const SizedBox(width: 14),
-                Expanded(child: _Details(topic: topic)),
+                Expanded(
+                  child: _Details(
+                    title: displayTitle,
+                    lesson: lesson,
+                    locked: locked,
+                  ),
+                ),
               ],
             ),
           ),
@@ -85,8 +75,9 @@ class TopicCard extends StatelessWidget {
 }
 
 class _StatusCircle extends StatelessWidget {
-  const _StatusCircle({required this.locked});
+  const _StatusCircle({required this.number, required this.locked});
 
+  final int number;
   final bool locked;
 
   @override
@@ -94,33 +85,44 @@ class _StatusCircle extends StatelessWidget {
     return Container(
       width: 44,
       height: 44,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: locked ? AppColors.track : AppColors.primarySoft,
       ),
-      child: Icon(
-        locked ? LucideIcons.lock : LucideIcons.check,
-        size: 20,
-        color: locked ? AppColors.hint : AppColors.primary,
-      ),
+      child:
+          locked
+              ? const Icon(LucideIcons.lock, size: 18, color: AppColors.hint)
+              : Text(
+                '$number',
+                style: GoogleFonts.manrope(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+              ),
     );
   }
 }
 
 class _Details extends StatelessWidget {
-  const _Details({required this.topic});
+  const _Details({
+    required this.title,
+    required this.lesson,
+    required this.locked,
+  });
 
-  final Topic topic;
+  final String title;
+  final Lesson lesson;
+  final bool locked;
 
   @override
   Widget build(BuildContext context) {
-    final locked = topic.isLocked;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          topic.title,
+          title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.manrope(
@@ -132,7 +134,7 @@ class _Details extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          topic.grammarFocus,
+          lesson.grammarFocus,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.manrope(
@@ -143,22 +145,21 @@ class _Details extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Row(
+        Wrap(
+          spacing: 8,
+          runSpacing: 6,
           children: [
-            Expanded(
-              child: Text(
-                topic.statusLabel,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.manrope(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: locked ? AppColors.hint : AppColors.success,
-                ),
+            _Pill(
+              label: lesson.cefrLevel,
+              colors: cefrColors(lesson.cefrLevel),
+            ),
+            _Pill(
+              label: 'Semester ${lesson.semester}',
+              colors: (
+                background: AppColors.primarySoft,
+                foreground: AppColors.primary,
               ),
             ),
-            const SizedBox(width: 8),
-            _SemesterPill(semester: topic.semester),
           ],
         ),
       ],
@@ -166,25 +167,26 @@ class _Details extends StatelessWidget {
   }
 }
 
-class _SemesterPill extends StatelessWidget {
-  const _SemesterPill({required this.semester});
+class _Pill extends StatelessWidget {
+  const _Pill({required this.label, required this.colors});
 
-  final int semester;
+  final String label;
+  final PillColors colors;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.primarySoft,
+        color: colors.background,
         borderRadius: BorderRadius.circular(99),
       ),
       child: Text(
-        'Sem $semester',
+        label,
         style: GoogleFonts.manrope(
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: AppColors.primary,
+          color: colors.foreground,
         ),
       ),
     );

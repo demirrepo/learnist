@@ -23,6 +23,7 @@ class ErrorPattern {
     required this.correction,
     required this.mistakeCount,
     required this.lessonLabel,
+    required this.lessonNumber,
   });
 
   /// The grammar point the mistakes have in common.
@@ -37,6 +38,7 @@ class ErrorPattern {
 
   /// The lesson that teaches [rule].
   final String lessonLabel;
+  final int lessonNumber;
 
   /// Mistakes needed before a pattern appears on the map; one slip is
   /// not a weakness.

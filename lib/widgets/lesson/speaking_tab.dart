@@ -2,24 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 
+const _noSpeakingMessage = "Ushbu darsda gapirish mashqi yo'q.";
+
 class SpeakingTab extends StatelessWidget {
-  const SpeakingTab({super.key});
+  const SpeakingTab({super.key, required this.lesson});
+
+  final Lesson lesson;
 
   @override
   Widget build(BuildContext context) {
+    final prompt = lesson.speakingPrompt;
+    if (prompt == null) {
+      return const LessonTabBody(children: [LessonNotice(_noSpeakingMessage)]);
+    }
+
     return LessonTabBody(
       children: [
-        const LessonCard(
+        LessonCard(
           child: LessonPrompt(
             tagIcon: LucideIcons.mic,
             tag: 'Speaking task',
-            title: 'Talk about yourself',
-            body: 'Record a short introduction for your new classmates. '
-                'Talk about your name, age, hometown, family and studies. '
-                'Try to speak for the full time.',
+            title: lesson.title,
+            body: prompt,
           ),
         ),
         const _SpeakingTimer(),

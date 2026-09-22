@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:learnist/main.dart';
+import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/screens/ai_lab_screen.dart';
 import 'package:learnist/screens/auth_screen.dart';
 import 'package:learnist/screens/edit_profile_screen.dart';
@@ -15,10 +17,19 @@ import 'package:learnist/screens/error_map_screen.dart';
 import 'package:learnist/screens/home_screen.dart';
 import 'package:learnist/screens/lesson_detail_screen.dart';
 import 'package:learnist/screens/profile_screen.dart';
+import 'package:learnist/screens/teacher_panel_screen.dart';
+import 'package:learnist/screens/topics_screen.dart';
 import 'package:learnist/screens/update_password_screen.dart';
+import 'package:learnist/services/lesson_service.dart';
+import 'package:learnist/services/progress_service.dart';
 import 'package:learnist/services/supabase_service.dart';
 import 'package:learnist/widgets/error_map/error_pattern_card.dart';
 import 'package:learnist/widgets/main_layout.dart';
+import 'package:learnist/widgets/teacher/student_detail_dialog.dart';
+import 'package:learnist/widgets/topics/topic_card.dart';
+
+import 'support/fake_lesson_service.dart';
+import 'support/fake_progress_service.dart';
 
 /// In-memory auth so tests never touch Supabase.
 class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
@@ -28,7 +39,10 @@ class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
     this.fullName,
     this.username,
     this.university,
+    this.role = UserRole.student,
   }) : _signedIn = signedIn;
+
+  UserRole role;
 
   bool _signedIn;
   String? fullName;
@@ -54,6 +68,12 @@ class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
 
   @override
   String? get currentUserUniversity => university;
+
+  @override
+  UserRole get currentUserRole => role;
+
+  @override
+  bool get isTeacher => role == UserRole.teacher;
 
   @override
   bool get isRecoveringPassword => _recovering;
@@ -87,11 +107,13 @@ class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
     required String fullName,
     required String username,
     required String university,
+    required UserRole role,
   }) async {
     lastSignUp = {
       'full_name': fullName,
       'username': username,
       'university': university,
+      'role': role.name,
     };
     return AuthResponse();
   }
@@ -146,10 +168,20 @@ class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
   }
 }
 
-Widget _app(_FakeSupabaseService auth) => ProviderScope(
-      overrides: [supabaseServiceProvider.overrideWithValue(auth)],
-      child: const LearnistApp(),
-    );
+Widget _app(
+  _FakeSupabaseService auth, {
+  FakeLessonService? lessons,
+  FakeProgressService? progress,
+}) => ProviderScope(
+  overrides: [
+    supabaseServiceProvider.overrideWithValue(auth),
+    lessonServiceProvider.overrideWithValue(lessons ?? FakeLessonService()),
+    progressServiceProvider.overrideWithValue(
+      progress ?? FakeProgressService(),
+    ),
+  ],
+  child: const LearnistApp(),
+);
 
 Finder _byKey(String key) => find.byKey(ValueKey(key));
 
@@ -186,8 +218,9 @@ void main() {
   // Tests have no network; skip fetching Google Fonts.
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
-  testWidgets('signed-out users are sent to /auth, then /home after sign in',
-      (tester) async {
+  testWidgets('signed-out users are sent to /auth, then /home after sign in', (
+    tester,
+  ) async {
     final auth = _FakeSupabaseService(signedIn: false);
     await tester.pumpWidget(_app(auth));
     await tester.pumpAndSettle();
@@ -207,8 +240,9 @@ void main() {
     expect(find.byType(AuthScreen), findsOneWidget);
   });
 
-  testWidgets('sign up sends profile fields, including other university',
-      (tester) async {
+  testWidgets('sign up sends profile fields, including other university', (
+    tester,
+  ) async {
     final auth = _FakeSupabaseService(signedIn: false);
     await tester.pumpWidget(_app(auth));
     await tester.pumpAndSettle();
@@ -228,14 +262,16 @@ void main() {
       'full_name': 'Test Student',
       'username': 'learner_01',
       'university': 'My College',
+      'role': 'student',
     });
     // No session returned → confirmation SnackBar, back to Sign In mode.
     expect(find.textContaining('Tasdiqlash havolasi'), findsOneWidget);
     expect(_byKey('auth-full-name'), findsNothing);
   });
 
-  testWidgets('taken username stops sign-up before calling signUp',
-      (tester) async {
+  testWidgets('taken username stops sign-up before calling signUp', (
+    tester,
+  ) async {
     final auth = _FakeSupabaseService(
       signedIn: false,
       takenUsernames: {'learner_01'},
@@ -255,8 +291,9 @@ void main() {
     expect(_byKey('auth-full-name'), findsOneWidget);
   });
 
-  testWidgets('footer link switches modes; forgot link is sign-in only',
-      (tester) async {
+  testWidgets('footer link switches modes; forgot link is sign-in only', (
+    tester,
+  ) async {
     await tester.pumpWidget(_app(_FakeSupabaseService(signedIn: false)));
     await tester.pumpAndSettle();
     expect(_byKey('auth-forgot-password'), findsOneWidget);
@@ -292,8 +329,9 @@ void main() {
     expect(find.text(passwordResetSentMessage), findsOneWidget);
   });
 
-  testWidgets('recovery event opens update screen; saving returns home',
-      (tester) async {
+  testWidgets('recovery event opens update screen; saving returns home', (
+    tester,
+  ) async {
     final auth = _FakeSupabaseService(signedIn: false);
     await tester.pumpWidget(_app(auth));
     await tester.pumpAndSettle();
@@ -305,7 +343,10 @@ void main() {
 
     await tester.enterText(_byKey('update-password-field'), '123');
     await _tapVisible(tester, _byKey('update-password-submit'));
-    expect(find.text("Parol kamida 6 ta belgidan iborat bo'lsin"), findsOneWidget);
+    expect(
+      find.text("Parol kamida 6 ta belgidan iborat bo'lsin"),
+      findsOneWidget,
+    );
     expect(auth.lastNewPassword, isNull);
 
     await tester.enterText(_byKey('update-password-field'), 'newSecret1');
@@ -317,8 +358,9 @@ void main() {
     expect(find.text(passwordUpdatedMessage), findsOneWidget);
   });
 
-  testWidgets('cancelling recovery signs out to the auth screen',
-      (tester) async {
+  testWidgets('cancelling recovery signs out to the auth screen', (
+    tester,
+  ) async {
     final auth = _FakeSupabaseService(signedIn: false);
     await tester.pumpWidget(_app(auth));
     await tester.pumpAndSettle();
@@ -360,11 +402,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('52-lesson pathway'), findsOneWidget);
 
-    // Lessons open inside the shell, so the nav bar stays visible.
-    await tester.tap(find.text('Lesson 1. Hello, everybody!'));
+    // Lessons are pushed full-screen above the tab shell.
+    await tester.tap(find.text('1. Hello, everybody!'));
     await tester.pumpAndSettle();
-    expect(find.text('Lesson 1: Hello, everybody!'), findsOneWidget);
-    expect(find.byType(LearnistNavBar), findsOneWidget);
+    expect(find.byType(LessonDetailScreen), findsOneWidget);
+    expect(find.byType(LearnistNavBar), findsNothing);
 
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
@@ -386,8 +428,9 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('shows name, username and university from metadata',
-        (tester) async {
+    testWidgets('shows name, username and university from metadata', (
+      tester,
+    ) async {
       await openProfile(
         tester,
         _FakeSupabaseService(
@@ -430,8 +473,9 @@ void main() {
       expect(find.byType(LearnistNavBar), findsNothing);
     });
 
-    testWidgets('language sheet updates the selection and closes',
-        (tester) async {
+    testWidgets('language sheet updates the selection and closes', (
+      tester,
+    ) async {
       await openProfile(tester, _FakeSupabaseService(signedIn: true));
 
       expect(find.text("O'zbekcha"), findsOneWidget);
@@ -450,8 +494,9 @@ void main() {
       expect(find.byType(LearnistNavBar), findsOneWidget);
     });
 
-    testWidgets('error map is a menu item, not embedded in the profile',
-        (tester) async {
+    testWidgets('error map is a menu item, not embedded in the profile', (
+      tester,
+    ) async {
       await openProfile(tester, _FakeSupabaseService(signedIn: true));
 
       expect(find.text('Xatolar xaritasi'), findsOneWidget);
@@ -459,8 +504,9 @@ void main() {
       expect(find.byIcon(Icons.troubleshoot), findsOneWidget);
     });
 
-    testWidgets('error map lists recurring patterns and opens the lesson',
-        (tester) async {
+    testWidgets('error map lists recurring patterns and opens the lesson', (
+      tester,
+    ) async {
       // Tall view so the lazy ListView builds every card.
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1;
@@ -495,12 +541,13 @@ void main() {
 
     test('only recurring patterns are kept, most frequent first', () {
       ErrorPattern pattern(String rule, int count) => ErrorPattern(
-            rule: rule,
-            example: '',
-            correction: '',
-            mistakeCount: count,
-            lessonLabel: '',
-          );
+        rule: rule,
+        example: '',
+        correction: '',
+        mistakeCount: count,
+        lessonLabel: '',
+        lessonNumber: 1,
+      );
 
       final result = recurringPatterns([
         pattern('once', 1),
@@ -536,13 +583,16 @@ void main() {
     FilledButton saveButton(WidgetTester tester) =>
         tester.widget<FilledButton>(_byKey('edit-save'));
 
-    testWidgets('edit form is pre-filled and saving needs a change',
-        (tester) async {
+    testWidgets('edit form is pre-filled and saving needs a change', (
+      tester,
+    ) async {
       await openEditProfile(tester, editableUser());
 
       expect(find.text('Profilni tahrirlash'), findsOneWidget);
-      expect(find.widgetWithText(TextFormField, 'Aziz Karimov'),
-          findsOneWidget);
+      expect(
+        find.widgetWithText(TextFormField, 'Aziz Karimov'),
+        findsOneWidget,
+      );
       expect(find.widgetWithText(TextFormField, 'aziz'), findsOneWidget);
       expect(saveButton(tester).onPressed, isNull);
 
@@ -551,8 +601,9 @@ void main() {
       expect(saveButton(tester).onPressed, isNotNull);
     });
 
-    testWidgets('empty metadata shows placeholder hints, not values',
-        (tester) async {
+    testWidgets('empty metadata shows placeholder hints, not values', (
+      tester,
+    ) async {
       await openEditProfile(tester, _FakeSupabaseService(signedIn: true));
 
       expect(find.text('Demir'), findsOneWidget);
@@ -584,8 +635,9 @@ void main() {
       expect(find.byType(EditProfileScreen), findsOneWidget);
     });
 
-    testWidgets('an unchanged username skips the availability check',
-        (tester) async {
+    testWidgets('an unchanged username skips the availability check', (
+      tester,
+    ) async {
       // "aziz" is reported taken — by this same user.
       final auth = editableUser(taken: {'aziz'});
       await openEditProfile(tester, auth);
@@ -596,8 +648,7 @@ void main() {
       expect(auth.lastProfileUpdate?['username'], 'aziz');
     });
 
-    testWidgets('saving updates the profile and returns to it',
-        (tester) async {
+    testWidgets('saving updates the profile and returns to it', (tester) async {
       final auth = editableUser();
       await openEditProfile(tester, auth);
 
@@ -617,13 +668,15 @@ void main() {
       expect(find.text('My College'), findsOneWidget);
     });
 
-    testWidgets('save failures stay on the form with an Uzbek message',
-        (tester) async {
-      final auth = editableUser()
-        ..updateProfileError = const PostgrestException(
-          message: 'duplicate key value violates unique constraint',
-          code: '23505',
-        );
+    testWidgets('save failures stay on the form with an Uzbek message', (
+      tester,
+    ) async {
+      final auth =
+          editableUser()
+            ..updateProfileError = const PostgrestException(
+              message: 'duplicate key value violates unique constraint',
+              code: '23505',
+            );
       await openEditProfile(tester, auth);
 
       await tester.enterText(_byKey('edit-username'), 'aziz_new');
@@ -659,8 +712,9 @@ void main() {
   });
 
   group('home screen', () {
-    testWidgets('greets the user by first name and renders all sections',
-        (tester) async {
+    testWidgets('greets the user by first name and renders all sections', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _app(
           _FakeSupabaseService(signedIn: true, fullName: 'Demirbek Razzaqov'),
@@ -670,7 +724,9 @@ void main() {
 
       expect(find.textContaining(', Demirbek 👋'), findsOneWidget);
       expect(find.text("TODAY'S FOCUS"), findsOneWidget);
-      expect(find.text('Continue Lesson 2'), findsOneWidget);
+      // No metadata yet: lesson 1 and no CEFR level.
+      expect(find.text('Continue Lesson 1'), findsOneWidget);
+      expect(find.text('N/A'), findsNWidgets(2)); // badge + snapshot tile
       expect(find.text('Learning space'), findsOneWidget);
       expect(find.text('1/52'), findsOneWidget);
       expect(find.text('Lesson 1 · Present Simple'), findsOneWidget);
@@ -691,6 +747,64 @@ void main() {
       expect(find.byType(AiLabScreen), findsOneWidget);
     });
 
+    testWidgets('shows the stored level and continues the current lesson', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _app(
+          _FakeSupabaseService(signedIn: true),
+          progress: FakeProgressService(
+            progress: const UserProgress(cefrLevel: 'B2', currentLesson: 5),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('N/A'), findsNothing);
+      expect(
+        find.descendant(
+          of: _byKey('home-cefr-badge'),
+          matching: find.text('B2'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('UZ'), findsNothing);
+
+      await _tapVisible(tester, _byKey('home-continue-lesson'));
+      final screen = tester.widget<LessonDetailScreen>(
+        find.byType(LessonDetailScreen),
+      );
+      expect(screen.lessonId, 5);
+    });
+
+    testWidgets('home refetches progress when the auth state changes', (
+      tester,
+    ) async {
+      final auth = _FakeSupabaseService(signedIn: true);
+      final progress = FakeProgressService();
+      await tester.pumpWidget(_app(auth, progress: progress));
+      await tester.pumpAndSettle();
+      expect(find.text('Continue Lesson 1'), findsOneWidget);
+
+      progress.progress = const UserProgress(cefrLevel: 'A2', currentLesson: 3);
+      auth.notifyListeners();
+      await tester.pumpAndSettle();
+      expect(find.text('Continue Lesson 3'), findsOneWidget);
+    });
+
+    testWidgets('a failed progress fetch falls back to defaults', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _app(
+          _FakeSupabaseService(signedIn: true),
+          progress: FakeProgressService()..progressError = Exception('down'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Continue Lesson 1'), findsOneWidget);
+    });
+
     test('greeting follows the time of day', () {
       expect(greetingFor(DateTime(2026, 9, 14, 8)), 'Good morning');
       expect(greetingFor(DateTime(2026, 9, 14, 14)), 'Good afternoon');
@@ -702,6 +816,251 @@ void main() {
       expect(firstNameFrom('  Demirbek   Razzaqov '), 'Demirbek');
       expect(firstNameFrom(''), 'Demir');
       expect(firstNameFrom(null), 'Demir');
+    });
+  });
+
+  group('teacher role', () {
+    _FakeSupabaseService teacher() => _FakeSupabaseService(
+      signedIn: true,
+      fullName: 'Dilnoza Karimova',
+      role: UserRole.teacher,
+    );
+
+    testWidgets('sign up as a teacher stores the teacher role', (tester) async {
+      final auth = _FakeSupabaseService(signedIn: false);
+      await tester.pumpWidget(_app(auth));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Sign Up'));
+      await tester.pumpAndSettle();
+      await tester.tap(_byKey('auth-role-teacher'));
+      await tester.pumpAndSettle();
+
+      await _selectUniversity(tester, 'Boshqa', 'Boshqa / Other');
+      await _fillCommonSignUpFields(tester, username: 'teacher_01');
+      await tester.enterText(_byKey('auth-other-university'), 'My College');
+      await _tapVisible(tester, _byKey('auth-submit'));
+
+      expect(auth.lastSignUp?['role'], 'teacher');
+    });
+
+    testWidgets('students have no panel tab and are redirected away', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_app(_FakeSupabaseService(signedIn: true)));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Panel'), findsNothing);
+
+      final router = GoRouter.of(tester.element(find.byType(HomeScreen)));
+      router.go('/teacher-panel');
+      await tester.pumpAndSettle();
+      expect(find.byType(TeacherPanelScreen), findsNothing);
+      expect(find.byType(HomeScreen), findsOneWidget);
+    });
+
+    Future<int> lockedTopicCount(
+      WidgetTester tester,
+      _FakeSupabaseService auth,
+    ) async {
+      await tester.pumpWidget(_app(auth));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Topics'));
+      await tester.pumpAndSettle();
+      return tester
+          .widgetList<TopicCard>(find.byType(TopicCard))
+          .where((card) => card.locked)
+          .length;
+    }
+
+    testWidgets('students still see locked topics', (tester) async {
+      final auth = _FakeSupabaseService(signedIn: true);
+      expect(await lockedTopicCount(tester, auth), greaterThan(0));
+    });
+
+    testWidgets('teachers bypass every topic lock', (tester) async {
+      expect(await lockedTopicCount(tester, teacher()), 0);
+    });
+
+    testWidgets('teacher opens the panel and a student detail dialog', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_app(teacher()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Panel'));
+      await tester.pumpAndSettle();
+      expect(find.byType(TeacherPanelScreen), findsOneWidget);
+      expect(find.text("O'qituvchi paneli"), findsOneWidget);
+      expect(find.text('No error data yet.'), findsOneWidget);
+
+      await _tapVisible(tester, find.text('View'));
+      expect(find.byType(StudentDetailDialog), findsOneWidget);
+      expect(find.text('@redscorpnoir • current Lesson 2'), findsOneWidget);
+      expect(find.text('No recurring mistakes recorded yet.'), findsOneWidget);
+      expect(find.textContaining('Grammar 85%'), findsOneWidget);
+
+      await tester.tap(_byKey('student-detail-close'));
+      await tester.pumpAndSettle();
+      expect(find.byType(StudentDetailDialog), findsNothing);
+    });
+
+    testWidgets('wide screens use the sidebar with the full label', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1280, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(_app(teacher()));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LearnistSidebar), findsOneWidget);
+      expect(find.byType(LearnistNavBar), findsNothing);
+
+      await tester.tap(find.text("O'qituvchi paneli"));
+      await tester.pumpAndSettle();
+      expect(find.byType(TeacherPanelScreen), findsOneWidget);
+      expect(find.text('TALABA'), findsOneWidget);
+    });
+  });
+
+  group('topics screen', () {
+    Future<void> openTopics(
+      WidgetTester tester, {
+      _FakeSupabaseService? auth,
+      FakeLessonService? lessons,
+      FakeProgressService? progress,
+      bool settle = true,
+    }) async {
+      await tester.pumpWidget(
+        _app(
+          auth ?? _FakeSupabaseService(signedIn: true),
+          lessons: lessons,
+          progress: progress,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Topics'));
+      settle ? await tester.pumpAndSettle() : await tester.pump();
+    }
+
+    testWidgets('shows a spinner until lessons arrive', (tester) async {
+      final lessons = FakeLessonService(pending: Completer<void>());
+      await openTopics(tester, lessons: lessons, settle: false);
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(TopicCard), findsNothing);
+
+      lessons.pending!.complete();
+      await tester.pumpAndSettle();
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('1. Hello, everybody!'), findsOneWidget);
+      expect(find.text('Semester 1'), findsWidgets);
+      expect(find.text('A1'), findsWidgets);
+    });
+
+    testWidgets('fetches once, not on every rebuild', (tester) async {
+      final lessons = FakeLessonService();
+      await openTopics(tester, lessons: lessons);
+      await tester.enterText(find.byType(TextField), 'sport');
+      await tester.pumpAndSettle();
+
+      expect(lessons.fetchCount, 1);
+      expect(find.text('2. A world of sport'), findsOneWidget);
+      expect(find.text('1. Hello, everybody!'), findsNothing);
+    });
+
+    testWidgets('an error shows a message and retry refetches', (tester) async {
+      final lessons = FakeLessonService(
+        error: const PostgrestException(message: 'boom'),
+      );
+      await openTopics(tester, lessons: lessons);
+
+      expect(find.textContaining("Darslarni yuklab bo'lmadi"), findsOneWidget);
+      expect(find.byType(TopicCard), findsNothing);
+
+      lessons.error = null;
+      await tester.tap(find.text('Qayta urinish'));
+      await tester.pumpAndSettle();
+      expect(lessons.fetchCount, 2);
+      expect(find.text('1. Hello, everybody!'), findsOneWidget);
+    });
+
+    testWidgets('search reaches semester 2 lessons', (tester) async {
+      await openTopics(tester);
+      await tester.enterText(find.byType(TextField), 'white gold');
+      await tester.pumpAndSettle();
+
+      // Header and card pill.
+      expect(find.text('Semester 2'), findsNWidgets(2));
+      expect(find.text('38. White Gold'), findsOneWidget);
+    });
+
+    testWidgets('students open lesson 1; later lessons say Qulflangan', (
+      tester,
+    ) async {
+      await openTopics(tester);
+
+      await tester.tap(find.text('2. A world of sport'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Qulflangan'), findsOneWidget);
+      expect(find.byType(LessonDetailScreen), findsNothing);
+
+      await tester.tap(find.text('1. Hello, everybody!'));
+      await tester.pumpAndSettle();
+      final screen = tester.widget<LessonDetailScreen>(
+        find.byType(LessonDetailScreen),
+      );
+      expect(screen.lessonId, 1);
+    });
+
+    testWidgets('students can open lessons up to current_lesson', (
+      tester,
+    ) async {
+      await openTopics(
+        tester,
+        progress: FakeProgressService(
+          progress: const UserProgress(currentLesson: 2),
+        ),
+      );
+
+      await tester.tap(find.text('3. The digital era'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Qulflangan'), findsOneWidget);
+
+      await tester.tap(find.text('2. A world of sport'));
+      await tester.pumpAndSettle();
+      final screen = tester.widget<LessonDetailScreen>(
+        find.byType(LessonDetailScreen),
+      );
+      expect(screen.lessonId, 2);
+    });
+
+    testWidgets('teachers open any lesson by number', (tester) async {
+      await openTopics(
+        tester,
+        auth: _FakeSupabaseService(signedIn: true, role: UserRole.teacher),
+      );
+
+      await tester.tap(find.text('2. A world of sport'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Qulflangan'), findsNothing);
+      final screen = tester.widget<LessonDetailScreen>(
+        find.byType(LessonDetailScreen),
+      );
+      expect(screen.lessonId, 2);
+    });
+
+    testWidgets('a malformed lesson id redirects to the list', (tester) async {
+      await openTopics(tester);
+      GoRouter.of(
+        tester.element(find.byType(TopicsScreen)),
+      ).go('/lesson-detail/abc');
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LessonDetailScreen), findsNothing);
+      expect(find.byType(TopicsScreen), findsOneWidget);
     });
   });
 
@@ -724,7 +1083,8 @@ void main() {
 
     test('trigger failure (HTTP 500) means the username is taken', () {
       final error = AuthRetryableFetchException(
-        message: '{"code":500,"error_code":"unexpected_failure",'
+        message:
+            '{"code":500,"error_code":"unexpected_failure",'
             '"msg":"Database error saving new user"}',
         statusCode: '500',
       );
@@ -734,7 +1094,10 @@ void main() {
     test('server and database errors are not reported as network errors', () {
       expect(
         authErrorMessage(
-          AuthRetryableFetchException(message: 'Bad gateway', statusCode: '502'),
+          AuthRetryableFetchException(
+            message: 'Bad gateway',
+            statusCode: '502',
+          ),
         ),
         allOf(isNot(contains(internet)), contains('Serverda')),
       );

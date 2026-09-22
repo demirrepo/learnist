@@ -12,6 +12,45 @@ class QuizQuestion {
     required this.correctIndex,
   });
 
+  /// Parses one `{question, options, answer_index}` item from a JSONB
+  /// questions column. Returns null for anything that can't be scored
+  /// reliably: a blank prompt, fewer than two options, a non-string option
+  /// (dropping it would shift [correctIndex]) or an out-of-range answer.
+  static QuizQuestion? tryParse(Object? raw) {
+    if (raw is! Map) return null;
+
+    final prompt = raw['question'];
+    final rawOptions = raw['options'];
+    final answer = raw['answer_index'];
+    if (prompt is! String || prompt.trim().isEmpty) return null;
+    if (rawOptions is! List || rawOptions.length < 2) return null;
+
+    final options = <String>[];
+    for (final option in rawOptions) {
+      if (option is! String || option.trim().isEmpty) return null;
+      options.add(option.trim());
+    }
+
+    final index = switch (answer) {
+      int value => value,
+      num value when value == value.roundToDouble() => value.toInt(),
+      _ => null,
+    };
+    if (index == null || index < 0 || index >= options.length) return null;
+
+    return QuizQuestion(
+      prompt: prompt.trim(),
+      options: List.unmodifiable(options),
+      correctIndex: index,
+    );
+  }
+
+  /// Every valid question in [raw]; malformed items are skipped.
+  static List<QuizQuestion> listFrom(List<dynamic> raw) => [
+    for (final item in raw)
+      if (tryParse(item) case final question?) question,
+  ];
+
   final String prompt;
   final List<String> options;
   final int correctIndex;
@@ -67,9 +106,10 @@ class _LessonQuizState extends State<LessonQuiz> {
       children: [
         for (var i = 0; i < questions.length; i++) ...[
           if (i > 0) const SizedBox(height: 12),
-          _QuestionCard(
+          QuizQuestionCard(
             number: i + 1,
-            question: questions[i],
+            prompt: questions[i].prompt,
+            options: questions[i].options,
             selectedIndex: _answers[i],
             onSelected: (option) => setState(() => _answers[i] = option),
           ),
@@ -85,16 +125,21 @@ class _LessonQuizState extends State<LessonQuiz> {
   }
 }
 
-class _QuestionCard extends StatelessWidget {
-  const _QuestionCard({
+/// One numbered multiple-choice question; shared by lesson quizzes and the
+/// level check-up.
+class QuizQuestionCard extends StatelessWidget {
+  const QuizQuestionCard({
+    super.key,
     required this.number,
-    required this.question,
+    required this.prompt,
+    required this.options,
     required this.selectedIndex,
     required this.onSelected,
   });
 
   final int number;
-  final QuizQuestion question;
+  final String prompt;
+  final List<String> options;
   final int? selectedIndex;
   final ValueChanged<int> onSelected;
 
@@ -106,7 +151,7 @@ class _QuestionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '$number. ${question.prompt}',
+            '$number. $prompt',
             style: GoogleFonts.manrope(
               fontSize: 15.5,
               height: 1.4,
@@ -115,10 +160,10 @@ class _QuestionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          for (var i = 0; i < question.options.length; i++) ...[
+          for (var i = 0; i < options.length; i++) ...[
             if (i > 0) const SizedBox(height: 8),
             _OptionTile(
-              label: question.options[i],
+              label: options[i],
               selected: selectedIndex == i,
               onTap: () => onSelected(i),
             ),
@@ -178,8 +223,7 @@ class _OptionTile extends StatelessWidget {
                     style: GoogleFonts.manrope(
                       fontSize: 14.5,
                       height: 1.4,
-                      fontWeight:
-                          selected ? FontWeight.w700 : FontWeight.w600,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                   ),

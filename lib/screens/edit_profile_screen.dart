@@ -160,9 +160,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         hintText: 'Demir',
                         prefixIcon: Icon(LucideIcons.user, size: 20),
                       ),
-                      validator: (value) => (value?.trim().length ?? 0) < 3
-                          ? "To'liq ismingizni kiriting"
-                          : null,
+                      validator:
+                          (value) =>
+                              (value?.trim().length ?? 0) < 3
+                                  ? "To'liq ismingizni kiriting"
+                                  : null,
                     ),
                     const SizedBox(height: 18),
                     const _FieldLabel('Foydalanuvchi nomi'),
@@ -180,10 +182,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         errorText: _usernameError,
                         errorMaxLines: 2,
                       ),
-                      validator: (value) => _usernamePattern
-                              .hasMatch(value?.trim().toLowerCase() ?? '')
-                          ? null
-                          : "3–30 ta belgi: harflar, raqamlar, _ yoki .",
+                      validator:
+                          (value) =>
+                              _usernamePattern.hasMatch(
+                                    value?.trim().toLowerCase() ?? '',
+                                  )
+                                  ? null
+                                  : "3–30 ta belgi: harflar, raqamlar, _ yoki .",
                     ),
                     const SizedBox(height: 18),
                     const _FieldLabel('Universitet'),
@@ -196,15 +201,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     FilledButton(
                       key: const ValueKey('edit-save'),
                       onPressed: _saving || !_hasChanges ? null : _save,
-                      child: _saving
-                          ? const SizedBox.square(
-                              dimension: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.4,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Text('Saqlash'),
+                      child:
+                          _saving
+                              ? const SizedBox.square(
+                                dimension: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.4,
+                                  color: Colors.white,
+                                ),
+                              )
+                              : const Text('Saqlash'),
                     ),
                   ],
                 ),
@@ -256,9 +262,11 @@ class _UniversityField extends StatelessWidget {
             hintText: 'Millat Umidi University',
             prefixIcon: Icon(LucideIcons.graduationCap, size: 20),
           ),
-          validator: (value) => (value?.trim().isEmpty ?? true)
-              ? 'Universitet nomini kiriting'
-              : null,
+          validator:
+              (value) =>
+                  (value?.trim().isEmpty ?? true)
+                      ? 'Universitet nomini kiriting'
+                      : null,
         );
       },
       optionsViewBuilder: (context, onSelected, options) {
