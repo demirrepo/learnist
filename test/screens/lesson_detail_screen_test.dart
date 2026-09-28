@@ -8,18 +8,22 @@ import 'package:learnist/models/lesson_model.dart';
 import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/screens/lesson_detail_screen.dart';
 import 'package:learnist/theme/app_theme.dart';
+import 'package:learnist/services/deepgram_service.dart';
 import 'package:learnist/services/gemini_service.dart';
 import 'package:learnist/services/lesson_service.dart';
 import 'package:learnist/services/progress_service.dart';
+import 'package:learnist/services/speech_recorder.dart';
 import 'package:learnist/services/supabase_service.dart';
 import 'package:learnist/widgets/lesson/lesson_common.dart';
 import 'package:learnist/widgets/lesson/lesson_quiz.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import '../support/fake_deepgram_service.dart';
 import '../support/fake_gemini_service.dart';
 import '../support/fake_lesson_service.dart';
 import '../support/fake_progress_service.dart';
+import '../support/fake_speech_recorder.dart';
 
 /// The progress providers only listen to the auth service for changes.
 class _AuthStub extends ChangeNotifier implements SupabaseService {
@@ -33,6 +37,8 @@ Future<void> _pump(
   FakeLessonService? service,
   FakeProgressService? progress,
   FakeGeminiService? gemini,
+  FakeDeepgramService? deepgram,
+  FakeSpeechRecorder? recorder,
   bool settle = true,
 }) async {
   await tester.pumpWidget(
@@ -44,6 +50,12 @@ Future<void> _pump(
           progress ?? FakeProgressService(),
         ),
         geminiServiceProvider.overrideWithValue(gemini ?? FakeGeminiService()),
+        deepgramServiceProvider.overrideWithValue(
+          deepgram ?? FakeDeepgramService(),
+        ),
+        speechRecorderProvider.overrideWithValue(
+          recorder ?? FakeSpeechRecorder(),
+        ),
       ],
       child: MaterialApp(
         theme: AppTheme.light,
@@ -356,6 +368,198 @@ void main() {
       final assess = tester.getTopLeft(find.text('Assess speaking'));
       final complete = tester.getTopLeft(find.text('Darsni yakunlash'));
       expect(complete.dy, greaterThan(assess.dy));
+    });
+  });
+
+  group('Speaking by microphone', () {
+    final mic = find.byKey(const ValueKey('speaking-mic'));
+    final answer = find.byKey(const ValueKey('speaking-answer'));
+    final assess = find.ancestor(
+      of: find.text('Assess speaking'),
+      matching: find.bySubtype<FilledButton>(),
+    );
+
+    String answerText(WidgetTester tester) =>
+        tester
+            .widget<TextField>(
+              find.descendant(of: answer, matching: find.byType(TextField)),
+            )
+            .controller!
+            .text;
+
+    Color? snackBarColor(WidgetTester tester, String message) =>
+        tester
+            .widget<SnackBar>(
+              find.ancestor(
+                of: find.text(message),
+                matching: find.byType(SnackBar),
+              ),
+            )
+            .backgroundColor;
+
+    Future<void> openSpeaking(
+      WidgetTester tester, {
+      FakeGeminiService? gemini,
+      FakeDeepgramService? deepgram,
+      FakeSpeechRecorder? recorder,
+    }) async {
+      _useTallView(tester);
+      await _pump(
+        tester,
+        gemini: gemini,
+        deepgram: deepgram,
+        recorder: recorder,
+      );
+      await _openTab(tester, 'Gapirish');
+    }
+
+    testWidgets('only the speaking task has a microphone', (tester) async {
+      _useTallView(tester);
+      await _pump(tester);
+      expect(find.byKey(const ValueKey('grammar-mic')), findsNothing);
+
+      await _openTab(tester, 'Yozish');
+      expect(find.byKey(const ValueKey('writing-mic')), findsNothing);
+
+      await _openTab(tester, 'Gapirish');
+      expect(mic, findsOneWidget);
+      expect(find.byTooltip('Start recording'), findsOneWidget);
+    });
+
+    testWidgets('records, transcribes into the field, then grades it', (
+      tester,
+    ) async {
+      final recorder = FakeSpeechRecorder();
+      final deepgram = FakeDeepgramService(
+        transcript: 'I usually cook on Sundays.',
+      )..pending = Completer<void>();
+      final gemini = FakeGeminiService();
+      await openSpeaking(
+        tester,
+        gemini: gemini,
+        deepgram: deepgram,
+        recorder: recorder,
+      );
+
+      await tester.tap(find.byTooltip('Start recording'));
+      // The pulse repeats while recording, so pump rather than settle.
+      await tester.pump();
+      expect(recorder.recording, isTrue);
+      expect(find.text('Recording… Tap to stop'), findsOneWidget);
+      expect(tester.widget<ButtonStyleButton>(assess).onPressed, isNull);
+
+      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.pump();
+      expect(recorder.recording, isFalse);
+      expect(find.text('Transcribing…'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: mic,
+          matching: find.byType(CircularProgressIndicator),
+        ),
+        findsOneWidget,
+      );
+      expect(deepgram.paths, ['/tmp/speaking.m4a']);
+
+      deepgram.pending!.complete();
+      await tester.pumpAndSettle();
+
+      expect(answerText(tester), 'I usually cook on Sundays.');
+      expect(recorder.deleted, ['/tmp/speaking.m4a']);
+      expect(find.byTooltip('Start recording'), findsOneWidget);
+      expect(gemini.calls, isEmpty);
+
+      await tester.tap(assess);
+      await tester.pumpAndSettle();
+      expect(gemini.calls.single.studentText, 'I usually cook on Sundays.');
+      expect(find.text('Mastery reached: 85%'), findsOneWidget);
+    });
+
+    for (final denial in [
+      (
+        permission: MicPermission.denied,
+        message: 'Ovoz yozish uchun mikrofonga ruxsat bering.',
+      ),
+      (
+        permission: MicPermission.permanentlyDenied,
+        message:
+            'Mikrofonga ruxsat berilmagan. Uni telefon sozlamalaridan yoqing.',
+      ),
+    ]) {
+      testWidgets('${denial.permission.name} microphone shows a red snackbar', (
+        tester,
+      ) async {
+        final recorder = FakeSpeechRecorder(permission: denial.permission);
+        await openSpeaking(tester, recorder: recorder);
+
+        await tester.tap(find.byTooltip('Start recording'));
+        await tester.pumpAndSettle();
+
+        expect(recorder.recording, isFalse);
+        expect(snackBarColor(tester, denial.message), AppColors.danger);
+        expect(find.byTooltip('Start recording'), findsOneWidget);
+      });
+    }
+
+    testWidgets('a recorder failure shows a red snackbar', (tester) async {
+      final recorder =
+          FakeSpeechRecorder()..startError = Exception('mic in use');
+      await openSpeaking(tester, recorder: recorder);
+
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pumpAndSettle();
+
+      expect(
+        snackBarColor(
+          tester,
+          "Ovoz yozishni boshlab bo'lmadi. Iltimos qayta urinib ko'ring.",
+        ),
+        AppColors.danger,
+      );
+    });
+
+    testWidgets('a failed transcription keeps the typed answer', (
+      tester,
+    ) async {
+      final recorder = FakeSpeechRecorder();
+      final deepgram =
+          FakeDeepgramService()
+            ..error = const DeepgramException(
+              "Internet aloqasi yo'q. Iltimos qayta urinib ko'ring.",
+            );
+      await openSpeaking(tester, deepgram: deepgram, recorder: recorder);
+      await tester.enterText(answer, 'My typed answer.');
+
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.pumpAndSettle();
+
+      expect(
+        snackBarColor(
+          tester,
+          "Internet aloqasi yo'q. Iltimos qayta urinib ko'ring.",
+        ),
+        AppColors.danger,
+      );
+      expect(answerText(tester), 'My typed answer.');
+      expect(recorder.deleted, ['/tmp/speaking.m4a']);
+      expect(tester.widget<ButtonStyleButton>(assess).onPressed, isNotNull);
+    });
+
+    testWidgets('leaving the lesson while recording stops the recorder', (
+      tester,
+    ) async {
+      final recorder = FakeSpeechRecorder();
+      await openSpeaking(tester, recorder: recorder);
+
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      expect(recorder.recording, isTrue);
+
+      await tester.pumpWidget(const SizedBox());
+      expect(recorder.cancelCount, 1);
+      expect(recorder.recording, isFalse);
     });
   });
 

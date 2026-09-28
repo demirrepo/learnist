@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Learnist records your spoken answers in speaking lessons so they can be transcribed and graded.</string>
 </dict>
 </plist>

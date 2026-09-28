@@ -1061,6 +1061,9 @@ void main() {
                 )
                 .first,
       );
+      // scrollUntilVisible stops once the button's edge shows.
+      await tester.ensureVisible(complete);
+      await tester.pumpAndSettle();
       await tester.tap(complete);
       await tester.pumpAndSettle();
 

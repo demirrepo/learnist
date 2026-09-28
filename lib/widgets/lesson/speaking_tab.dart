@@ -65,8 +65,9 @@ class SpeakingTab extends ConsumerWidget {
                 lessonNumber: number,
                 section: 'speaking',
                 buttonLabel: 'Assess speaking',
-                hint: 'Type what you said here…',
+                hint: 'Record your answer, or type what you said here…',
                 minLines: 5,
+                isSpeakingTask: true,
                 evaluate:
                     (gemini, answer) => gemini.evaluateSpeaking(answer, prompt),
               ),
@@ -79,16 +80,9 @@ class SpeakingTab extends ConsumerWidget {
   }
 }
 
-/// Mock recorder: the button only toggles its own appearance.
-class _SpeakingTimer extends StatefulWidget {
+/// The suggested speaking time. Recording happens in the transcript card.
+class _SpeakingTimer extends StatelessWidget {
   const _SpeakingTimer();
-
-  @override
-  State<_SpeakingTimer> createState() => _SpeakingTimerState();
-}
-
-class _SpeakingTimerState extends State<_SpeakingTimer> {
-  bool _recording = false;
 
   @override
   Widget build(BuildContext context) {
@@ -128,17 +122,6 @@ class _SpeakingTimerState extends State<_SpeakingTimer> {
                   ),
                 ),
               ],
-            ),
-          ),
-          IconButton(
-            tooltip: _recording ? 'Stop recording' : 'Start recording',
-            onPressed: () => setState(() => _recording = !_recording),
-            icon: Icon(_recording ? LucideIcons.square : LucideIcons.mic),
-            color: Colors.white,
-            style: IconButton.styleFrom(
-              backgroundColor:
-                  _recording ? AppColors.danger : AppColors.primary,
-              fixedSize: const Size.square(56),
             ),
           ),
         ],
