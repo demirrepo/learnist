@@ -4,10 +4,13 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
+import 'ai_graded_task.dart';
 import 'lesson_common.dart';
 
 const _noRulesMessage = "Ushbu darsda grammatika qoidalari yo'q.";
 
+/// The lesson's grammar rule and a practical task that Gemini scores as
+/// the lesson's `grammar` section.
 class GrammarTab extends StatelessWidget {
   const GrammarTab({super.key, required this.lesson});
 
@@ -40,11 +43,14 @@ class GrammarTab extends StatelessWidget {
                     '"${lesson.title}". Use ${lesson.grammarFocus} naturally.',
               ),
               const SizedBox(height: 18),
-              const LessonTextField(hint: 'Write your answer here…'),
-              const SizedBox(height: 16),
-              LessonActionRow(
-                primaryLabel: 'Analyze my answer',
-                onPrimary: () => showComingSoon(context, 'Answer analysis'),
+              AiGradedTask(
+                lessonNumber: lesson.lessonNumber,
+                section: 'grammar',
+                buttonLabel: 'Analyze my answer',
+                hint: 'Write your answer here…',
+                evaluate:
+                    (gemini, answer) =>
+                        gemini.evaluateGrammar(answer, lesson.grammarFocus),
                 onAskAi: () => showComingSoon(context, 'Ask AI'),
               ),
             ],

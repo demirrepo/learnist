@@ -43,12 +43,14 @@ final checkupQuestionsProvider = FutureProvider<List<CheckupQuestion>>(
   retry: _noRetry,
 );
 
-/// Reads `user_progress`, `checkup_history` and `checkup_questions`, and
-/// submits check-ups through the `submit_checkup` database function.
+/// Reads `user_progress`, `checkup_history` and `checkup_questions`,
+/// submits check-ups through the `submit_checkup` database function,
+/// records section scores through `save_section_score` and completes
+/// lessons through `complete_lesson`.
 ///
 /// Students can't write progress or history directly (RLS), and never see
-/// `answer_index`; scoring, the level and the cooldown are all decided on
-/// the server.
+/// `answer_index`; scoring, the level, the cooldown and lesson unlocks are
+/// all decided on the server.
 class ProgressService {
   ProgressService([SupabaseClient? client])
     : _supabase = client ?? Supabase.instance.client;
@@ -139,6 +141,82 @@ class ProgressService {
       rethrow;
     }
   }
+
+  /// Stores the student's latest [score] (0–100) for one [section] of
+  /// [lessonNumber]: one of [lessonSections].
+  Future<void> saveSectionScore(
+    int lessonNumber,
+    String section,
+    int score,
+  ) async {
+    try {
+      await _supabase.rpc<Object?>(
+        'save_section_score',
+        params: {
+          'p_lesson_number': lessonNumber,
+          'p_section': section,
+          'p_score': score,
+        },
+      );
+    } catch (error, stackTrace) {
+      _log('saveSectionScore', error, stackTrace);
+      rethrow;
+    }
+  }
+
+  /// Unlocks the lesson after [lessonNumber] if it is the student's current
+  /// lesson; completing an earlier lesson again changes nothing.
+  ///
+  /// Throws [InsufficientScoreException] when the lesson's section average
+  /// is below [InsufficientScoreException.minAverage].
+  ///
+  /// Callers must invalidate [userProgressProvider] afterwards.
+  Future<void> completeLesson(int lessonNumber) async {
+    try {
+      await _supabase.rpc<Object?>(
+        'complete_lesson',
+        params: {'completed_lesson': lessonNumber},
+      );
+    } on PostgrestException catch (error, stackTrace) {
+      _log('completeLesson', error, stackTrace);
+      if (error.message == 'insufficient_score') {
+        throw InsufficientScoreException(average: _parseAverage(error.details));
+      }
+      rethrow;
+    } catch (error, stackTrace) {
+      _log('completeLesson', error, stackTrace);
+      rethrow;
+    }
+  }
+}
+
+/// The `p_section` values `save_section_score` accepts.
+const lessonSections = [
+  'grammar',
+  'reading',
+  'listening',
+  'writing',
+  'speaking',
+];
+
+/// Reads the average out of `complete_lesson`'s 'Score: 65' detail.
+int? _parseAverage(Object? details) {
+  final match = RegExp(r'Score:\s*(\d+)').firstMatch('${details ?? ''}');
+  return match == null ? null : int.parse(match.group(1)!);
+}
+
+/// The server refused to unlock the next lesson because the section
+/// average is below [minAverage].
+class InsufficientScoreException implements Exception {
+  const InsufficientScoreException({this.average});
+
+  static const minAverage = 80;
+
+  /// Rounded down; null if the server's detail couldn't be read.
+  final int? average;
+
+  @override
+  String toString() => 'InsufficientScoreException(average: $average)';
 }
 
 /// The server rejected a submission because the cooldown hasn't passed.
@@ -157,6 +235,25 @@ class CheckupCooldownException implements Exception {
 /// permission or schema problem is visible on screen, not only in the log.
 String checkupErrorMessage(Object error) {
   final message = _userMessage(error);
+  if (kDebugMode && error is PostgrestException) {
+    return '$message\n\n[debug] ${error.code ?? 'no code'}: ${error.message}';
+  }
+  return message;
+}
+
+/// User-facing Uzbek message for a failed [ProgressService.completeLesson].
+String lessonCompletionErrorMessage(Object error) {
+  if (error is InsufficientScoreException) {
+    const min = InsufficientScoreException.minAverage;
+    final current =
+        error.average == null ? '' : ' (hozirgi: ${error.average}%)';
+    return "O'rtacha ballingiz $min% dan past$current. "
+        "Keyingi darsga o'tish uchun bo'limlarni yaxshilang.";
+  }
+  final message =
+      isNetworkError(error)
+          ? "Internet aloqasi yo'q. Tarmoqni tekshirib, qayta urinib ko'ring."
+          : "Darsni yakunlab bo'lmadi. Iltimos, qayta urinib ko'ring.";
   if (kDebugMode && error is PostgrestException) {
     return '$message\n\n[debug] ${error.code ?? 'no code'}: ${error.message}';
   }

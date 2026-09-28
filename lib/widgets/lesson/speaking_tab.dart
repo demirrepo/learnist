@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/lesson_model.dart';
+import '../../models/user_progress.dart';
+import '../../services/progress_service.dart';
 import '../../theme/app_theme.dart';
+import 'ai_graded_task.dart';
+import 'complete_lesson_button.dart';
 import 'lesson_common.dart';
 
 const _noSpeakingMessage = "Ushbu darsda gapirish mashqi yo'q.";
 
-class SpeakingTab extends StatelessWidget {
+/// The last tab, so it ends with "Darsni yakunlash" on the student's
+/// current lesson. Reviewing an earlier lesson, or while progress is still
+/// loading, shows no button. Lesson 52 has nothing left to unlock.
+class SpeakingTab extends ConsumerWidget {
   const SpeakingTab({super.key, required this.lesson});
 
   final Lesson lesson;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentLesson = ref.watch(userProgressProvider).value?.currentLesson;
+    final number = lesson.lessonNumber;
+    final complete = [
+      if (number == currentLesson && number < UserProgress.lastLesson)
+        CompleteLessonButton(lessonNumber: number),
+    ];
+
     final prompt = lesson.speakingPrompt;
     if (prompt == null) {
-      return const LessonTabBody(children: [LessonNotice(_noSpeakingMessage)]);
+      return LessonTabBody(
+        children: [const LessonNotice(_noSpeakingMessage), ...complete],
+      );
     }
 
     return LessonTabBody(
@@ -44,19 +61,19 @@ class SpeakingTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              const LessonTextField(
-                hint: 'Your speech transcript will appear here…',
-                readOnly: true,
+              AiGradedTask(
+                lessonNumber: number,
+                section: 'speaking',
+                buttonLabel: 'Assess speaking',
+                hint: 'Type what you said here…',
                 minLines: 5,
-              ),
-              const SizedBox(height: 16),
-              LessonPrimaryButton(
-                label: 'Assess speaking',
-                onPressed: () => showComingSoon(context, 'Speaking assessment'),
+                evaluate:
+                    (gemini, answer) => gemini.evaluateSpeaking(answer, prompt),
               ),
             ],
           ),
         ),
+        ...complete,
       ],
     );
   }

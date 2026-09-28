@@ -48,9 +48,10 @@ class SnapshotGrid extends StatelessWidget {
                 Expanded(child: _StatCard(stat: stats[i])),
                 const SizedBox(width: _gap),
                 Expanded(
-                  child: i + 1 < stats.length
-                      ? _StatCard(stat: stats[i + 1])
-                      : const SizedBox.shrink(),
+                  child:
+                      i + 1 < stats.length
+                          ? _StatCard(stat: stats[i + 1])
+                          : const SizedBox.shrink(),
                 ),
               ],
             ),

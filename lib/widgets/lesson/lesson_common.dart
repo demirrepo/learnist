@@ -200,17 +200,30 @@ class LessonPrimaryButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.icon = LucideIcons.sparkles,
+    this.loading = false,
   });
 
   final String label;
   final IconData icon;
   final VoidCallback? onPressed;
 
+  /// Swaps the icon for a spinner and disables the button.
+  final bool loading;
+
   @override
   Widget build(BuildContext context) {
     return FilledButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: 20),
+      onPressed: loading ? null : onPressed,
+      icon:
+          loading
+              ? const SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+              : Icon(icon, size: 20),
       label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
     );
   }
@@ -251,18 +264,24 @@ class LessonActionRow extends StatelessWidget {
     required this.primaryLabel,
     required this.onPrimary,
     required this.onAskAi,
+    this.primaryLoading = false,
   });
 
   final String primaryLabel;
   final VoidCallback? onPrimary;
   final VoidCallback? onAskAi;
+  final bool primaryLoading;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-          child: LessonPrimaryButton(label: primaryLabel, onPressed: onPrimary),
+          child: LessonPrimaryButton(
+            label: primaryLabel,
+            onPressed: onPrimary,
+            loading: primaryLoading,
+          ),
         ),
         const SizedBox(width: 10),
         AskAiButton(onPressed: onAskAi),

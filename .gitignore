@@ -51,3 +51,6 @@ app.*.map.json
 .venv/
 .env.seed
 __pycache__/
+
+# Generated listening MP3s (uploaded to Supabase, then deleted)
+audio_out/

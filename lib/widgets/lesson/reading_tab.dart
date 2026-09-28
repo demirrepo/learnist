@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/lesson_model.dart';
+import '../../services/progress_service.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 import 'lesson_quiz.dart';
+import 'section_score.dart';
 
 const _noReadingMessage = "Ushbu darsda o'qish mashqi yo'q.";
 
@@ -25,13 +28,15 @@ List<_VocabularyItem> _parseVocabulary(List<dynamic> raw) {
   ];
 }
 
-class ReadingTab extends StatelessWidget {
+/// The reading passage and its quiz, whose score is saved as the lesson's
+/// `reading` section.
+class ReadingTab extends ConsumerWidget {
   const ReadingTab({super.key, required this.lesson});
 
   final Lesson lesson;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final passage = lesson.readingPassage;
     final questions = QuizQuestion.listFrom(lesson.readingQuestions);
     final vocabulary = _parseVocabulary(lesson.readingVocabulary);
@@ -61,6 +66,14 @@ class ReadingTab extends StatelessWidget {
           LessonQuiz(
             key: ValueKey('reading-quiz-${lesson.lessonNumber}'),
             questions: questions,
+            onScored:
+                (score) => saveSectionScoreOrWarn(
+                  progress: ref.read(progressServiceProvider),
+                  messenger: ScaffoldMessenger.of(context),
+                  lessonNumber: lesson.lessonNumber,
+                  section: 'reading',
+                  score: score,
+                ),
           ),
         if (vocabulary.isNotEmpty) _VocabularyCard(items: vocabulary),
       ],

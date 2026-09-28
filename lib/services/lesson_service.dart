@@ -27,7 +27,7 @@ class LessonService {
       'cefr_level, topic, task_meta, grammar_rules, grammar_rules_source, '
       'reading_passage, reading_format, reading_vocabulary, reading_questions, '
       'listening_transcript, listening_format, listening_speakers, '
-      'listening_questions, writing_prompt, speaking_prompt';
+      'listening_questions, audio_url, writing_prompt, speaking_prompt';
 
   /// PostgREST's code when `.single()` matches no rows.
   static const _noRowsCode = 'PGRST116';

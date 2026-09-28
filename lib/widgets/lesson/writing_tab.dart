@@ -4,6 +4,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
+import 'ai_graded_task.dart';
 import 'lesson_common.dart';
 
 const _noWritingMessage = "Ushbu darsda yozish mashqi yo'q.";
@@ -18,32 +19,18 @@ const _lenses = [
 const _minWords = 80;
 const _maxWords = 120;
 
-class WritingTab extends StatefulWidget {
+/// The writing task, graded by Gemini as the lesson's `writing` section.
+class WritingTab extends StatelessWidget {
   const WritingTab({super.key, required this.lesson});
 
   final Lesson lesson;
 
   @override
-  State<WritingTab> createState() => _WritingTabState();
-}
-
-class _WritingTabState extends State<WritingTab> {
-  int _wordCount = 0;
-
-  void _onChanged(String text) {
-    final count =
-        text.trim().isEmpty ? 0 : text.trim().split(RegExp(r'\s+')).length;
-    if (count != _wordCount) setState(() => _wordCount = count);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final prompt = widget.lesson.writingPrompt;
+    final prompt = lesson.writingPrompt;
     if (prompt == null) {
       return const LessonTabBody(children: [LessonNotice(_noWritingMessage)]);
     }
-
-    final inRange = _wordCount >= _minWords && _wordCount <= _maxWords;
 
     return LessonTabBody(
       children: [
@@ -54,30 +41,20 @@ class _WritingTabState extends State<WritingTab> {
               LessonPrompt(
                 tagIcon: LucideIcons.pencil,
                 tag: 'Writing task',
-                title: widget.lesson.title,
+                title: lesson.title,
                 body: prompt,
               ),
               const SizedBox(height: 18),
-              LessonTextField(
+              AiGradedTask(
+                lessonNumber: lesson.lessonNumber,
+                section: 'writing',
+                buttonLabel: 'Assess my writing',
                 hint: 'Write your text here…',
                 minLines: 10,
                 maxLines: 20,
-                onChanged: _onChanged,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '$_wordCount / $_minWords–$_maxWords words',
-                textAlign: TextAlign.end,
-                style: GoogleFonts.manrope(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: inRange ? AppColors.success : AppColors.hint,
-                ),
-              ),
-              const SizedBox(height: 12),
-              LessonActionRow(
-                primaryLabel: 'Assess my writing',
-                onPrimary: () => showComingSoon(context, 'Writing assessment'),
+                evaluate:
+                    (gemini, answer) => gemini.evaluateWriting(answer, prompt),
+                fieldFooter: _WordCount.new,
                 onAskAi: () => showComingSoon(context, 'Ask AI'),
               ),
             ],
@@ -85,6 +62,29 @@ class _WritingTabState extends State<WritingTab> {
         ),
         const _CefrLenses(),
       ],
+    );
+  }
+}
+
+class _WordCount extends StatelessWidget {
+  const _WordCount(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final trimmed = text.trim();
+    final count = trimmed.isEmpty ? 0 : trimmed.split(RegExp(r'\s+')).length;
+    final inRange = count >= _minWords && count <= _maxWords;
+
+    return Text(
+      '$count / $_minWords–$_maxWords words',
+      textAlign: TextAlign.end,
+      style: GoogleFonts.manrope(
+        fontSize: 12.5,
+        fontWeight: FontWeight.w700,
+        color: inRange ? AppColors.success : AppColors.hint,
+      ),
     );
   }
 }

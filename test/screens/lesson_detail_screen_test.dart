@@ -5,25 +5,45 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnist/models/lesson_model.dart';
+import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/screens/lesson_detail_screen.dart';
 import 'package:learnist/theme/app_theme.dart';
+import 'package:learnist/services/gemini_service.dart';
 import 'package:learnist/services/lesson_service.dart';
+import 'package:learnist/services/progress_service.dart';
+import 'package:learnist/services/supabase_service.dart';
 import 'package:learnist/widgets/lesson/lesson_common.dart';
 import 'package:learnist/widgets/lesson/lesson_quiz.dart';
+import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import '../support/fake_gemini_service.dart';
 import '../support/fake_lesson_service.dart';
+import '../support/fake_progress_service.dart';
+
+/// The progress providers only listen to the auth service for changes.
+class _AuthStub extends ChangeNotifier implements SupabaseService {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 Future<void> _pump(
   WidgetTester tester, {
   int lessonId = 1,
   FakeLessonService? service,
+  FakeProgressService? progress,
+  FakeGeminiService? gemini,
   bool settle = true,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        supabaseServiceProvider.overrideWithValue(_AuthStub()),
         lessonServiceProvider.overrideWithValue(service ?? FakeLessonService()),
+        progressServiceProvider.overrideWithValue(
+          progress ?? FakeProgressService(),
+        ),
+        geminiServiceProvider.overrideWithValue(gemini ?? FakeGeminiService()),
       ],
       child: MaterialApp(
         theme: AppTheme.light,
@@ -131,11 +151,220 @@ void main() {
     expect(find.text('Umumiy qoida'), findsOneWidget);
   });
 
+  group('Analyze my answer', () {
+    final answer = find.byKey(const ValueKey('grammar-answer'));
+    final analyze = find.ancestor(
+      of: find.text('Analyze my answer'),
+      matching: find.bySubtype<FilledButton>(),
+    );
+    final result = find.byKey(const ValueKey('grammar-result'));
+    const text = 'I play football every day. She reads books.';
+
+    testWidgets('scores the answer, saves it and shows the feedback', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      final gemini =
+          FakeGeminiService()
+            ..pending = Completer<void>()
+            ..result = (score: 85, feedback: 'Zamon to\'g\'ri.');
+      final progress = FakeProgressService();
+      await _pump(tester, gemini: gemini, progress: progress);
+
+      await tester.enterText(answer, text);
+      await tester.tap(analyze);
+      await tester.pump();
+
+      // Loading: spinner, button disabled, nothing saved yet.
+      expect(
+        find.descendant(
+          of: analyze,
+          matching: find.byType(CircularProgressIndicator),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.widget<ButtonStyleButton>(analyze).onPressed, isNull);
+      expect(progress.sectionScores, isEmpty);
+
+      gemini.pending!.complete();
+      await tester.pumpAndSettle();
+
+      expect(gemini.calls.single, (
+        section: 'grammar',
+        studentText: text,
+        topic: lesson1.grammarFocus,
+      ));
+      expect(progress.sectionScores, {
+        1: {'grammar': 85},
+      });
+      expect(find.text('Mastery reached: 85%'), findsOneWidget);
+      expect(find.text('Zamon to\'g\'ri.'), findsOneWidget);
+      expect(tester.widget<ButtonStyleButton>(analyze).onPressed, isNotNull);
+    });
+
+    testWidgets('keeps the answer and result across tab switches', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      await _pump(tester);
+
+      await tester.enterText(answer, text);
+      await tester.tap(analyze);
+      await tester.pumpAndSettle();
+      expect(result, findsOneWidget);
+
+      await _openTab(tester, 'Gapirish');
+      expect(result, findsNothing);
+      await _openTab(tester, 'Grammatika');
+
+      expect(find.text('Mastery reached: 85%'), findsOneWidget);
+      expect(find.text(text), findsOneWidget);
+    });
+
+    testWidgets('a failed evaluation shows a red Uzbek snackbar', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      final gemini =
+          FakeGeminiService()..error = const GeminiException('Internet yo\'q');
+      final progress = FakeProgressService();
+      await _pump(tester, gemini: gemini, progress: progress);
+
+      await tester.enterText(answer, text);
+      await tester.tap(analyze);
+      await tester.pumpAndSettle();
+
+      const message =
+          "Baholashda xatolik yuz berdi. Iltimos qayta urinib ko'ring.";
+      expect(find.text(message), findsOneWidget);
+      expect(
+        tester
+            .widget<SnackBar>(
+              find.ancestor(
+                of: find.text(message),
+                matching: find.byType(SnackBar),
+              ),
+            )
+            .backgroundColor,
+        AppColors.danger,
+      );
+      expect(progress.sectionScores, isEmpty);
+      expect(result, findsNothing);
+      expect(tester.widget<ButtonStyleButton>(analyze).onPressed, isNotNull);
+    });
+
+    testWidgets('an empty answer is not sent', (tester) async {
+      _useTallView(tester);
+      final gemini = FakeGeminiService();
+      await _pump(tester, gemini: gemini);
+
+      await tester.enterText(answer, '   ');
+      await tester.tap(analyze);
+      await tester.pumpAndSettle();
+
+      expect(gemini.calls, isEmpty);
+      expect(find.text('Avval javobingizni yozing.'), findsOneWidget);
+    });
+
+    testWidgets('a failed save still shows the score and says so', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      final progress =
+          FakeProgressService()..saveScoreError = ClientException('offline');
+      await _pump(tester, progress: progress);
+
+      await tester.enterText(answer, text);
+      await tester.tap(analyze);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Mastery reached: 85%'), findsOneWidget);
+      expect(
+        find.text("Ball saqlanmadi. Iltimos qayta urinib ko'ring."),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('Writing and speaking are graded like grammar', () {
+    for (final task in [
+      (
+        tab: 'Yozish',
+        section: 'writing',
+        button: 'Assess my writing',
+        topic: lesson1.writingPrompt!,
+      ),
+      (
+        tab: 'Gapirish',
+        section: 'speaking',
+        button: 'Assess speaking',
+        topic: lesson1.speakingPrompt!,
+      ),
+    ]) {
+      testWidgets('${task.section}: grades, saves and shows the score', (
+        tester,
+      ) async {
+        _useTallView(tester);
+        final gemini =
+            FakeGeminiService()..result = (score: 72, feedback: 'Yaxshi.');
+        final progress = FakeProgressService();
+        await _pump(tester, gemini: gemini, progress: progress);
+        await _openTab(tester, task.tab);
+
+        const text = 'I usually spend my weekends with my family.';
+        await tester.enterText(
+          find.byKey(ValueKey('${task.section}-answer')),
+          text,
+        );
+        await tester.tap(find.text(task.button));
+        await tester.pumpAndSettle();
+
+        expect(gemini.calls.single, (
+          section: task.section,
+          studentText: text,
+          topic: task.topic,
+        ));
+        expect(progress.sectionScores, {
+          1: {task.section: 72},
+        });
+        expect(find.text('Mastery reached: 72%'), findsOneWidget);
+        expect(find.text('Yaxshi.'), findsOneWidget);
+      });
+    }
+
+    testWidgets('writing counts words as the student types', (tester) async {
+      _useTallView(tester);
+      await _pump(tester);
+      await _openTab(tester, 'Yozish');
+
+      expect(find.text('0 / 80–120 words'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const ValueKey('writing-answer')),
+        'One two  three',
+      );
+      await tester.pump();
+      expect(find.text('3 / 80–120 words'), findsOneWidget);
+    });
+
+    testWidgets('speaking keeps "Darsni yakunlash" below the assessment', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      await _pump(tester);
+      await _openTab(tester, 'Gapirish');
+
+      final assess = tester.getTopLeft(find.text('Assess speaking'));
+      final complete = tester.getTopLeft(find.text('Darsni yakunlash'));
+      expect(complete.dy, greaterThan(assess.dy));
+    });
+  });
+
   testWidgets('reading tab: passage, live quiz with aggregate score, vocab', (
     tester,
   ) async {
     _useTallView(tester);
-    await _pump(tester);
+    final progress = FakeProgressService();
+    await _pump(tester, progress: progress);
     await _openTab(tester, "O'qish");
 
     expect(find.text(lesson1.readingPassage!), findsOneWidget);
@@ -154,13 +383,48 @@ void main() {
 
     final score = _firstOptionScore(lesson1.readingQuestions);
     expect(find.text('$score/10 correct'), findsOneWidget);
+    expect(progress.sectionScores, {
+      1: {'reading': score * 10},
+    });
+  });
+
+  testWidgets('a quiz score that fails to save shows a red snackbar', (
+    tester,
+  ) async {
+    _useTallView(tester);
+    final progress =
+        FakeProgressService()..saveScoreError = ClientException('offline');
+    await _pump(tester, progress: progress);
+    await _openTab(tester, "O'qish");
+
+    await _answerFirstOptions(tester);
+    await tester.tap(find.text('Natijani tekshirish'));
+    await tester.pumpAndSettle();
+
+    const message = "Ball saqlanmadi. Iltimos qayta urinib ko'ring.";
+    expect(find.text(message), findsOneWidget);
+    expect(
+      tester
+          .widget<SnackBar>(
+            find.ancestor(
+              of: find.text(message),
+              matching: find.byType(SnackBar),
+            ),
+          )
+          .backgroundColor,
+      AppColors.danger,
+    );
+    // The score dialog still shows.
+    final score = _firstOptionScore(lesson1.readingQuestions);
+    expect(find.text('$score/10 correct'), findsOneWidget);
   });
 
   testWidgets('listening tab: format, blurred transcript, live quiz', (
     tester,
   ) async {
     _useTallView(tester);
-    await _pump(tester);
+    final progress = FakeProgressService();
+    await _pump(tester, progress: progress);
     await _openTab(tester, 'Tinglab tushunish');
 
     expect(find.text('Two-speaker conversation'), findsOneWidget);
@@ -179,6 +443,9 @@ void main() {
 
     final score = _firstOptionScore(lesson1.listeningQuestions);
     expect(find.text('$score/10 correct'), findsOneWidget);
+    expect(progress.sectionScores, {
+      1: {'listening': score * 10},
+    });
   });
 
   testWidgets('writing and speaking tabs show the live prompts', (
@@ -227,5 +494,92 @@ void main() {
 
     await _openTab(tester, 'Gapirish');
     expect(find.text("Ushbu darsda gapirish mashqi yo'q."), findsOneWidget);
+  });
+
+  group('Darsni yakunlash', () {
+    final complete = find.byKey(const ValueKey('complete-lesson'));
+
+    testWidgets('ends the speaking tab of the current lesson', (tester) async {
+      _useTallView(tester);
+      await _pump(tester);
+
+      expect(complete, findsNothing);
+      await _openTab(tester, 'Gapirish');
+      expect(find.text('Darsni yakunlash'), findsOneWidget);
+    });
+
+    testWidgets('is hidden when reviewing an earlier lesson', (tester) async {
+      _useTallView(tester);
+      await _pump(
+        tester,
+        progress: FakeProgressService(
+          progress: const UserProgress(currentLesson: 3),
+        ),
+      );
+      await _openTab(tester, 'Gapirish');
+      expect(complete, findsNothing);
+    });
+
+    testWidgets('is hidden on the last lesson', (tester) async {
+      _useTallView(tester);
+      await _pump(
+        tester,
+        lessonId: UserProgress.lastLesson,
+        progress: FakeProgressService(
+          progress: const UserProgress(currentLesson: UserProgress.lastLesson),
+        ),
+      );
+      await _openTab(tester, 'Gapirish');
+      expect(complete, findsNothing);
+    });
+
+    testWidgets('a network failure shows an Uzbek message and stays', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      final progress =
+          FakeProgressService()..completeError = ClientException('offline');
+      await _pump(tester, progress: progress);
+      await _openTab(tester, 'Gapirish');
+
+      await tester.tap(complete);
+      await tester.pumpAndSettle();
+
+      expect(progress.completedLessons, [1]);
+      expect(find.textContaining("Internet aloqasi yo'q"), findsOneWidget);
+      expect(find.byType(LessonDetailScreen), findsOneWidget);
+      // Re-enabled for another try.
+      expect(tester.widget<ButtonStyleButton>(complete).onPressed, isNotNull);
+    });
+
+    testWidgets('an average under 80% shows the score in a red snackbar', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      final progress =
+          FakeProgressService()
+            ..completeError = const InsufficientScoreException(average: 65);
+      await _pump(tester, progress: progress);
+      await _openTab(tester, 'Gapirish');
+
+      await tester.tap(complete);
+      await tester.pumpAndSettle();
+
+      expect(progress.completedLessons, [1]);
+      expect(progress.progress.currentLesson, 1);
+      expect(
+        find.text(
+          "O'rtacha ballingiz 80% dan past (hozirgi: 65%). "
+          "Keyingi darsga o'tish uchun bo'limlarni yaxshilang.",
+        ),
+        findsOneWidget,
+      );
+      final snackBar = tester.widget<SnackBar>(
+        find.byKey(const ValueKey('complete-lesson-error')),
+      );
+      expect(snackBar.backgroundColor, AppColors.danger);
+      expect(find.byType(LessonDetailScreen), findsOneWidget);
+      expect(tester.widget<ButtonStyleButton>(complete).onPressed, isNotNull);
+    });
   });
 }

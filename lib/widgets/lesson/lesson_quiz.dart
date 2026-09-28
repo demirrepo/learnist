@@ -61,9 +61,13 @@ class QuizQuestion {
 /// Checking results only reports the aggregate score. Options are never
 /// marked right or wrong, so learners can't copy answers on a retry.
 class LessonQuiz extends StatefulWidget {
-  const LessonQuiz({super.key, required this.questions});
+  const LessonQuiz({super.key, required this.questions, this.onScored});
 
   final List<QuizQuestion> questions;
+
+  /// Called with the percentage correct (0–100) each time the results are
+  /// checked with every question answered.
+  final ValueChanged<int>? onScored;
 
   @override
   State<LessonQuiz> createState() => _LessonQuizState();
@@ -90,6 +94,7 @@ class _LessonQuizState extends State<LessonQuiz> {
     for (var i = 0; i < total; i++) {
       if (_answers[i] == widget.questions[i].correctIndex) correct++;
     }
+    widget.onScored?.call((correct / total * 100).round());
 
     showDialog<void>(
       context: context,

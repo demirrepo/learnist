@@ -25,6 +25,7 @@ class Lesson {
     this.listeningFormat,
     this.listeningSpeakers = const [],
     this.listeningQuestions = const [],
+    this.audioUrl,
     this.writingPrompt,
     this.speakingPrompt,
   });
@@ -49,6 +50,7 @@ class Lesson {
       listeningFormat: _optionalString(json['listening_format']),
       listeningSpeakers: _stringList(json['listening_speakers']),
       listeningQuestions: _jsonList(json['listening_questions']),
+      audioUrl: _optionalString(json['audio_url']),
       writingPrompt: _optionalString(json['writing_prompt']),
       speakingPrompt: _optionalString(json['speaking_prompt']),
     );
@@ -88,6 +90,11 @@ class Lesson {
 
   /// Same shape as [readingQuestions].
   final List<dynamic> listeningQuestions;
+
+  /// Public URL of the transcript's Neural TTS rendering, in the
+  /// `listening_audios` bucket. Null until `generate_audios.py` has run for
+  /// this lesson; the listening tab then falls back to transcript-only.
+  final String? audioUrl;
   final String? writingPrompt;
   final String? speakingPrompt;
 

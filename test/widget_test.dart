@@ -24,6 +24,7 @@ import 'package:learnist/services/lesson_service.dart';
 import 'package:learnist/services/progress_service.dart';
 import 'package:learnist/services/supabase_service.dart';
 import 'package:learnist/widgets/error_map/error_pattern_card.dart';
+import 'package:learnist/widgets/lesson/speaking_tab.dart';
 import 'package:learnist/widgets/main_layout.dart';
 import 'package:learnist/widgets/teacher/student_detail_dialog.dart';
 import 'package:learnist/widgets/topics/topic_card.dart';
@@ -1031,6 +1032,46 @@ void main() {
 
       await tester.tap(find.text('2. A world of sport'));
       await tester.pumpAndSettle();
+      final screen = tester.widget<LessonDetailScreen>(
+        find.byType(LessonDetailScreen),
+      );
+      expect(screen.lessonId, 2);
+    });
+
+    testWidgets('completing the current lesson unlocks the next one', (
+      tester,
+    ) async {
+      final progress = FakeProgressService();
+      await openTopics(tester, progress: progress);
+
+      await tester.tap(find.text('1. Hello, everybody!'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Gapirish'));
+      await tester.pumpAndSettle();
+
+      final complete = find.byKey(const ValueKey('complete-lesson'));
+      await tester.scrollUntilVisible(
+        complete,
+        300,
+        scrollable:
+            find
+                .descendant(
+                  of: find.byType(SpeakingTab),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
+      );
+      await tester.tap(complete);
+      await tester.pumpAndSettle();
+
+      expect(progress.completedLessons, [1]);
+      expect(find.byType(LessonDetailScreen), findsNothing);
+      expect(find.byType(TopicsScreen), findsOneWidget);
+      expect(find.text('Tabriklaymiz! Yangi dars ochildi'), findsOneWidget);
+
+      await tester.tap(find.text('2. A world of sport'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Qulflangan'), findsNothing);
       final screen = tester.widget<LessonDetailScreen>(
         find.byType(LessonDetailScreen),
       );

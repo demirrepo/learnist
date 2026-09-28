@@ -33,6 +33,25 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
   });
 
+  testWidgets('reports the percentage only once all are answered', (
+    tester,
+  ) async {
+    final scores = <int>[];
+    await tester.pumpWidget(
+      _host(LessonQuiz(questions: _questions, onScored: scores.add)),
+    );
+
+    await tester.tap(find.text('a1'));
+    await tester.tap(find.text('Natijani tekshirish'));
+    await tester.pumpAndSettle();
+    expect(scores, isEmpty);
+
+    await tester.tap(find.text('b2'));
+    await tester.tap(find.text('Natijani tekshirish'));
+    await tester.pumpAndSettle();
+    expect(scores, [50]);
+  });
+
   testWidgets('shows only the aggregate score', (tester) async {
     await tester.pumpWidget(_host(const LessonQuiz(questions: _questions)));
     await tester.tap(find.text('a1'));

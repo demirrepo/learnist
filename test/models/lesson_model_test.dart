@@ -65,6 +65,7 @@ void main() {
     expect(lesson.grammarRules, isNull);
     expect(lesson.readingPassage, isNull);
     expect(lesson.listeningTranscript, isNull);
+    expect(lesson.audioUrl, isNull);
     expect(lesson.writingPrompt, isNull);
     expect(lesson.speakingPrompt, isNull);
     expect(lesson.taskMeta, isEmpty);
@@ -79,11 +80,22 @@ void main() {
       ..._minimalRow(),
       'topic': '   ',
       'reading_passage': '',
+      'audio_url': '  ',
       'task_meta': ['Vocabulary', '', null, 3, ' Speaking '],
     });
     expect(lesson.topic, isNull);
     expect(lesson.readingPassage, isNull);
+    // A blank audio_url must read as "no audio", not as an empty stream URL.
+    expect(lesson.audioUrl, isNull);
     expect(lesson.taskMeta, ['Vocabulary', 'Speaking']);
+  });
+
+  test('audio_url is read from the row', () {
+    const url =
+        'https://xyz.supabase.co/storage/v1/object/public/'
+        'listening_audios/lesson_07.mp3';
+    final lesson = Lesson.fromJson({..._minimalRow(), 'audio_url': url});
+    expect(lesson.audioUrl, url);
   });
 
   test('JSONB lists stored as strings are decoded; junk becomes empty', () {

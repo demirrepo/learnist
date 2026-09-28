@@ -15,7 +15,11 @@ final seedCheckupQuestions = [
     CheckupQuestion.tryParse(row as Map<String, dynamic>)!,
 ];
 
-/// In-memory stand-in for the three tables and `submit_checkup`.
+/// In-memory stand-in for the four tables, `submit_checkup`,
+/// `save_section_score` and `complete_lesson`.
+///
+/// [completeLesson] does not check [sectionScores]; set [completeError] to
+/// an [InsufficientScoreException] to simulate a low average.
 ///
 /// A successful [submitCheckup] behaves like the server: it appends to
 /// [history] and starts the cooldown in [progress], so a refetch after
@@ -40,10 +44,16 @@ class FakeProgressService implements ProgressService {
   Object? historyError;
   Object? questionsError;
   Object? submitError;
+  Object? completeError;
+  Object? saveScoreError;
 
   int progressFetches = 0;
   int questionFetches = 0;
   Map<int, int>? lastSubmitted;
+  final List<int> completedLessons = [];
+
+  /// Latest score per lesson and section, as `save_section_score` keeps it.
+  final Map<int, Map<String, int>> sectionScores = {};
 
   @override
   Future<UserProgress> fetchProgress() async {
@@ -92,5 +102,28 @@ class FakeProgressService implements ProgressService {
       lastCheckupDate: result.takenAt,
     );
     return result;
+  }
+
+  @override
+  Future<void> saveSectionScore(
+    int lessonNumber,
+    String section,
+    int score,
+  ) async {
+    if (saveScoreError case final error?) throw error;
+    (sectionScores[lessonNumber] ??= {})[section] = score;
+  }
+
+  /// Like the server: advances only from the current lesson, up to 52.
+  @override
+  Future<void> completeLesson(int lessonNumber) async {
+    completedLessons.add(lessonNumber);
+    if (completeError case final error?) throw error;
+    if (progress.currentLesson != lessonNumber) return;
+    progress = UserProgress(
+      cefrLevel: progress.cefrLevel,
+      currentLesson: (lessonNumber + 1).clamp(1, UserProgress.lastLesson),
+      lastCheckupDate: progress.lastCheckupDate,
+    );
   }
 }
