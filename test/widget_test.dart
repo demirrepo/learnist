@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:learnist/main.dart';
 import 'package:learnist/models/user_progress.dart';
+import 'package:learnist/models/user_stats.dart';
 import 'package:learnist/screens/ai_lab_screen.dart';
 import 'package:learnist/screens/auth_screen.dart';
 import 'package:learnist/screens/edit_profile_screen.dart';
@@ -25,6 +26,7 @@ import 'package:learnist/services/progress_service.dart';
 import 'package:learnist/services/supabase_service.dart';
 import 'package:learnist/theme/app_theme.dart';
 import 'package:learnist/widgets/error_map/error_pattern_card.dart';
+import 'package:learnist/widgets/home/lesson_mastery_progress.dart';
 import 'package:learnist/widgets/lesson/speaking_tab.dart';
 import 'package:learnist/widgets/main_layout.dart';
 import 'package:learnist/widgets/teacher/student_detail_dialog.dart';
@@ -512,9 +514,10 @@ void main() {
   group('profile screen', () {
     Future<void> openProfile(
       WidgetTester tester,
-      _FakeSupabaseService auth,
-    ) async {
-      await tester.pumpWidget(_app(auth));
+      _FakeSupabaseService auth, {
+      FakeProgressService? progress,
+    }) async {
+      await tester.pumpWidget(_app(auth, progress: progress));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Profile'));
       await tester.pumpAndSettle();
@@ -544,6 +547,44 @@ void main() {
       expect(find.byIcon(Icons.school), findsOneWidget);
       expect(find.byIcon(Icons.chevron_right), findsNWidgets(3));
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('stats show lessons mastered and the overall average', (
+      tester,
+    ) async {
+      final progress = FakeProgressService(
+        stats: const UserStats(lessonsMastered: 6, overallAverage: 91),
+      );
+      await openProfile(
+        tester,
+        _FakeSupabaseService(signedIn: true),
+        progress: progress,
+      );
+
+      expect(
+        find.bySemanticsLabel("O'rganilgan mavzular: 6/52"),
+        findsOneWidget,
+      );
+      expect(find.bySemanticsLabel("O'rtacha natija: 91%"), findsOneWidget);
+
+      progress.stats = const UserStats(lessonsMastered: 7, overallAverage: 89);
+      await progress.completeLesson(7);
+      await tester.pumpAndSettle();
+      expect(
+        find.bySemanticsLabel("O'rganilgan mavzular: 7/52"),
+        findsOneWidget,
+      );
+      expect(find.bySemanticsLabel("O'rtacha natija: 89%"), findsOneWidget);
+    });
+
+    testWidgets('stats read zero before anything is scored', (tester) async {
+      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+
+      expect(
+        find.bySemanticsLabel("O'rganilgan mavzular: 0/52"),
+        findsOneWidget,
+      );
+      expect(find.bySemanticsLabel("O'rtacha natija: 0%"), findsOneWidget);
     });
 
     testWidgets('falls back when metadata is missing', (tester) async {
@@ -820,8 +861,58 @@ void main() {
       expect(find.text('Continue Lesson 1'), findsOneWidget);
       expect(find.text('N/A'), findsNWidgets(2)); // badge + snapshot tile
       expect(find.text('Learning space'), findsOneWidget);
-      expect(find.text('1/52'), findsOneWidget);
-      expect(find.text('Lesson 1 · Present Simple'), findsOneWidget);
+      // No stats yet: nothing mastered, no mistakes.
+      expect(find.text('0/52'), findsOneWidget);
+      expect(find.text('0% mastery'), findsOneWidget);
+    });
+
+    testWidgets('snapshot and mastery bar show the stats', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          _FakeSupabaseService(signedIn: true),
+          progress: FakeProgressService(
+            progress: const UserProgress(currentLesson: 5),
+            stats: const UserStats(
+              lessonsMastered: 4,
+              currentLessonMastery: 63,
+              overallAverage: 88,
+              trackedMistakes: 7,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.bySemanticsLabel('Lessons mastered: 4/52'), findsOneWidget);
+      expect(find.bySemanticsLabel('Tracked mistakes: 7'), findsOneWidget);
+      expect(find.text('63% mastery'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Lesson mastery, Lesson 5: 63%'),
+        findsOneWidget,
+      );
+      final bar = tester.widget<LinearProgressIndicator>(
+        find.descendant(
+          of: find.byType(LessonMasteryProgress),
+          matching: find.byType(LinearProgressIndicator),
+        ),
+      );
+      expect(bar.value, closeTo(0.63, 1e-9));
+    });
+
+    testWidgets('home stats refresh after a lesson task is saved', (
+      tester,
+    ) async {
+      final progress = FakeProgressService();
+      await tester.pumpWidget(
+        _app(_FakeSupabaseService(signedIn: true), progress: progress),
+      );
+      await tester.pumpAndSettle();
+      expect(find.bySemanticsLabel('Tracked mistakes: 0'), findsOneWidget);
+
+      progress.stats = const UserStats(trackedMistakes: 3);
+      await progress.saveMistakes(1, 'reading', [0, 1, 2]);
+      await tester.pumpAndSettle();
+      expect(find.bySemanticsLabel('Tracked mistakes: 3'), findsOneWidget);
     });
 
     testWidgets('falls back to "Demir" without a full name', (tester) async {

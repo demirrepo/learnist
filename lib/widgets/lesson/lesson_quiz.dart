@@ -65,9 +65,10 @@ class LessonQuiz extends StatefulWidget {
 
   final List<QuizQuestion> questions;
 
-  /// Called with the percentage correct (0–100) each time the results are
-  /// checked with every question answered.
-  final ValueChanged<int>? onScored;
+  /// Called with the percentage correct (0–100) and the 0-based indexes of
+  /// the wrong answers each time the results are checked with every
+  /// question answered.
+  final void Function(int score, List<int> wrongIndexes)? onScored;
 
   @override
   State<LessonQuiz> createState() => _LessonQuizState();
@@ -90,11 +91,12 @@ class _LessonQuizState extends State<LessonQuiz> {
       return;
     }
 
-    var correct = 0;
-    for (var i = 0; i < total; i++) {
-      if (_answers[i] == widget.questions[i].correctIndex) correct++;
-    }
-    widget.onScored?.call((correct / total * 100).round());
+    final wrong = [
+      for (var i = 0; i < total; i++)
+        if (_answers[i] != widget.questions[i].correctIndex) i,
+    ];
+    final correct = total - wrong.length;
+    widget.onScored?.call((correct / total * 100).round(), wrong);
 
     showDialog<void>(
       context: context,

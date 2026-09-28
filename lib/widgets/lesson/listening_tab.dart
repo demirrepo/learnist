@@ -53,12 +53,13 @@ class ListeningTab extends ConsumerWidget {
             key: ValueKey('listening-quiz-${lesson.lessonNumber}'),
             questions: questions,
             onScored:
-                (score) => saveSectionScoreOrWarn(
+                (score, wrongIndexes) => saveQuizResultOrWarn(
                   progress: ref.read(progressServiceProvider),
                   messenger: ScaffoldMessenger.of(context),
                   lessonNumber: lesson.lessonNumber,
                   section: 'listening',
                   score: score,
+                  wrongIndexes: wrongIndexes,
                 ),
           ),
       ],

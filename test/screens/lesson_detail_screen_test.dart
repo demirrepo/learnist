@@ -102,6 +102,15 @@ int _firstOptionScore(List<dynamic> raw) =>
       raw,
     ).where((question) => question.correctIndex == 0).length;
 
+/// Indexes of the questions whose answer isn't the first option.
+List<int> _wrongWithFirstOptions(List<dynamic> raw) {
+  final questions = QuizQuestion.listFrom(raw);
+  return [
+    for (var i = 0; i < questions.length; i++)
+      if (questions[i].correctIndex != 0) i,
+  ];
+}
+
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
@@ -585,6 +594,9 @@ void main() {
     expect(progress.sectionScores, {
       1: {'reading': score * 10},
     });
+    final mistakes = progress.mistakeCalls.single;
+    expect((mistakes.lesson, mistakes.section), (1, 'reading'));
+    expect(mistakes.wrong, _wrongWithFirstOptions(lesson1.readingQuestions));
   });
 
   testWidgets('a quiz score that fails to save shows a red snackbar', (
@@ -618,6 +630,27 @@ void main() {
     expect(find.text('$score/10 correct'), findsOneWidget);
   });
 
+  testWidgets('a failed mistake update only logs; the score still saves', (
+    tester,
+  ) async {
+    _useTallView(tester);
+    final progress =
+        FakeProgressService()..saveMistakesError = ClientException('offline');
+    await _pump(tester, progress: progress);
+    await _openTab(tester, "O'qish");
+
+    await _answerFirstOptions(tester);
+    await tester.tap(find.text('Natijani tekshirish'));
+    await tester.pumpAndSettle();
+
+    final score = _firstOptionScore(lesson1.readingQuestions);
+    expect(progress.sectionScores, {
+      1: {'reading': score * 10},
+    });
+    expect(find.byType(SnackBar), findsNothing);
+    expect(find.text('$score/10 correct'), findsOneWidget);
+  });
+
   testWidgets('listening tab: format, blurred transcript, live quiz', (
     tester,
   ) async {
@@ -645,6 +678,9 @@ void main() {
     expect(progress.sectionScores, {
       1: {'listening': score * 10},
     });
+    final mistakes = progress.mistakeCalls.single;
+    expect((mistakes.lesson, mistakes.section), (1, 'listening'));
+    expect(mistakes.wrong, _wrongWithFirstOptions(lesson1.listeningQuestions));
   });
 
   testWidgets('writing and speaking tabs show the live prompts', (

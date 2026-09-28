@@ -67,12 +67,13 @@ class ReadingTab extends ConsumerWidget {
             key: ValueKey('reading-quiz-${lesson.lessonNumber}'),
             questions: questions,
             onScored:
-                (score) => saveSectionScoreOrWarn(
+                (score, wrongIndexes) => saveQuizResultOrWarn(
                   progress: ref.read(progressServiceProvider),
                   messenger: ScaffoldMessenger.of(context),
                   lessonNumber: lesson.lessonNumber,
                   section: 'reading',
                   score: score,
+                  wrongIndexes: wrongIndexes,
                 ),
           ),
         if (vocabulary.isNotEmpty) _VocabularyCard(items: vocabulary),

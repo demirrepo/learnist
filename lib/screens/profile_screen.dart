@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../models/user_progress.dart';
+import '../models/user_stats.dart';
 import '../router.dart';
+import '../services/progress_service.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 
@@ -20,10 +23,17 @@ const _cardDecoration = BoxDecoration(
   ],
 );
 
-// Placeholder stats until progress comes from the backend.
-const _stats = [
-  _Stat(icon: LucideIcons.trophy, value: '1/52', label: "O'rganilgan mavzular"),
-  _Stat(icon: LucideIcons.target, value: '85%', label: "O'rtacha natija"),
+List<_Stat> _statsFrom(UserStats stats) => [
+  _Stat(
+    icon: LucideIcons.trophy,
+    value: '${stats.lessonsMastered}/${UserProgress.lastLesson}',
+    label: "O'rganilgan mavzular",
+  ),
+  _Stat(
+    icon: LucideIcons.target,
+    value: '${stats.overallAverage}%',
+    label: "O'rtacha natija",
+  ),
 ];
 
 const _settings = [
@@ -48,6 +58,8 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(supabaseServiceProvider);
+    // Zeros while loading or if the fetch fails, like Home.
+    final stats = ref.watch(userStatsProvider).value ?? const UserStats();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -82,7 +94,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            const _StatsRow(stats: _stats),
+            _StatsRow(stats: _statsFrom(stats)),
             const SizedBox(height: 24),
             const _SettingsCard(),
             const SizedBox(height: 16),

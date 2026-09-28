@@ -33,12 +33,20 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
   });
 
-  testWidgets('reports the percentage only once all are answered', (
-    tester,
-  ) async {
+  testWidgets('reports the percentage and wrong answers once all are '
+      'answered', (tester) async {
     final scores = <int>[];
+    final wrongs = <List<int>>[];
     await tester.pumpWidget(
-      _host(LessonQuiz(questions: _questions, onScored: scores.add)),
+      _host(
+        LessonQuiz(
+          questions: _questions,
+          onScored: (score, wrong) {
+            scores.add(score);
+            wrongs.add(wrong);
+          },
+        ),
+      ),
     );
 
     await tester.tap(find.text('a1'));
@@ -49,7 +57,17 @@ void main() {
     await tester.tap(find.text('b2'));
     await tester.tap(find.text('Natijani tekshirish'));
     await tester.pumpAndSettle();
-    expect(scores, [50]);
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('a2'));
+    await tester.tap(find.text('Natijani tekshirish'));
+    await tester.pumpAndSettle();
+    expect(scores, [50, 100]);
+    expect(wrongs, [
+      [1],
+      <int>[],
+    ]);
   });
 
   testWidgets('shows only the aggregate score', (tester) async {

@@ -4,11 +4,14 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/checkup.dart';
 import '../models/user_progress.dart';
+import '../models/user_stats.dart';
 import 'supabase_service.dart' show isNetworkError, supabaseServiceProvider;
 
-final progressServiceProvider = Provider<ProgressService>(
-  (ref) => ProgressService(),
-);
+final progressServiceProvider = Provider<ProgressService>((ref) {
+  final service = ProgressService();
+  ref.onDispose(service.dispose);
+  return service;
+});
 
 /// These screens have their own "Qayta urinish" button; Riverpod's
 /// automatic retries would only delay the error state.
@@ -30,6 +33,17 @@ final userProgressProvider = FutureProvider<UserProgress>((ref) {
   return ref.watch(progressServiceProvider).fetchProgress();
 }, retry: _noRetry);
 
+/// The Home and Profile statistics. Refetched after every score, mistake
+/// or lesson the service saves, as well as on auth changes.
+final userStatsProvider = FutureProvider<UserStats>((ref) {
+  _refetchOnAuthChange(ref);
+  final service = ref.watch(progressServiceProvider);
+  void refresh() => ref.invalidateSelf();
+  service.addListener(refresh);
+  ref.onDispose(() => service.removeListener(refresh));
+  return service.fetchStats();
+}, retry: _noRetry);
+
 /// Past check-ups, oldest first, for the growth chart.
 final checkupHistoryProvider = FutureProvider<List<CheckupHistoryEntry>>((ref) {
   _refetchOnAuthChange(ref);
@@ -45,13 +59,17 @@ final checkupQuestionsProvider = FutureProvider<List<CheckupQuestion>>(
 
 /// Reads `user_progress`, `checkup_history` and `checkup_questions`,
 /// submits check-ups through the `submit_checkup` database function,
-/// records section scores through `save_section_score` and completes
-/// lessons through `complete_lesson`.
+/// records section scores through `save_section_score` and quiz mistakes
+/// through `upsert_mistakes`, completes lessons through `complete_lesson`
+/// and reads statistics through `get_user_stats`.
 ///
 /// Students can't write progress or history directly (RLS), and never see
 /// `answer_index`; scoring, the level, the cooldown and lesson unlocks are
 /// all decided on the server.
-class ProgressService {
+///
+/// Notifies listeners after each successful write that changes the
+/// statistics, so [userStatsProvider] refetches.
+class ProgressService extends ChangeNotifier {
   ProgressService([SupabaseClient? client])
     : _supabase = client ?? Supabase.instance.client;
 
@@ -72,6 +90,17 @@ class ProgressService {
       return UserProgress.fromJson(row);
     } catch (error, stackTrace) {
       _log('fetchProgress (user_progress)', error, stackTrace);
+      rethrow;
+    }
+  }
+
+  Future<UserStats> fetchStats() async {
+    if (_userId == null) return const UserStats();
+    try {
+      final json = await _supabase.rpc<Map<String, dynamic>>('get_user_stats');
+      return UserStats.fromJson(json);
+    } catch (error, stackTrace) {
+      _log('fetchStats', error, stackTrace);
       rethrow;
     }
   }
@@ -162,6 +191,32 @@ class ProgressService {
       _log('saveSectionScore', error, stackTrace);
       rethrow;
     }
+    notifyListeners();
+  }
+
+  /// Records a graded [section] quiz ('reading' or 'listening') of
+  /// [lessonNumber]: the 0-based [wrongQuestionIndexes] are tracked as
+  /// mistakes (or counted again), and the section's other tracked
+  /// mistakes are resolved.
+  Future<void> saveMistakes(
+    int lessonNumber,
+    String section,
+    List<int> wrongQuestionIndexes,
+  ) async {
+    try {
+      await _supabase.rpc<Object?>(
+        'upsert_mistakes',
+        params: {
+          'p_lesson_number': lessonNumber,
+          'p_section': section,
+          'p_wrong_indexes': wrongQuestionIndexes,
+        },
+      );
+    } catch (error, stackTrace) {
+      _log('saveMistakes', error, stackTrace);
+      rethrow;
+    }
+    notifyListeners();
   }
 
   /// Unlocks the lesson after [lessonNumber] if it is the student's current
@@ -187,6 +242,7 @@ class ProgressService {
       _log('completeLesson', error, stackTrace);
       rethrow;
     }
+    notifyListeners();
   }
 }
 

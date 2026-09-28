@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:learnist/models/checkup.dart';
+import 'package:flutter/foundation.dart';
 import 'package:learnist/models/user_progress.dart';
+import 'package:learnist/models/user_stats.dart';
 import 'package:learnist/services/progress_service.dart';
 
 /// The 30 seeded questions, as students receive them (no answers).
@@ -24,9 +26,13 @@ final seedCheckupQuestions = [
 /// A successful [submitCheckup] behaves like the server: it appends to
 /// [history] and starts the cooldown in [progress], so a refetch after
 /// submitting shows the cooldown state.
-class FakeProgressService implements ProgressService {
+///
+/// Like the real service, successful score, mistake and completion writes
+/// notify listeners so [userStatsProvider] refetches [stats].
+class FakeProgressService extends ChangeNotifier implements ProgressService {
   FakeProgressService({
     this.progress = const UserProgress(),
+    this.stats = const UserStats(),
     List<CheckupHistoryEntry>? history,
     List<CheckupQuestion>? questions,
     this.nextResult,
@@ -34,6 +40,7 @@ class FakeProgressService implements ProgressService {
        questions = questions ?? seedCheckupQuestions;
 
   UserProgress progress;
+  UserStats stats;
   final List<CheckupHistoryEntry> history;
   final List<CheckupQuestion> questions;
 
@@ -46,14 +53,42 @@ class FakeProgressService implements ProgressService {
   Object? submitError;
   Object? completeError;
   Object? saveScoreError;
+  Object? statsError;
+  Object? saveMistakesError;
 
   int progressFetches = 0;
   int questionFetches = 0;
+  int statsFetches = 0;
   Map<int, int>? lastSubmitted;
   final List<int> completedLessons = [];
 
   /// Latest score per lesson and section, as `save_section_score` keeps it.
   final Map<int, Map<String, int>> sectionScores = {};
+
+  /// Every `upsert_mistakes` call, in order.
+  final List<({int lesson, String section, List<int> wrong})> mistakeCalls = [];
+
+  @override
+  Future<UserStats> fetchStats() async {
+    statsFetches++;
+    if (statsError case final error?) throw error;
+    return stats;
+  }
+
+  @override
+  Future<void> saveMistakes(
+    int lessonNumber,
+    String section,
+    List<int> wrongQuestionIndexes,
+  ) async {
+    if (saveMistakesError case final error?) throw error;
+    mistakeCalls.add((
+      lesson: lessonNumber,
+      section: section,
+      wrong: List.of(wrongQuestionIndexes),
+    ));
+    notifyListeners();
+  }
 
   @override
   Future<UserProgress> fetchProgress() async {
@@ -112,6 +147,7 @@ class FakeProgressService implements ProgressService {
   ) async {
     if (saveScoreError case final error?) throw error;
     (sectionScores[lessonNumber] ??= {})[section] = score;
+    notifyListeners();
   }
 
   /// Like the server: advances only from the current lesson, up to 52.
@@ -119,11 +155,13 @@ class FakeProgressService implements ProgressService {
   Future<void> completeLesson(int lessonNumber) async {
     completedLessons.add(lessonNumber);
     if (completeError case final error?) throw error;
-    if (progress.currentLesson != lessonNumber) return;
-    progress = UserProgress(
-      cefrLevel: progress.cefrLevel,
-      currentLesson: (lessonNumber + 1).clamp(1, UserProgress.lastLesson),
-      lastCheckupDate: progress.lastCheckupDate,
-    );
+    if (progress.currentLesson == lessonNumber) {
+      progress = UserProgress(
+        cefrLevel: progress.cefrLevel,
+        currentLesson: (lessonNumber + 1).clamp(1, UserProgress.lastLesson),
+        lastCheckupDate: progress.lastCheckupDate,
+      );
+    }
+    notifyListeners();
   }
 }

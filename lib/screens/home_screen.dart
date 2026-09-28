@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../models/user_progress.dart';
+import '../models/user_stats.dart';
 import '../router.dart';
 import '../services/progress_service.dart';
 import '../services/supabase_service.dart';
@@ -38,10 +39,9 @@ const _learningSpaceItems = [
   ),
 ];
 
-/// "Lessons mastered" and "Tracked mistakes" are still placeholders.
-List<SnapshotStat> _snapshotStats(UserProgress progress) => [
-  const SnapshotStat(
-    value: '1/52',
+List<SnapshotStat> _snapshotStats(UserProgress progress, UserStats stats) => [
+  SnapshotStat(
+    value: '${stats.lessonsMastered}/${UserProgress.lastLesson}',
     label: 'Lessons mastered',
     icon: LucideIcons.bookOpen,
   ),
@@ -55,8 +55,8 @@ List<SnapshotStat> _snapshotStats(UserProgress progress) => [
     label: 'CEFR estimate',
     icon: LucideIcons.shieldCheck,
   ),
-  const SnapshotStat(
-    value: '0',
+  SnapshotStat(
+    value: '${stats.trackedMistakes}',
     label: 'Tracked mistakes',
     icon: LucideIcons.rotateCcw,
   ),
@@ -71,6 +71,7 @@ class HomeScreen extends ConsumerWidget {
     // Defaults while loading or if the fetch fails; Home never blocks on it.
     final progress =
         ref.watch(userProgressProvider).value ?? const UserProgress();
+    final stats = ref.watch(userStatsProvider).value ?? const UserStats();
     final lesson = progress.currentLesson;
 
     return Scaffold(
@@ -94,7 +95,7 @@ class HomeScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
                 child: HeroBannerCard(
-                  masteryPercent: 100,
+                  masteryPercent: stats.currentLessonMastery,
                   headline:
                       'Your English grows every time you understand a mistake.',
                   subtitle:
@@ -114,14 +115,14 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 32),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
-                child: SnapshotGrid(stats: _snapshotStats(progress)),
+                child: SnapshotGrid(stats: _snapshotStats(progress, stats)),
               ),
               const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: _pagePadding),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
                 child: LessonMasteryProgress(
-                  lessonLabel: 'Lesson 1 · Present Simple',
-                  progress: 1,
+                  lessonLabel: 'Lesson $lesson',
+                  progress: stats.currentLessonMastery / 100,
                 ),
               ),
             ],
