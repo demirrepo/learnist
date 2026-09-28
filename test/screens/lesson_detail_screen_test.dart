@@ -9,8 +9,8 @@ import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/screens/lesson_detail_screen.dart';
 import 'package:learnist/theme/app_theme.dart';
 import 'package:learnist/services/deepgram_service.dart';
-import 'package:learnist/services/gemini_service.dart';
 import 'package:learnist/services/lesson_service.dart';
+import 'package:learnist/services/openai_service.dart';
 import 'package:learnist/services/progress_service.dart';
 import 'package:learnist/services/speech_recorder.dart';
 import 'package:learnist/services/supabase_service.dart';
@@ -20,8 +20,8 @@ import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../support/fake_deepgram_service.dart';
-import '../support/fake_gemini_service.dart';
 import '../support/fake_lesson_service.dart';
+import '../support/fake_openai_service.dart';
 import '../support/fake_progress_service.dart';
 import '../support/fake_speech_recorder.dart';
 
@@ -36,7 +36,7 @@ Future<void> _pump(
   int lessonId = 1,
   FakeLessonService? service,
   FakeProgressService? progress,
-  FakeGeminiService? gemini,
+  FakeOpenAIService? ai,
   FakeDeepgramService? deepgram,
   FakeSpeechRecorder? recorder,
   bool settle = true,
@@ -49,7 +49,7 @@ Future<void> _pump(
         progressServiceProvider.overrideWithValue(
           progress ?? FakeProgressService(),
         ),
-        geminiServiceProvider.overrideWithValue(gemini ?? FakeGeminiService()),
+        openaiServiceProvider.overrideWithValue(ai ?? FakeOpenAIService()),
         deepgramServiceProvider.overrideWithValue(
           deepgram ?? FakeDeepgramService(),
         ),
@@ -176,12 +176,12 @@ void main() {
       tester,
     ) async {
       _useTallView(tester);
-      final gemini =
-          FakeGeminiService()
+      final ai =
+          FakeOpenAIService()
             ..pending = Completer<void>()
             ..result = (score: 85, feedback: 'Zamon to\'g\'ri.');
       final progress = FakeProgressService();
-      await _pump(tester, gemini: gemini, progress: progress);
+      await _pump(tester, ai: ai, progress: progress);
 
       await tester.enterText(answer, text);
       await tester.tap(analyze);
@@ -198,10 +198,10 @@ void main() {
       expect(tester.widget<ButtonStyleButton>(analyze).onPressed, isNull);
       expect(progress.sectionScores, isEmpty);
 
-      gemini.pending!.complete();
+      ai.pending!.complete();
       await tester.pumpAndSettle();
 
-      expect(gemini.calls.single, (
+      expect(ai.calls.single, (
         section: 'grammar',
         studentText: text,
         topic: lesson1.grammarFocus,
@@ -237,10 +237,10 @@ void main() {
       tester,
     ) async {
       _useTallView(tester);
-      final gemini =
-          FakeGeminiService()..error = const GeminiException('Internet yo\'q');
+      final ai =
+          FakeOpenAIService()..error = const OpenAIException('Internet yo\'q');
       final progress = FakeProgressService();
-      await _pump(tester, gemini: gemini, progress: progress);
+      await _pump(tester, ai: ai, progress: progress);
 
       await tester.enterText(answer, text);
       await tester.tap(analyze);
@@ -267,14 +267,14 @@ void main() {
 
     testWidgets('an empty answer is not sent', (tester) async {
       _useTallView(tester);
-      final gemini = FakeGeminiService();
-      await _pump(tester, gemini: gemini);
+      final ai = FakeOpenAIService();
+      await _pump(tester, ai: ai);
 
       await tester.enterText(answer, '   ');
       await tester.tap(analyze);
       await tester.pumpAndSettle();
 
-      expect(gemini.calls, isEmpty);
+      expect(ai.calls, isEmpty);
       expect(find.text('Avval javobingizni yozing.'), findsOneWidget);
     });
 
@@ -317,10 +317,10 @@ void main() {
         tester,
       ) async {
         _useTallView(tester);
-        final gemini =
-            FakeGeminiService()..result = (score: 72, feedback: 'Yaxshi.');
+        final ai =
+            FakeOpenAIService()..result = (score: 72, feedback: 'Yaxshi.');
         final progress = FakeProgressService();
-        await _pump(tester, gemini: gemini, progress: progress);
+        await _pump(tester, ai: ai, progress: progress);
         await _openTab(tester, task.tab);
 
         const text = 'I usually spend my weekends with my family.';
@@ -331,7 +331,7 @@ void main() {
         await tester.tap(find.text(task.button));
         await tester.pumpAndSettle();
 
-        expect(gemini.calls.single, (
+        expect(ai.calls.single, (
           section: task.section,
           studentText: text,
           topic: task.topic,
@@ -399,17 +399,12 @@ void main() {
 
     Future<void> openSpeaking(
       WidgetTester tester, {
-      FakeGeminiService? gemini,
+      FakeOpenAIService? ai,
       FakeDeepgramService? deepgram,
       FakeSpeechRecorder? recorder,
     }) async {
       _useTallView(tester);
-      await _pump(
-        tester,
-        gemini: gemini,
-        deepgram: deepgram,
-        recorder: recorder,
-      );
+      await _pump(tester, ai: ai, deepgram: deepgram, recorder: recorder);
       await _openTab(tester, 'Gapirish');
     }
 
@@ -433,10 +428,10 @@ void main() {
       final deepgram = FakeDeepgramService(
         transcript: 'I usually cook on Sundays.',
       )..pending = Completer<void>();
-      final gemini = FakeGeminiService();
+      final ai = FakeOpenAIService();
       await openSpeaking(
         tester,
-        gemini: gemini,
+        ai: ai,
         deepgram: deepgram,
         recorder: recorder,
       );
@@ -467,11 +462,11 @@ void main() {
       expect(answerText(tester), 'I usually cook on Sundays.');
       expect(recorder.deleted, ['/tmp/speaking.m4a']);
       expect(find.byTooltip('Start recording'), findsOneWidget);
-      expect(gemini.calls, isEmpty);
+      expect(ai.calls, isEmpty);
 
       await tester.tap(assess);
       await tester.pumpAndSettle();
-      expect(gemini.calls.single.studentText, 'I usually cook on Sundays.');
+      expect(ai.calls.single.studentText, 'I usually cook on Sundays.');
       expect(find.text('Mastery reached: 85%'), findsOneWidget);
     });
 

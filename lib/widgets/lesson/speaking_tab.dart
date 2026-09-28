@@ -68,8 +68,7 @@ class SpeakingTab extends ConsumerWidget {
                 hint: 'Record your answer, or type what you said here…',
                 minLines: 5,
                 isSpeakingTask: true,
-                evaluate:
-                    (gemini, answer) => gemini.evaluateSpeaking(answer, prompt),
+                evaluate: (ai, answer) => ai.evaluateSpeaking(answer, prompt),
               ),
             ],
           ),

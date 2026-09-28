@@ -3,39 +3,46 @@ import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:http/http.dart' as http;
 
-/// The shared [GeminiService]; overridden with a fake in tests.
-final geminiServiceProvider = Provider<GeminiService>((ref) => GeminiService());
+/// The shared [OpenAIService]; overridden with a fake in tests.
+final openaiServiceProvider = Provider<OpenAIService>((ref) {
+  final service = OpenAIService();
+  ref.onDispose(service.close);
+  return service;
+});
 
-/// Thrown when the prompt evaluation can't be completed. [message] is already
-/// user-facing (Uzbek), so the UI can show it as-is.
-class GeminiException implements Exception {
-  const GeminiException(this.message);
+/// Thrown when an AI request can't be completed. [message] is already
+/// user-facing (Uzbek), so the UI can show it as-is. [statusCode] is set when
+/// OpenAI answered with an error.
+class OpenAIException implements Exception {
+  const OpenAIException(this.message, {this.statusCode});
 
   final String message;
+  final int? statusCode;
 
   @override
-  String toString() => 'GeminiException: $message';
+  String toString() =>
+      'OpenAIException${statusCode == null ? '' : ' ($statusCode)'}: '
+      '$message';
 }
 
 /// A graded answer's score (0–100) and Uzbek feedback.
 typedef AiEvaluation = ({int score, String feedback});
 
-/// Wraps the Gemini text models used by the AI Lab and the lesson tabs.
-///
-/// A singleton so each model (and its HTTP client) is built once and reused
-/// across rebuilds.
-class GeminiService {
-  factory GeminiService() => _instance;
+/// Calls OpenAI's Chat Completions REST API for the AI Lab's prompt checker
+/// and the lesson tabs' grading.
+class OpenAIService {
+  /// [apiKey] defaults to `OPENAI_API_KEY` from `.env`.
+  OpenAIService({http.Client? client, String? apiKey})
+    : _client = client ?? http.Client(),
+      _apiKeyOverride = apiKey;
 
-  GeminiService._();
+  static final endpoint = Uri.https('api.openai.com', '/v1/chat/completions');
 
-  static final GeminiService _instance = GeminiService._();
+  static const model = 'gpt-4o-mini';
 
-  /// `gemini-1.5-flash` and `gemini-2.5-flash` are both closed to new API
-  /// keys, so we use the current flash model. Swap here when it rolls over.
-  static const _modelName = 'gemini-3.6-flash';
+  static const _timeout = Duration(seconds: 30);
 
   static const _systemInstruction =
       'You are an expert AI prompt evaluator for a university English learning '
@@ -107,64 +114,36 @@ class GeminiService {
       'unrelated to the task, not English, or empty.\n'
       '$_gradingRules';
 
-  GenerativeModel? _model;
-
-  /// Grading models by system instruction.
-  final _gradingModels = <String, GenerativeModel>{};
+  final http.Client _client;
+  final String? _apiKeyOverride;
 
   /// Read on first use: [dotenv] is only loaded after `main()` runs.
   String get _apiKey {
-    final apiKey = dotenv.env['GEMINI_API_KEY'];
+    final apiKey = _apiKeyOverride ?? dotenv.env['OPENAI_API_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
-      throw const GeminiException(
-        'GEMINI_API_KEY topilmadi. .env faylini tekshiring.',
+      throw const OpenAIException(
+        'OPENAI_API_KEY topilmadi. .env faylini tekshiring.',
       );
     }
     return apiKey;
   }
 
-  GenerativeModel get _generativeModel =>
-      _model ??= GenerativeModel(
-        model: _modelName,
-        apiKey: _apiKey,
-        systemInstruction: Content.system(_systemInstruction),
-      );
-
-  /// JSON mode with a schema, so the reply is always a bare object.
-  GenerativeModel _gradingModel(String instruction) =>
-      _gradingModels[instruction] ??= GenerativeModel(
-        model: _modelName,
-        apiKey: _apiKey,
-        systemInstruction: Content.system(instruction),
-        generationConfig: GenerationConfig(
-          temperature: 0.2,
-          responseMimeType: 'application/json',
-          responseSchema: Schema.object(
-            properties: {
-              'score': Schema.integer(description: 'From 0 to 100.'),
-              'feedback': Schema.string(description: 'In Uzbek.'),
-            },
-            requiredProperties: ['score', 'feedback'],
-          ),
-        ),
-      );
-
-  /// Returns the model's feedback on [userPrompt].
+  /// Returns the model's feedback on [userPrompt], in Markdown.
   ///
-  /// Throws a [GeminiException] with a user-facing message on a missing key,
-  /// a network failure, or an empty/blocked response.
+  /// Throws an [OpenAIException] with a user-facing message on a missing
+  /// key, a network failure, an error status, or an empty response.
   Future<String> evaluatePrompt(String userPrompt) async {
     final trimmed = userPrompt.trim();
     if (trimmed.isEmpty) {
-      throw const GeminiException('Avval promptingizni yozing.');
+      throw const OpenAIException('Avval promptingizni yozing.');
     }
-    return _generate(() => _generativeModel, trimmed);
+    return _complete(_systemInstruction, trimmed);
   }
 
   /// Scores [studentText] (0–100) on its use of [targetGrammar], e.g. the
   /// lesson's `grammar_focus`, with Uzbek feedback.
   ///
-  /// Throws a [GeminiException] like [evaluatePrompt], and also when the
+  /// Throws an [OpenAIException] like [evaluatePrompt], and also when the
   /// reply isn't the expected JSON.
   Future<AiEvaluation> evaluateGrammar(
     String studentText,
@@ -190,6 +169,8 @@ class GeminiService {
         studentText,
       );
 
+  void close() => _client.close();
+
   Future<AiEvaluation> _grade(
     String instruction,
     String task,
@@ -197,48 +178,97 @@ class GeminiService {
   ) async {
     final trimmed = studentText.trim();
     if (trimmed.isEmpty) {
-      throw const GeminiException('Avval javobingizni yozing.');
+      throw const OpenAIException('Avval javobingizni yozing.');
     }
-    final reply = await _generate(
-      () => _gradingModel(instruction),
+    final reply = await _complete(
+      instruction,
       '$task\n\nStudent text:\n"""\n$trimmed\n"""',
+      json: true,
     );
     return parseEvaluation(reply);
   }
 
-  Future<String> _generate(
-    GenerativeModel Function() model,
-    String prompt,
-  ) async {
-    final GenerateContentResponse response;
+  /// Sends [system] and [user] as one chat turn and returns the reply.
+  /// [json] turns on JSON mode, which needs "JSON" in the instructions.
+  Future<String> _complete(
+    String system,
+    String user, {
+    bool json = false,
+  }) async {
+    final apiKey = _apiKey;
+
+    final http.Response response;
     try {
-      response = await model().generateContent([Content.text(prompt)]);
-    } on GeminiException {
-      rethrow;
-    } on GenerativeAIException catch (error) {
-      throw GeminiException('AI javob bera olmadi: ${error.message}');
+      response = await _client
+          .post(
+            endpoint,
+            headers: {
+              'Authorization': 'Bearer $apiKey',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'model': model,
+              'messages': [
+                {'role': 'system', 'content': system},
+                {'role': 'user', 'content': user},
+              ],
+              if (json) ...{
+                'temperature': 0.2,
+                'response_format': {'type': 'json_object'},
+              },
+            }),
+          )
+          .timeout(_timeout);
+    } on TimeoutException {
+      throw const OpenAIException(
+        'AI javob bermadi. Qaytadan urinib ko\'ring.',
+      );
     } catch (_) {
-      throw const GeminiException(
+      throw const OpenAIException(
         'Internetga ulanib bo\'lmadi. Qaytadan urinib ko\'ring.',
       );
     }
 
-    final text = response.text?.trim();
-    if (text == null || text.isEmpty) {
-      throw const GeminiException(
-        'AI bo\'sh javob qaytardi. Qaytadan urinib ko\'ring.',
+    if (response.statusCode != 200) {
+      throw OpenAIException(
+        response.statusCode == 429
+            ? 'AI hozir band. Birozdan so\'ng qaytadan urinib ko\'ring.'
+            : 'AI javob bera olmadi. Qaytadan urinib ko\'ring.',
+        statusCode: response.statusCode,
       );
     }
-    return text;
+    // OpenAI sends no charset, and package:http would fall back to Latin-1,
+    // garbling the Uzbek feedback.
+    return parseCompletion(utf8.decode(response.bodyBytes));
   }
+}
+
+/// Reads `choices[0].message.content` from a Chat Completions response.
+/// Throws an [OpenAIException] if it is missing or blank, e.g. a refusal.
+String parseCompletion(String body) {
+  const empty = OpenAIException(
+    'AI bo\'sh javob qaytardi. Qaytadan urinib ko\'ring.',
+  );
+  final Object? decoded;
+  try {
+    decoded = jsonDecode(body);
+  } on FormatException {
+    throw empty;
+  }
+  if (decoded case {
+    'choices': [{'message': {'content': final String content}}, ...],
+  } when content.trim().isNotEmpty) {
+    return content.trim();
+  }
+  throw empty;
 }
 
 /// Reads `{"score": 85, "feedback": "..."}` from a grading reply.
 ///
 /// Tolerates a stray code fence and a fractional score; clamps the score
-/// to 0–100. Throws a [GeminiException] for anything else.
+/// to 0–100. Throws a [OpenAIException] for anything else.
 AiEvaluation parseEvaluation(String reply) {
-  const invalid = GeminiException(
+  const invalid = OpenAIException(
     'AI javobini o\'qib bo\'lmadi. Qaytadan urinib ko\'ring.',
   );
   final json = reply

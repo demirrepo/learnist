@@ -19,7 +19,7 @@ const _lenses = [
 const _minWords = 80;
 const _maxWords = 120;
 
-/// The writing task, graded by Gemini as the lesson's `writing` section.
+/// The writing task, graded by the AI as the lesson's `writing` section.
 class WritingTab extends StatelessWidget {
   const WritingTab({super.key, required this.lesson});
 
@@ -52,8 +52,7 @@ class WritingTab extends StatelessWidget {
                 hint: 'Write your text here…',
                 minLines: 10,
                 maxLines: 20,
-                evaluate:
-                    (gemini, answer) => gemini.evaluateWriting(answer, prompt),
+                evaluate: (ai, answer) => ai.evaluateWriting(answer, prompt),
                 fieldFooter: _WordCount.new,
                 onAskAi: () => showComingSoon(context, 'Ask AI'),
               ),

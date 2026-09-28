@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../services/deepgram_service.dart';
-import '../../services/gemini_service.dart';
+import '../../services/openai_service.dart';
 import '../../services/progress_service.dart';
 import '../../services/speech_recorder.dart';
 import '../../theme/app_theme.dart';
@@ -25,7 +25,7 @@ const _recordingErrorMessage =
 const _transcriptionErrorMessage =
     "Nutqni matnga aylantirib bo'lmadi. Iltimos qayta urinib ko'ring.";
 
-/// Answer field, grading button and result for a Gemini-graded task.
+/// Answer field, grading button and result for an AI-graded task.
 ///
 /// On tap it sends the answer to [evaluate], saves the score as the
 /// lesson's [section] score and shows "Mastery reached: X%" with the
@@ -55,8 +55,7 @@ class AiGradedTask extends ConsumerStatefulWidget {
   final String section;
   final String buttonLabel;
   final String hint;
-  final Future<AiEvaluation> Function(GeminiService gemini, String answer)
-  evaluate;
+  final Future<AiEvaluation> Function(OpenAIService ai, String answer) evaluate;
   final int minLines;
   final int maxLines;
 
@@ -188,7 +187,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
 
     // Read before the awaits: the student may leave the lesson meanwhile,
     // and the score must still be saved.
-    final gemini = ref.read(geminiServiceProvider);
+    final ai = ref.read(openaiServiceProvider);
     final progress = ref.read(progressServiceProvider);
     final section = widget.section;
     final lessonNumber = widget.lessonNumber;
@@ -197,7 +196,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
 
     final AiEvaluation result;
     try {
-      result = await widget.evaluate(gemini, text);
+      result = await widget.evaluate(ai, text);
     } catch (error) {
       if (kDebugMode) debugPrint('[Lesson] grading $section failed: $error');
       if (mounted) setState(() => _evaluating = false);
@@ -417,7 +416,7 @@ class _MicRecorderState extends State<_MicRecorder>
   }
 }
 
-/// "Mastery reached: X%" and Gemini's feedback. Green once the score
+/// "Mastery reached: X%" and the AI's feedback. Green once the score
 /// reaches the 80% the next lesson needs.
 class _EvaluationResult extends StatelessWidget {
   const _EvaluationResult({super.key, required this.result});

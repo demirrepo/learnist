@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-import '../../services/gemini_service.dart';
+import '../../services/openai_service.dart';
 import '../../theme/app_theme.dart';
 import 'ai_lab_common.dart';
 
-/// Free-text prompt box with a check button. Sends the prompt to Gemini and
+/// Free-text prompt box with a check button. Sends the prompt to the AI and
 /// shows the feedback inline.
-class PromptCheckerCard extends StatefulWidget {
+class PromptCheckerCard extends ConsumerStatefulWidget {
   const PromptCheckerCard({super.key});
 
   @override
-  State<PromptCheckerCard> createState() => _PromptCheckerCardState();
+  ConsumerState<PromptCheckerCard> createState() => _PromptCheckerCardState();
 }
 
-class _PromptCheckerCardState extends State<PromptCheckerCard> {
+class _PromptCheckerCardState extends ConsumerState<PromptCheckerCard> {
   final _controller = TextEditingController();
   bool _isLoading = false;
   String? _aiFeedback;
@@ -29,6 +30,7 @@ class _PromptCheckerCardState extends State<PromptCheckerCard> {
 
   Future<void> _check() async {
     if (_isLoading) return;
+    final ai = ref.read(openaiServiceProvider);
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -39,8 +41,8 @@ class _PromptCheckerCardState extends State<PromptCheckerCard> {
     String? feedback;
     String? error;
     try {
-      feedback = await GeminiService().evaluatePrompt(_controller.text);
-    } on GeminiException catch (e) {
+      feedback = await ai.evaluatePrompt(_controller.text);
+    } on OpenAIException catch (e) {
       error = e.message;
     } catch (_) {
       error = 'Kutilmagan xatolik. Qaytadan urinib ko\'ring.';
@@ -185,7 +187,7 @@ class _FeedbackBox extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          // Gemini answers in Markdown, so bold/lists/headings are rendered
+          // The model answers in Markdown, so bold/lists/headings are rendered
           // rather than shown as raw asterisks. MarkdownBody (not Markdown)
           // because this sits inside an unbounded Column.
           MarkdownBody(
@@ -226,7 +228,7 @@ class _FeedbackBox extends StatelessWidget {
         color: AppColors.primary,
         decoration: TextDecoration.underline,
       ),
-      // Gemini rarely emits headings under a 4-sentence cap, but size them
+      // The model rarely emits headings under a 4-sentence cap, but size them
       // down when it does so they don't tower over the card.
       h1: bold.copyWith(fontSize: 17),
       h2: bold.copyWith(fontSize: 16),

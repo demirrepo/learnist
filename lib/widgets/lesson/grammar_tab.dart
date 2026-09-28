@@ -9,7 +9,7 @@ import 'lesson_common.dart';
 
 const _noRulesMessage = "Ushbu darsda grammatika qoidalari yo'q.";
 
-/// The lesson's grammar rule and a practical task that Gemini scores as
+/// The lesson's grammar rule and a practical task that the AI scores as
 /// the lesson's `grammar` section.
 class GrammarTab extends StatelessWidget {
   const GrammarTab({super.key, required this.lesson});
@@ -49,8 +49,8 @@ class GrammarTab extends StatelessWidget {
                 buttonLabel: 'Analyze my answer',
                 hint: 'Write your answer here…',
                 evaluate:
-                    (gemini, answer) =>
-                        gemini.evaluateGrammar(answer, lesson.grammarFocus),
+                    (ai, answer) =>
+                        ai.evaluateGrammar(answer, lesson.grammarFocus),
                 onAskAi: () => showComingSoon(context, 'Ask AI'),
               ),
             ],
