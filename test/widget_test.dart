@@ -241,6 +241,20 @@ void main() {
     expect(find.byType(AuthScreen), findsOneWidget);
   });
 
+  testWidgets('the active role pill is as tall as the active mode pill', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_app(_FakeSupabaseService(signedIn: false)));
+    await tester.pumpAndSettle();
+
+    Size pill(Finder label) => tester.getSize(
+      find.ancestor(of: label, matching: find.byType(AnimatedContainer)).first,
+    );
+    final role = pill(find.text('Talaba'));
+    final mode = pill(find.text('Sign In').first);
+    expect(role.height, mode.height);
+  });
+
   testWidgets('sign up sends profile fields, including other university', (
     tester,
   ) async {

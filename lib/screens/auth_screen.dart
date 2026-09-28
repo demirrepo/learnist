@@ -854,9 +854,11 @@ class _RoleSegment extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = selected ? AppColors.primary : AppColors.textMuted;
 
+    // Aligned so it fills the track's full height, like [_ToggleSegment].
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
+      alignment: Alignment.center,
       decoration: ShapeDecoration(
         color: selected ? AppColors.surface : Colors.transparent,
         shape: StadiumBorder(
