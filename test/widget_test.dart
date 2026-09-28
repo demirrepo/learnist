@@ -23,6 +23,7 @@ import 'package:learnist/screens/update_password_screen.dart';
 import 'package:learnist/services/lesson_service.dart';
 import 'package:learnist/services/progress_service.dart';
 import 'package:learnist/services/supabase_service.dart';
+import 'package:learnist/theme/app_theme.dart';
 import 'package:learnist/widgets/error_map/error_pattern_card.dart';
 import 'package:learnist/widgets/lesson/speaking_tab.dart';
 import 'package:learnist/widgets/main_layout.dart';
@@ -91,8 +92,18 @@ class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
 
   void emitLinkError(AuthException error) => _linkErrors.add(error);
 
+  /// The tab picked on the last sign-in.
+  UserRole? lastSignInRole;
+
+  /// Like the real service: refuses an account saved as the other [role].
   @override
-  Future<void> signIn({required String email, required String password}) async {
+  Future<void> signIn({
+    required String email,
+    required String password,
+    required UserRole role,
+  }) async {
+    lastSignInRole = role;
+    if (role != this.role) throw RoleMismatchException(this.role);
     _signedIn = true;
     notifyListeners();
   }
@@ -239,6 +250,72 @@ void main() {
     await auth.signOut();
     await tester.pumpAndSettle();
     expect(find.byType(AuthScreen), findsOneWidget);
+  });
+
+  group('sign-in role check', () {
+    Future<void> signInAs(WidgetTester tester, UserRole tab) async {
+      await tester.tap(_byKey('auth-role-${tab.name}'));
+      await tester.pump();
+      await tester.enterText(_byKey('auth-email'), 'a@b.uz');
+      await tester.enterText(_byKey('auth-password'), 'secret123');
+      await _tapVisible(tester, _byKey('auth-submit'));
+    }
+
+    for (final (saved, picked, message) in [
+      (
+        UserRole.student,
+        UserRole.teacher,
+        "Siz talaba sifatida ro'yxatdan o'tgansiz. "
+            "Iltimos, 'Talaba' bo'limini tanlang.",
+      ),
+      (
+        UserRole.teacher,
+        UserRole.student,
+        "Siz o'qituvchi sifatida ro'yxatdan o'tgansiz. "
+            "Iltimos, 'O'qituvchi' bo'limini tanlang.",
+      ),
+    ]) {
+      testWidgets('a ${saved.name} on the ${picked.name} tab is refused', (
+        tester,
+      ) async {
+        final auth = _FakeSupabaseService(signedIn: false, role: saved);
+        await tester.pumpWidget(_app(auth));
+        await tester.pumpAndSettle();
+
+        await signInAs(tester, picked);
+
+        expect(auth.lastSignInRole, picked);
+        expect(auth.isSignedIn, isFalse);
+        expect(find.byType(AuthScreen), findsOneWidget);
+        expect(find.text(message), findsOneWidget);
+        expect(
+          tester
+              .widget<SnackBar>(
+                find.ancestor(
+                  of: find.text(message),
+                  matching: find.byType(SnackBar),
+                ),
+              )
+              .backgroundColor,
+          AppColors.danger,
+        );
+      });
+    }
+
+    testWidgets('a teacher on the teacher tab signs in', (tester) async {
+      final auth = _FakeSupabaseService(
+        signedIn: false,
+        role: UserRole.teacher,
+      );
+      await tester.pumpWidget(_app(auth));
+      await tester.pumpAndSettle();
+
+      await signInAs(tester, UserRole.teacher);
+
+      expect(auth.isSignedIn, isTrue);
+      expect(find.byType(AuthScreen), findsNothing);
+      expect(find.byType(SnackBar), findsNothing);
+    });
   });
 
   testWidgets('the active role pill is as tall as the active mode pill', (

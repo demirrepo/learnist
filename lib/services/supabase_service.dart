@@ -40,7 +40,12 @@ class SupabaseService extends ChangeNotifier {
   final _authLinkErrors = StreamController<AuthException>.broadcast();
   bool _isRecoveringPassword = false;
 
-  bool get isSignedIn => _supabase.auth.currentSession != null;
+  /// True while [signIn] checks the account's role. The session exists by
+  /// then, but the router must not see it until the role matches.
+  bool _verifyingRole = false;
+
+  bool get isSignedIn =>
+      !_verifyingRole && _supabase.auth.currentSession != null;
 
   /// `full_name` saved in the sign-up metadata, if any.
   String? get currentUserFullName => _metadataString('full_name');
@@ -92,8 +97,40 @@ class SupabaseService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signIn({required String email, required String password}) {
-    return _supabase.auth.signInWithPassword(email: email, password: password);
+  /// Signs in, then checks the account's saved role against the [role]
+  /// tab the user picked. On a mismatch the new session is ended at once and
+  /// [RoleMismatchException] is thrown.
+  ///
+  /// Like [currentUserRole], this only guards the UI: the role lives in
+  /// user-editable metadata.
+  Future<void> signIn({
+    required String email,
+    required String password,
+    required UserRole role,
+  }) async {
+    _verifyingRole = true;
+    try {
+      final response = await _supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      final savedRole = UserRole.fromMetadata(
+        response.user?.userMetadata?['role'],
+      );
+      if (savedRole != role) {
+        try {
+          // The local session is removed before any request, so a failed
+          // server call still leaves the user signed out here.
+          await signOut();
+        } catch (error, stackTrace) {
+          logAuthError('Sign-out after role mismatch', error, stackTrace);
+        }
+        throw RoleMismatchException(savedRole);
+      }
+    } finally {
+      _verifyingRole = false;
+      notifyListeners();
+    }
   }
 
   /// Asks the `is_username_available` database function. A direct select on
@@ -200,6 +237,27 @@ class SupabaseService extends ChangeNotifier {
   }
 }
 
+/// Sign-in was refused because the account was registered as [savedRole],
+/// not the role picked on the Auth screen.
+class RoleMismatchException implements Exception {
+  const RoleMismatchException(this.savedRole);
+
+  final UserRole savedRole;
+
+  /// Tells the user which tab to pick instead.
+  String get message => switch (savedRole) {
+    UserRole.student =>
+      "Siz talaba sifatida ro'yxatdan o'tgansiz. "
+          "Iltimos, 'Talaba' bo'limini tanlang.",
+    UserRole.teacher =>
+      "Siz o'qituvchi sifatida ro'yxatdan o'tgansiz. "
+          "Iltimos, 'O'qituvchi' bo'limini tanlang.",
+  };
+
+  @override
+  String toString() => 'RoleMismatchException(saved: ${savedRole.name})';
+}
+
 /// The signed-in user has no `profiles` row, or RLS hid it.
 class ProfileNotFoundException implements Exception {
   const ProfileNotFoundException();
@@ -234,6 +292,7 @@ bool isNetworkError(Object error) =>
 
 /// User-facing Uzbek message for any auth failure.
 String authErrorMessage(Object error) {
+  if (error is RoleMismatchException) return error.message;
   if (isNetworkError(error)) return _networkMessage;
   if (error is AuthException) return _authExceptionMessage(error);
   return _genericMessage;

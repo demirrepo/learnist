@@ -136,7 +136,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           setState(() => _mode = _AuthMode.signIn);
         }
       } else {
-        await service.signIn(email: email, password: password);
+        await service.signIn(email: email, password: password, role: _role);
       }
       // On success the router redirect moves the user to /home.
     } catch (error, stackTrace) {
@@ -221,8 +221,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Only sign-up stores the role; on sign-in the account's saved
-              // role decides what the user sees.
+              // Sign-up stores the role; sign-in refuses an account saved
+              // with the other one.
               _RoleToggle(
                 role: _role,
                 onChanged:
