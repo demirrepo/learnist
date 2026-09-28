@@ -47,7 +47,6 @@ class SpeakingTab extends ConsumerWidget {
             body: prompt,
           ),
         ),
-        const _SpeakingTimer(),
         LessonCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -75,56 +74,6 @@ class SpeakingTab extends ConsumerWidget {
         ),
         ...complete,
       ],
-    );
-  }
-}
-
-/// The suggested speaking time. Recording happens in the transcript card.
-class _SpeakingTimer extends StatelessWidget {
-  const _SpeakingTimer();
-
-  @override
-  Widget build(BuildContext context) {
-    return LessonCard(
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primarySoft,
-            ),
-            child: const Icon(LucideIcons.timer, color: AppColors.primary),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Speaking time',
-                  style: GoogleFonts.manrope(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.hint,
-                  ),
-                ),
-                Text(
-                  '05:00',
-                  style: GoogleFonts.manrope(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
-                    color: AppColors.textPrimary,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
