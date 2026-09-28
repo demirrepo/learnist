@@ -803,12 +803,13 @@ class _RoleToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Same height and stadium shape as [_AuthModeToggle].
     return Container(
-      height: 48,
+      height: 52,
       padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
+      decoration: const ShapeDecoration(
         color: AppColors.track,
-        borderRadius: BorderRadius.circular(14),
+        shape: StadiumBorder(),
       ),
       child: Row(
         children: [
@@ -856,12 +857,13 @@ class _RoleSegment extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: selected ? AppColors.surface : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: selected ? AppColors.primary : Colors.transparent,
-          width: 1.4,
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: selected ? AppColors.primary : Colors.transparent,
+            width: 1.4,
+          ),
         ),
       ),
       child: Row(
