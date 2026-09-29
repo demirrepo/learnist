@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 import 'ai_lab_common.dart';
 
-const _promptParts = ['Role', 'Task', 'Level', 'Context', 'Format'];
+List<String> _promptParts(AppLocalizations l10n) => [
+  l10n.promptPartRole,
+  l10n.promptPartTask,
+  l10n.promptPartLevel,
+  l10n.promptPartContext,
+  l10n.promptPartFormat,
+];
 
 /// Intro to prompt literacy: headline, the five prompt parts and an
 /// example prompt on a dark card.
@@ -18,7 +25,7 @@ class AiHeroSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'PROMPT LITERACY',
+          context.l10n.aiLabEyebrow,
           style: GoogleFonts.manrope(
             fontSize: 13,
             fontWeight: FontWeight.w800,
@@ -28,7 +35,7 @@ class AiHeroSection extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          'Ask better questions. Learn more independently.',
+          context.l10n.aiLabHeadline,
           style: GoogleFonts.manrope(
             fontSize: 28,
             height: 1.15,
@@ -39,8 +46,7 @@ class AiHeroSection extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          'A prompt is the instruction you give an AI. A clear prompt gets '
-          'you an answer you can learn from, not just one to copy.',
+          context.l10n.aiLabIntro,
           style: GoogleFonts.manrope(
             fontSize: 15,
             height: 1.5,
@@ -52,7 +58,10 @@ class AiHeroSection extends StatelessWidget {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: [for (final part in _promptParts) _PartPill(label: part)],
+          children: [
+            for (final part in _promptParts(context.l10n))
+              _PartPill(label: part),
+          ],
         ),
         const SizedBox(height: 20),
         const _ExamplePromptCard(),
@@ -117,7 +126,7 @@ class _ExamplePromptCard extends StatelessWidget {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  'EXAMPLE PROMPT',
+                  context.l10n.aiLabExamplePrompt,
                   style: GoogleFonts.manrope(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,

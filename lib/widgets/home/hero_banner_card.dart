@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 
 /// Dark "Today's focus" banner with the next-lesson and AI Lab actions.
@@ -100,7 +101,14 @@ class HeroBannerCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Continue Lesson $nextLessonNumber'),
+                  // Longer in Uzbek and Russian; never overflow a phone.
+                  Flexible(
+                    child: Text(
+                      context.l10n.homeContinueLesson(nextLessonNumber),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   const Icon(LucideIcons.arrowRight, size: 18),
                 ],
@@ -122,12 +130,18 @@ class HeroBannerCard extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(LucideIcons.sparkles, size: 18),
-                SizedBox(width: 8),
-                Text('Open AI Lab'),
+                const Icon(LucideIcons.sparkles, size: 18),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    context.l10n.homeOpenAiLab,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           ),
@@ -149,7 +163,7 @@ class _FocusChip extends StatelessWidget {
         shape: const StadiumBorder(),
       ),
       child: Text(
-        "TODAY'S FOCUS",
+        context.l10n.homeTodaysFocus,
         style: GoogleFonts.manrope(
           fontSize: 11.5,
           fontWeight: FontWeight.w800,
@@ -180,7 +194,7 @@ class _MasteryChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '$percent% mastery',
+            context.l10n.homeMastery(percent),
             style: GoogleFonts.manrope(
               fontSize: 12,
               fontWeight: FontWeight.w800,

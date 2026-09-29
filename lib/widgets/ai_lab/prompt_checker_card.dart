@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../services/openai_service.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 import 'ai_lab_common.dart';
 
@@ -31,6 +32,7 @@ class _PromptCheckerCardState extends ConsumerState<PromptCheckerCard> {
   Future<void> _check() async {
     if (_isLoading) return;
     final ai = ref.read(openaiServiceProvider);
+    final unexpected = context.l10n.promptCheckerUnexpected;
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -45,7 +47,7 @@ class _PromptCheckerCardState extends ConsumerState<PromptCheckerCard> {
     } on OpenAIException catch (e) {
       error = e.message;
     } catch (_) {
-      error = 'Kutilmagan xatolik. Qaytadan urinib ko\'ring.';
+      error = unexpected;
     }
 
     // The card can be disposed while the request is in flight.
@@ -93,7 +95,7 @@ class _PromptCheckerCardState extends ConsumerState<PromptCheckerCard> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Prompt checker',
+                  context.l10n.promptCheckerTitle,
                   style: GoogleFonts.manrope(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -118,8 +120,8 @@ class _PromptCheckerCardState extends ConsumerState<PromptCheckerCard> {
               color: AppColors.textPrimary,
             ),
             // Only the focused border comes from the app theme.
-            decoration: const InputDecoration(
-              hintText: 'Write a prompt...',
+            decoration: InputDecoration(
+              hintText: context.l10n.promptCheckerHint,
               fillColor: AppColors.track,
               border: noBorder,
               enabledBorder: noBorder,
@@ -129,7 +131,7 @@ class _PromptCheckerCardState extends ConsumerState<PromptCheckerCard> {
           const SizedBox(height: 16),
           FilledButton(
             onPressed: _isLoading ? null : _check,
-            child: const Text('Check my prompt'),
+            child: Text(context.l10n.promptCheckerButton),
           ),
           if (_isLoading) ...[
             const SizedBox(height: 20),
@@ -177,7 +179,7 @@ class _FeedbackBox extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'AI fikri',
+                context.l10n.promptCheckerFeedback,
                 style: GoogleFonts.manrope(
                   fontSize: 13,
                   fontWeight: FontWeight.w800,

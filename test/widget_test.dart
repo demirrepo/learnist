@@ -9,6 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:learnist/l10n/app_localizations.dart';
 import 'package:learnist/main.dart';
 import 'package:learnist/models/teacher_dashboard.dart';
 import 'package:learnist/models/tracked_mistake.dart';
@@ -207,6 +208,12 @@ Widget _app(
 );
 
 Finder _byKey(String key) => find.byKey(ValueKey(key));
+
+/// A bottom-bar tab; the same words can also appear on the page.
+Finder _navTab(String label) => find.descendant(
+  of: find.byType(LearnistNavBar),
+  matching: find.text(label),
+);
 
 Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
   await tester.ensureVisible(finder);
@@ -498,12 +505,12 @@ void main() {
     await tester.pumpWidget(_app(_FakeSupabaseService(signedIn: true)));
     await tester.pumpAndSettle();
 
-    expect(find.text('Your snapshot'), findsOneWidget);
+    expect(find.text('Natijalaringiz'), findsOneWidget);
     expect(find.byType(LearnistNavBar), findsOneWidget);
 
-    await tester.tap(find.text('Topics'));
+    await tester.tap(_navTab('Mavzular'));
     await tester.pumpAndSettle();
-    expect(find.text('52-lesson pathway'), findsOneWidget);
+    expect(find.text('52 darslik yo\'l'), findsOneWidget);
 
     // Lessons are pushed full-screen above the tab shell.
     await tester.tap(find.text('1. Hello, everybody!'));
@@ -513,9 +520,9 @@ void main() {
 
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
-    expect(find.text('52-lesson pathway'), findsOneWidget);
+    expect(find.text('52 darslik yo\'l'), findsOneWidget);
 
-    await tester.tap(find.text('Profile'));
+    await tester.tap(_navTab('Profil'));
     await tester.pumpAndSettle();
     expect(find.text('Tizimdan chiqish'), findsOneWidget);
   });
@@ -528,7 +535,7 @@ void main() {
     }) async {
       await tester.pumpWidget(_app(auth, progress: progress));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Profile'));
+      await tester.tap(_navTab('Profil'));
       await tester.pumpAndSettle();
     }
 
@@ -545,7 +552,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Profil'), findsOneWidget);
+      expect(find.widgetWithText(AppBar, 'Profil'), findsOneWidget);
       expect(find.text('DR'), findsOneWidget);
       expect(find.text('Demirbek Razzaqov'), findsOneWidget);
       expect(find.text('@redscorpnoir'), findsOneWidget);
@@ -616,10 +623,18 @@ void main() {
       expect(find.byType(LearnistNavBar), findsNothing);
     });
 
-    testWidgets('language sheet updates the selection and closes', (
+    Future<void> pickLanguage(WidgetTester tester, String language) async {
+      await tester.tap(find.text(language).last);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('picking a language switches the interface and closes', (
       tester,
     ) async {
       await openProfile(tester, _FakeSupabaseService(signedIn: true));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ProfileScreen)),
+      );
 
       expect(find.text("O'zbekcha"), findsOneWidget);
       await _tapVisible(tester, find.text('Til'));
@@ -628,16 +643,29 @@ void main() {
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
       expect(find.text("O'zbekcha"), findsNWidgets(2));
 
-      await tester.tap(find.text('English'));
-      await tester.pumpAndSettle();
+      await pickLanguage(tester, 'English');
 
-      expect(find.text('Tilni tanlang'), findsNothing);
+      expect(container.read(appLanguageProvider), 'en');
+      expect(find.text('Choose a language'), findsNothing);
+      expect(find.widgetWithText(AppBar, 'Profile'), findsOneWidget);
+      expect(find.text('Language'), findsOneWidget);
       expect(find.text('English'), findsOneWidget);
-      expect(find.text("O'zbekcha"), findsNothing);
-      expect(find.byType(LearnistNavBar), findsOneWidget);
+      expect(find.text('Sign out'), findsOneWidget);
+      expect(find.bySemanticsLabel('Topics mastered: 0/52'), findsOneWidget);
+      for (final tab in ['Home', 'Topics', 'AI Lab', 'Check-up', 'Profile']) {
+        expect(_navTab(tab), findsOneWidget, reason: tab);
+      }
+      // Flutter's own strings follow too.
+      expect(
+        MaterialLocalizations.of(
+          tester.element(find.byType(ProfileScreen)),
+        ).okButtonLabel,
+        'OK',
+      );
 
       // Reopened, the check follows the provider.
-      await _tapVisible(tester, find.text('Til'));
+      await _tapVisible(tester, find.text('Language'));
+      expect(find.text('Choose a language'), findsOneWidget);
       final checked = find.ancestor(
         of: find.byIcon(Icons.check_circle),
         matching: find.byType(ListTile),
@@ -646,10 +674,93 @@ void main() {
         find.descendant(of: checked, matching: find.text('English')),
         findsOneWidget,
       );
-      final container = ProviderScope.containerOf(
-        tester.element(find.byType(ProfileScreen)),
+
+      await pickLanguage(tester, 'Русский');
+      expect(container.read(appLanguageProvider), 'ru');
+      expect(find.widgetWithText(AppBar, 'Профиль'), findsOneWidget);
+      expect(find.text('Выйти'), findsOneWidget);
+      expect(_navTab('Главная'), findsOneWidget);
+      expect(
+        MaterialLocalizations.of(
+          tester.element(find.byType(ProfileScreen)),
+        ).cancelButtonLabel,
+        'Отмена',
       );
-      expect(container.read(appLanguageProvider), 'en');
+
+      // And back to the default.
+      await _tapVisible(tester, find.text('Язык'));
+      await pickLanguage(tester, "O'zbekcha");
+      expect(container.read(appLanguageProvider), 'uz');
+      expect(find.widgetWithText(AppBar, 'Profil'), findsOneWidget);
+      expect(_navTab('Bosh sahifa'), findsOneWidget);
+    });
+
+    testWidgets('every primary screen follows the picked language', (
+      tester,
+    ) async {
+      // Tall enough that the check-up submit button is built.
+      tester.view.physicalSize = const Size(800, 2400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+
+      for (final (language, labels) in [
+        (
+          'English',
+          (
+            home: 'Home',
+            homeText: 'Your snapshot',
+            topics: 'Topics',
+            topicsText: '52-lesson pathway',
+            aiLabText: 'Check my prompt',
+            checkup: 'Check-up',
+            checkupText: 'Submit check-up',
+            profile: 'Profile',
+            languageTile: 'Language',
+          ),
+        ),
+        (
+          'Русский',
+          (
+            home: 'Главная',
+            homeText: 'Ваша сводка',
+            topics: 'Темы',
+            topicsText: 'Путь из 52 уроков',
+            aiLabText: 'Проверить промпт',
+            checkup: 'Проверка',
+            checkupText: 'Отправить проверку',
+            profile: 'Профиль',
+            languageTile: 'Язык',
+          ),
+        ),
+      ]) {
+        await _tapVisible(
+          tester,
+          find.text(language == 'English' ? 'Til' : 'Language'),
+        );
+        await pickLanguage(tester, language);
+
+        await tester.tap(_navTab(labels.home));
+        await tester.pumpAndSettle();
+        expect(find.text(labels.homeText), findsOneWidget, reason: language);
+
+        await tester.tap(_navTab(labels.topics));
+        await tester.pumpAndSettle();
+        expect(find.text(labels.topicsText), findsOneWidget, reason: language);
+
+        await tester.tap(_navTab('AI Lab'));
+        await tester.pumpAndSettle();
+        expect(find.text(labels.aiLabText), findsOneWidget, reason: language);
+
+        await tester.tap(_navTab(labels.checkup));
+        await tester.pumpAndSettle();
+        expect(find.text(labels.checkupText), findsOneWidget, reason: language);
+
+        await tester.tap(_navTab(labels.profile));
+        await tester.pumpAndSettle();
+        expect(find.text(labels.languageTile), findsOneWidget);
+      }
     });
 
     group('join group', () {
@@ -661,7 +772,7 @@ void main() {
           _app(_FakeSupabaseService(signedIn: true), teacher: teacher),
         );
         await tester.pumpAndSettle();
-        await tester.tap(find.text('Profile'));
+        await tester.tap(_navTab('Profil'));
         await tester.pumpAndSettle();
         await _tapVisible(tester, find.text("Guruhga qo'shilish"));
         expect(find.byType(JoinGroupDialog), findsOneWidget);
@@ -776,7 +887,7 @@ void main() {
       expect(find.text('Tilni tanlang'), findsNothing);
 
       // Back on Profile, nothing is left floating either.
-      await tester.tap(find.text('Profile'));
+      await tester.tap(_navTab('Profil'));
       await tester.pumpAndSettle();
       expect(find.byType(ProfileScreen), findsOneWidget);
       expect(find.text('Tilni tanlang'), findsNothing);
@@ -1131,14 +1242,14 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining(', Demirbek 👋'), findsOneWidget);
-      expect(find.text("TODAY'S FOCUS"), findsOneWidget);
+      expect(find.text('BUGUNGI MAQSAD'), findsOneWidget);
       // No metadata yet: lesson 1 and no CEFR level.
-      expect(find.text('Continue Lesson 1'), findsOneWidget);
-      expect(find.text('N/A'), findsNWidgets(2)); // badge + snapshot tile
-      expect(find.text('Learning space'), findsOneWidget);
+      expect(find.text('1-darsni davom ettirish'), findsOneWidget);
+      expect(find.text('—'), findsNWidgets(2)); // badge + snapshot tile
+      expect(find.text('O\'quv maydoni'), findsOneWidget);
       // No stats yet: nothing mastered, no mistakes.
       expect(find.text('0/52'), findsOneWidget);
-      expect(find.text('0% mastery'), findsOneWidget);
+      expect(find.text('0% o\'zlashtirildi'), findsOneWidget);
     });
 
     testWidgets('snapshot and mastery bar show the stats', (tester) async {
@@ -1158,11 +1269,17 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.bySemanticsLabel('Lessons mastered: 4/52'), findsOneWidget);
-      expect(find.bySemanticsLabel('Tracked mistakes: 7'), findsOneWidget);
-      expect(find.text('63% mastery'), findsOneWidget);
       expect(
-        find.bySemanticsLabel('Lesson mastery, Lesson 5: 63%'),
+        find.bySemanticsLabel('O\'zlashtirilgan darslar: 4/52'),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('Kuzatilayotgan xatolar: 7'),
+        findsOneWidget,
+      );
+      expect(find.text('63% o\'zlashtirildi'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Darsni o\'zlashtirish, 5-dars: 63%'),
         findsOneWidget,
       );
       final bar = tester.widget<LinearProgressIndicator>(
@@ -1182,12 +1299,18 @@ void main() {
         _app(_FakeSupabaseService(signedIn: true), progress: progress),
       );
       await tester.pumpAndSettle();
-      expect(find.bySemanticsLabel('Tracked mistakes: 0'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Kuzatilayotgan xatolar: 0'),
+        findsOneWidget,
+      );
 
       progress.stats = const UserStats(trackedMistakes: 3);
       await progress.saveMistakes(1, 'reading', [0, 1, 2]);
       await tester.pumpAndSettle();
-      expect(find.bySemanticsLabel('Tracked mistakes: 3'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Kuzatilayotgan xatolar: 3'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('falls back to "Demir" without a full name', (tester) async {
@@ -1218,7 +1341,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('N/A'), findsNothing);
+      expect(find.text('—'), findsNothing);
       expect(
         find.descendant(
           of: _byKey('home-cefr-badge'),
@@ -1242,12 +1365,12 @@ void main() {
       final progress = FakeProgressService();
       await tester.pumpWidget(_app(auth, progress: progress));
       await tester.pumpAndSettle();
-      expect(find.text('Continue Lesson 1'), findsOneWidget);
+      expect(find.text('1-darsni davom ettirish'), findsOneWidget);
 
       progress.progress = const UserProgress(cefrLevel: 'A2', currentLesson: 3);
       auth.notifyListeners();
       await tester.pumpAndSettle();
-      expect(find.text('Continue Lesson 3'), findsOneWidget);
+      expect(find.text('3-darsni davom ettirish'), findsOneWidget);
     });
 
     testWidgets('a failed progress fetch falls back to defaults', (
@@ -1260,14 +1383,19 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Continue Lesson 1'), findsOneWidget);
+      expect(find.text('1-darsni davom ettirish'), findsOneWidget);
     });
 
     test('greeting follows the time of day', () {
-      expect(greetingFor(DateTime(2026, 9, 14, 8)), 'Good morning');
-      expect(greetingFor(DateTime(2026, 9, 14, 14)), 'Good afternoon');
-      expect(greetingFor(DateTime(2026, 9, 14, 23)), 'Good evening');
-      expect(greetingFor(DateTime(2026, 9, 14, 2)), 'Good evening');
+      final en = lookupAppLocalizations(const Locale('en'));
+      expect(greetingFor(DateTime(2026, 9, 14, 8), en), 'Good morning');
+      expect(greetingFor(DateTime(2026, 9, 14, 14), en), 'Good afternoon');
+      expect(greetingFor(DateTime(2026, 9, 14, 23), en), 'Good evening');
+      expect(greetingFor(DateTime(2026, 9, 14, 2), en), 'Good evening');
+
+      final uz = lookupAppLocalizations(const Locale('uz'));
+      expect(greetingFor(DateTime(2026, 9, 14, 8), uz), 'Xayrli tong');
+      expect(greetingFor(DateTime(2026, 9, 14, 23), uz), 'Xayrli kech');
     });
 
     test('first name is taken from full_name', () {
@@ -1323,7 +1451,7 @@ void main() {
     ) async {
       await tester.pumpWidget(_app(auth));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Topics'));
+      await tester.tap(_navTab('Mavzular'));
       await tester.pumpAndSettle();
       return tester
           .widgetList<TopicCard>(find.byType(TopicCard))
@@ -1442,7 +1570,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Topics'));
+      await tester.tap(_navTab('Mavzular'));
       settle ? await tester.pumpAndSettle() : await tester.pump();
     }
 
@@ -1457,7 +1585,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(find.text('1. Hello, everybody!'), findsOneWidget);
-      expect(find.text('Semester 1'), findsWidgets);
+      expect(find.text('1-semestr'), findsWidgets);
       expect(find.text('A1'), findsWidgets);
     });
 
@@ -1494,7 +1622,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Header and card pill.
-      expect(find.text('Semester 2'), findsNWidgets(2));
+      expect(find.text('2-semestr'), findsNWidgets(2));
       expect(find.text('38. White Gold'), findsOneWidget);
     });
 

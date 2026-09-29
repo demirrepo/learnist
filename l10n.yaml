@@ -1,0 +1,8 @@
+# gen-l10n settings: `flutter pub get` or any build regenerates
+# lib/l10n/app_localizations*.dart from the ARB files.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-dir: lib/l10n
+output-localization-file: app_localizations.dart
+synthetic-package: false
+nullable-getter: false

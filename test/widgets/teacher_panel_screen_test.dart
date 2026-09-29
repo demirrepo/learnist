@@ -11,6 +11,7 @@ import 'package:learnist/widgets/teacher/create_group_dialog.dart';
 import 'package:learnist/widgets/teacher/student_detail_dialog.dart';
 
 import '../support/fake_teacher_service.dart';
+import '../support/l10n.dart';
 
 /// The dashboard provider only listens to the auth service for changes.
 class _AuthStub extends ChangeNotifier implements SupabaseService {
@@ -83,7 +84,12 @@ Future<void> _pump(
         supabaseServiceProvider.overrideWithValue(_AuthStub()),
         teacherServiceProvider.overrideWithValue(teacher),
       ],
-      child: const MaterialApp(home: TeacherPanelScreen()),
+      child: const MaterialApp(
+        locale: testLocale,
+        localizationsDelegates: testLocalizationsDelegates,
+        supportedLocales: testSupportedLocales,
+        home: TeacherPanelScreen(),
+      ),
     ),
   );
   await tester.pumpAndSettle();

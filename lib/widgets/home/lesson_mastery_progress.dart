@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 
 /// Card with the current lesson's mastery percentage and a progress bar.
@@ -22,7 +23,7 @@ class LessonMasteryProgress extends StatelessWidget {
     final percent = '${(clamped * 100).round()}%';
 
     return Semantics(
-      label: 'Lesson mastery, $lessonLabel: $percent',
+      label: context.l10n.lessonMasterySemantics(lessonLabel, percent),
       excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
@@ -41,7 +42,7 @@ class LessonMasteryProgress extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Lesson mastery',
+                        context.l10n.lessonMastery,
                         style: GoogleFonts.manrope(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,

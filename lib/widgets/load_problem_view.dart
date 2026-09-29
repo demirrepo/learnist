@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// Icon, message and a "Qayta urinish" button for a failed or empty load.
@@ -38,7 +39,7 @@ class LoadProblemView extends StatelessWidget {
         FilledButton.icon(
           onPressed: onRetry,
           icon: const Icon(LucideIcons.refreshCw, size: 18),
-          label: const Text('Qayta urinish'),
+          label: Text(context.l10n.retry),
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.deepPurple,
             minimumSize: const Size(0, 48),

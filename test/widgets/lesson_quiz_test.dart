@@ -8,14 +8,19 @@ import 'package:learnist/theme/app_theme.dart';
 import 'package:learnist/widgets/lesson/lesson_quiz.dart';
 
 import '../support/fake_lesson_service.dart';
+import '../support/l10n.dart';
 
 const _questions = [
   QuizQuestion(prompt: 'Q one', options: ['a1', 'b1'], correctIndex: 0),
   QuizQuestion(prompt: 'Q two', options: ['a2', 'b2'], correctIndex: 0),
 ];
 
-Widget _host(Widget child) =>
-    MaterialApp(home: Scaffold(body: SingleChildScrollView(child: child)));
+Widget _host(Widget child) => MaterialApp(
+  locale: testLocale,
+  localizationsDelegates: testLocalizationsDelegates,
+  supportedLocales: testSupportedLocales,
+  home: Scaffold(body: SingleChildScrollView(child: child)),
+);
 
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
@@ -111,6 +116,10 @@ void main() {
             lessonServiceProvider.overrideWithValue(FakeLessonService()),
           ],
           child: MaterialApp(
+            locale: testLocale,
+            localizationsDelegates: testLocalizationsDelegates,
+            supportedLocales: testSupportedLocales,
+
             theme: AppTheme.light,
             home: LessonDetailScreen(lessonId: lessonId),
           ),

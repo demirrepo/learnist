@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../l10n/l10n.dart';
 import '../router.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
@@ -21,20 +22,20 @@ class NavTab {
   final IconData icon;
 }
 
-const _studentTabs = [
-  NavTab(AppRoutes.home, 'Home', LucideIcons.home),
-  NavTab(AppRoutes.topics, 'Topics', LucideIcons.bookOpen),
-  NavTab(AppRoutes.aiLab, 'AI Lab', LucideIcons.bot),
-  NavTab(AppRoutes.levelCheck, 'Check-up', LucideIcons.barChart3),
-  NavTab(AppRoutes.profile, 'Profile', LucideIcons.userCircle),
+List<NavTab> _tabsFor(AppLocalizations l10n, {required bool teacher}) => [
+  NavTab(AppRoutes.home, l10n.navHome, LucideIcons.home),
+  NavTab(AppRoutes.topics, l10n.navTopics, LucideIcons.bookOpen),
+  NavTab(AppRoutes.aiLab, l10n.navAiLab, LucideIcons.bot),
+  NavTab(AppRoutes.levelCheck, l10n.navCheckup, LucideIcons.barChart3),
+  NavTab(AppRoutes.profile, l10n.navProfile, LucideIcons.userCircle),
+  if (teacher)
+    NavTab(
+      AppRoutes.teacherPanel,
+      l10n.navTeacherPanel,
+      LucideIcons.layoutDashboard,
+      sidebarLabel: l10n.navTeacherPanelFull,
+    ),
 ];
-
-const _teacherTab = NavTab(
-  AppRoutes.teacherPanel,
-  'Panel',
-  LucideIcons.layoutDashboard,
-  sidebarLabel: "O'qituvchi paneli",
-);
 
 /// Widths from this up get the sidebar instead of the bottom bar.
 const _sidebarBreakpoint = 900.0;
@@ -48,7 +49,8 @@ class MainLayout extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(supabaseServiceProvider);
-    final tabs = [..._studentTabs, if (auth.isTeacher) _teacherTab];
+    final l10n = context.l10n;
+    final tabs = _tabsFor(l10n, teacher: auth.isTeacher);
 
     final location = GoRouterState.of(context).uri.path;
     final foundIndex = tabs.indexWhere((tab) => location.startsWith(tab.path));
@@ -73,8 +75,8 @@ class MainLayout extends ConsumerWidget {
               tabs: tabs,
               selectedIndex: currentIndex,
               onDestinationSelected: onSelected,
-              userName: auth.currentUserFullName ?? 'Learnist user',
-              roleLabel: auth.isTeacher ? "O'qituvchi" : 'Talaba',
+              userName: auth.currentUserFullName ?? l10n.sidebarDefaultUser,
+              roleLabel: auth.isTeacher ? l10n.roleTeacher : l10n.roleStudent,
             ),
             Expanded(child: child),
           ],
@@ -180,7 +182,7 @@ class _SidebarBrand extends StatelessWidget {
                 ),
               ),
               Text(
-                'AI Learning Companion',
+                context.l10n.sidebarTagline,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.manrope(

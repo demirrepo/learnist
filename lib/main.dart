@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'l10n/l10n.dart';
+import 'providers/app_language_provider.dart';
 import 'router.dart';
 import 'theme/app_theme.dart';
 
@@ -26,9 +28,14 @@ class LearnistApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    // Rebuilds the whole tree in the new language when it is picked.
+    final language = ref.watch(appLanguageProvider);
 
     return MaterialApp.router(
       title: 'Learnist',
+      locale: Locale(language),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: router,

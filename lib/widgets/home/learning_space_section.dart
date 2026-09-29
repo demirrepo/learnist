@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 
 class LearningSpaceItem {
@@ -43,7 +44,7 @@ class LearningSpaceSection extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                'Learning space',
+                context.l10n.homeLearningSpace,
                 style: GoogleFonts.manrope(
                   fontSize: 17.5,
                   fontWeight: FontWeight.w800,
@@ -56,7 +57,7 @@ class LearningSpaceSection extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      'Swipe',
+                      context.l10n.homeSwipe,
                       style: GoogleFonts.manrope(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w800,

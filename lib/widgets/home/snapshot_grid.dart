@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 
 class SnapshotStat {
@@ -30,7 +31,7 @@ class SnapshotGrid extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Your snapshot',
+          context.l10n.homeSnapshot,
           style: GoogleFonts.manrope(
             fontSize: 17.5,
             fontWeight: FontWeight.w800,

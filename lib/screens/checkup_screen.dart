@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../l10n/l10n.dart';
 import '../models/checkup.dart';
 import '../models/user_progress.dart';
 import '../services/progress_service.dart';
@@ -24,11 +26,6 @@ const _maxChartPoints = 6;
 
 /// Ordered CEFR scale; a level's index is its height on the growth chart.
 const _cefrLevels = UserProgress.cefrLevels;
-
-const _months = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', //
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-];
 
 /// The CEFR level check-up.
 ///
@@ -149,7 +146,7 @@ class _CheckupTestState extends ConsumerState<_CheckupTest> {
 
   Future<void> _submit(List<CheckupQuestion> questions) async {
     if (_answers.length < questions.length) {
-      _showError('Barcha ${questions.length} ta savolga javob bering.');
+      _showError(context.l10n.checkupAnswerAll(questions.length));
       return;
     }
     if (await _confirmSubmit(context) != true || !mounted) return;
@@ -209,7 +206,7 @@ class _CheckupTestState extends ConsumerState<_CheckupTest> {
       data: (questions) {
         if (questions.isEmpty) {
           return _ProblemCard(
-            message: "Savollar hali qo'shilmagan.",
+            message: context.l10n.checkupNoQuestions,
             onRetry: () => ref.invalidate(checkupQuestionsProvider),
           );
         }
@@ -262,7 +259,7 @@ Future<bool?> _confirmSubmit(BuildContext context) {
           surfaceTintColor: Colors.transparent,
           shape: const RoundedRectangleBorder(borderRadius: _cardRadius),
           title: Text(
-            'Natijani yuborasizmi?',
+            context.l10n.checkupConfirmTitle,
             style: GoogleFonts.manrope(
               fontSize: 20,
               fontWeight: FontWeight.w800,
@@ -270,8 +267,7 @@ Future<bool?> _confirmSubmit(BuildContext context) {
             ),
           ),
           content: Text(
-            "Yuborgach, keyingi tekshiruv ${checkupCooldown.inDays} kundan "
-            "so'ng ochiladi.",
+            context.l10n.checkupConfirmBody(checkupCooldown.inDays),
             style: GoogleFonts.manrope(
               fontSize: 15,
               height: 1.5,
@@ -282,7 +278,7 @@ Future<bool?> _confirmSubmit(BuildContext context) {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Bekor qilish'),
+              child: Text(context.l10n.cancel),
             ),
             FilledButton(
               key: const ValueKey('checkup-confirm-submit'),
@@ -292,7 +288,7 @@ Future<bool?> _confirmSubmit(BuildContext context) {
                 minimumSize: const Size(0, 44),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
               ),
-              child: const Text('Yuborish'),
+              child: Text(context.l10n.checkupConfirmSubmit),
             ),
           ],
         ),
@@ -352,7 +348,7 @@ class _AnsweredCounter extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Javoblar',
+                  context.l10n.checkupAnswers,
                   style: GoogleFonts.manrope(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
@@ -421,7 +417,7 @@ class _SubmitButton extends StatelessWidget {
                     color: Colors.white,
                   ),
                 )
-                : const Text('Submit check-up'),
+                : Text(context.l10n.checkupSubmit),
       ),
     );
   }
@@ -458,7 +454,7 @@ class _ResultDialog extends StatelessWidget {
         ),
       ),
       title: Text(
-        'Your level: ${result.cefrLevel}',
+        context.l10n.checkupResultTitle(result.cefrLevel),
         textAlign: TextAlign.center,
         style: GoogleFonts.manrope(
           fontSize: 22,
@@ -467,8 +463,11 @@ class _ResultDialog extends StatelessWidget {
         ),
       ),
       content: Text(
-        '${result.score}/${result.total} correct. Your next level check '
-        'opens in ${checkupCooldown.inDays} days.',
+        context.l10n.checkupResultBody(
+          result.score,
+          result.total,
+          checkupCooldown.inDays,
+        ),
         textAlign: TextAlign.center,
         style: GoogleFonts.manrope(
           fontSize: 15,
@@ -481,7 +480,7 @@ class _ResultDialog extends StatelessWidget {
         FilledButton(
           onPressed: () => Navigator.of(context).pop(),
           style: FilledButton.styleFrom(backgroundColor: AppColors.deepPurple),
-          child: const Text('OK'),
+          child: Text(context.l10n.ok),
         ),
       ],
     );
@@ -517,7 +516,7 @@ class _GrowthHistory extends ConsumerWidget {
                 for (final entry in recent)
                   _GrowthPoint(
                     level: entry.cefrLevel,
-                    label: _dateLabel(entry.takenAt),
+                    label: _dateLabel(entry.takenAt, context.l10n.localeName),
                   ),
               ],
               levelsGained: gained,
@@ -527,10 +526,9 @@ class _GrowthHistory extends ConsumerWidget {
   }
 }
 
-String _dateLabel(DateTime date) {
-  final local = date.toLocal();
-  return '${local.day} ${_months[local.month - 1]}';
-}
+/// Day and short month in the app's language, e.g. "22 Sep".
+String _dateLabel(DateTime date, String locale) =>
+    DateFormat('d MMM', locale).format(date.toLocal());
 
 class _Header extends StatelessWidget {
   const _Header();
@@ -541,7 +539,7 @@ class _Header extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'YOUR TRUE LEVEL',
+          context.l10n.checkupEyebrow,
           style: GoogleFonts.manrope(
             fontSize: 13,
             fontWeight: FontWeight.w800,
@@ -551,7 +549,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          'Daraja Tekshiruvi',
+          context.l10n.checkupTitle,
           style: GoogleFonts.manrope(
             fontSize: 28,
             height: 1.15,
@@ -672,7 +670,7 @@ class _InfoCard extends StatelessWidget {
               ),
               const Spacer(),
               _Pill(
-                label: '≈ $estimatedMinutes min',
+                label: context.l10n.checkupMinutes(estimatedMinutes),
                 background: Colors.white.withValues(alpha: 0.12),
                 foreground: Colors.white,
               ),
@@ -680,7 +678,7 @@ class _InfoCard extends StatelessWidget {
           ),
           const SizedBox(height: 28),
           Text(
-            '$questionCount questions from A1 to C2',
+            context.l10n.checkupQuestionRange(questionCount),
             style: GoogleFonts.manrope(
               fontSize: 24,
               height: 1.2,
@@ -691,7 +689,7 @@ class _InfoCard extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Your level is the highest one you pass in order, from A1 up.',
+            context.l10n.checkupLevelRule,
             style: GoogleFonts.manrope(
               fontSize: 15,
               height: 1.55,
@@ -732,7 +730,7 @@ class _CooldownCard extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           Text(
-            'Next level check in',
+            context.l10n.checkupNextIn,
             style: GoogleFonts.manrope(
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -741,7 +739,7 @@ class _CooldownCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '$daysRemaining ${daysRemaining == 1 ? 'day' : 'days'}',
+            context.l10n.checkupDays(daysRemaining),
             style: GoogleFonts.manrope(
               fontSize: 46,
               height: 1.2,
@@ -752,7 +750,7 @@ class _CooldownCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'A cooldown protects your result from short-term practice effects.',
+            context.l10n.checkupCooldownNote,
             textAlign: TextAlign.center,
             style: GoogleFonts.manrope(
               fontSize: 15,
@@ -772,7 +770,7 @@ class _CooldownCard extends StatelessWidget {
                 side: const BorderSide(color: AppColors.track),
                 elevation: 0,
               ),
-              child: const Text('Retake unavailable'),
+              child: Text(context.l10n.checkupRetakeUnavailable),
             ),
           ),
         ],
@@ -813,7 +811,7 @@ class _GrowthChartCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'CEFR growth',
+                      context.l10n.checkupGrowth,
                       style: GoogleFonts.manrope(
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
@@ -823,9 +821,7 @@ class _GrowthChartCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      points.length == 1
-                          ? 'Your last check'
-                          : 'Your last ${points.length} checks',
+                      context.l10n.checkupLastChecks(points.length),
                       style: GoogleFonts.manrope(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -837,7 +833,7 @@ class _GrowthChartCard extends StatelessWidget {
               ),
               if (gained > 0)
                 _Pill(
-                  label: '+$gained ${gained == 1 ? 'level' : 'levels'}',
+                  label: context.l10n.checkupLevelsGained(gained),
                   background: AppColors.successSoft,
                   foreground: AppColors.successDark,
                 ),
@@ -913,7 +909,7 @@ class _GrowthEmptyCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'CEFR growth',
+            context.l10n.checkupGrowth,
             style: GoogleFonts.manrope(
               fontSize: 20,
               fontWeight: FontWeight.w800,
@@ -923,7 +919,7 @@ class _GrowthEmptyCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            "Testni yechgach o'sish grafigi paydo bo'ladi",
+            context.l10n.checkupChartEmpty,
             textAlign: TextAlign.center,
             style: GoogleFonts.manrope(
               fontSize: 15,

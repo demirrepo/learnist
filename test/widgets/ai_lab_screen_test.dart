@@ -8,11 +8,17 @@ import 'package:learnist/services/openai_service.dart';
 import 'package:learnist/widgets/ai_lab/ai_course_list.dart';
 
 import '../support/fake_openai_service.dart';
+import '../support/l10n.dart';
 
 /// The AI Lab with [ai] answering the prompt checker.
 Widget _aiLab(FakeOpenAIService ai) => ProviderScope(
   overrides: [openaiServiceProvider.overrideWithValue(ai)],
-  child: const MaterialApp(home: AiLabScreen()),
+  child: const MaterialApp(
+    locale: testLocale,
+    localizationsDelegates: testLocalizationsDelegates,
+    supportedLocales: testSupportedLocales,
+    home: AiLabScreen(),
+  ),
 );
 
 void main() {
@@ -29,17 +35,24 @@ void main() {
           size: Size(320, 640),
           textScaler: TextScaler.linear(1.3),
         ),
-        child: ProviderScope(child: MaterialApp(home: AiLabScreen())),
+        child: ProviderScope(
+          child: MaterialApp(
+            locale: testLocale,
+            localizationsDelegates: testLocalizationsDelegates,
+            supportedLocales: testSupportedLocales,
+            home: AiLabScreen(),
+          ),
+        ),
       ),
     );
 
-    expect(find.text('PROMPT LITERACY'), findsOneWidget);
-    for (final part in ['Role', 'Task', 'Level', 'Context', 'Format']) {
+    expect(find.text('PROMPT SAVODXONLIGI'), findsOneWidget);
+    for (final part in ['Rol', 'Vazifa', 'Daraja', 'Kontekst', 'Format']) {
       expect(find.text(part), findsWidgets);
     }
 
     await tester.scrollUntilVisible(
-      find.text('Examples & Tone'),
+      find.text('Namuna va ohang'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
@@ -52,13 +65,13 @@ void main() {
     (tester) async {
       await tester.pumpWidget(_aiLab(FakeOpenAIService()));
 
-      expect(find.text('Prompt checker'), findsOneWidget);
+      expect(find.text('Prompt tekshiruvi'), findsOneWidget);
       expect(
-        find.widgetWithText(TextField, 'Write a prompt...'),
+        find.widgetWithText(TextField, 'Prompt yozing...'),
         findsOneWidget,
       );
       expect(
-        find.widgetWithText(FilledButton, 'Check my prompt'),
+        find.widgetWithText(FilledButton, 'Promptimni tekshirish'),
         findsOneWidget,
       );
       expect(find.byType(MarkdownBody), findsNothing);
@@ -73,15 +86,15 @@ void main() {
     await tester.pumpWidget(_aiLab(ai));
 
     await tester.enterText(find.byType(TextField), '   ');
-    await tester.ensureVisible(find.text('Check my prompt'));
-    await tester.tap(find.text('Check my prompt'));
+    await tester.ensureVisible(find.text('Promptimni tekshirish'));
+    await tester.tap(find.text('Promptimni tekshirish'));
     await tester.pump();
 
     expect(find.text('Avval promptingizni yozing.'), findsOneWidget);
     expect(find.byType(MarkdownBody), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsNothing);
     final button = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, 'Check my prompt'),
+      find.widgetWithText(FilledButton, 'Promptimni tekshirish'),
     );
     expect(button.onPressed, isNotNull);
   });
@@ -93,8 +106,8 @@ void main() {
     await tester.pumpWidget(_aiLab(ai));
 
     await tester.enterText(find.byType(TextField), 'Write a poem');
-    await tester.ensureVisible(find.text('Check my prompt'));
-    await tester.tap(find.text('Check my prompt'));
+    await tester.ensureVisible(find.text('Promptimni tekshirish'));
+    await tester.tap(find.text('Promptimni tekshirish'));
     await tester.pumpAndSettle();
 
     expect(ai.prompts, ['Write a poem']);

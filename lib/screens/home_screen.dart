@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../l10n/l10n.dart';
 import '../models/user_progress.dart';
 import '../models/user_stats.dart';
 import '../router.dart';
@@ -17,47 +18,50 @@ import '../widgets/home/snapshot_grid.dart';
 
 const _pagePadding = 20.0;
 
-// Placeholder content copied from the design mockup until real data exists.
-const _learningSpaceItems = [
+List<LearningSpaceItem> _learningSpaceItems(AppLocalizations l10n) => [
   LearningSpaceItem(
     icon: LucideIcons.bookOpen,
-    title: 'Mavzular',
-    subtitle: '52 lessons',
+    title: l10n.navTopics,
+    subtitle: l10n.homeLessonCount(UserProgress.lastLesson),
     route: AppRoutes.topics,
   ),
   LearningSpaceItem(
     icon: LucideIcons.bot,
-    title: 'AI Lab',
-    subtitle: 'Prompt better',
+    title: l10n.navAiLab,
+    subtitle: l10n.homePromptBetter,
     route: AppRoutes.aiLab,
   ),
   LearningSpaceItem(
     icon: LucideIcons.target,
-    title: 'Check-up',
-    subtitle: 'CEFR test',
+    title: l10n.navCheckup,
+    subtitle: l10n.homeCefrTest,
     route: AppRoutes.levelCheck,
   ),
 ];
 
-List<SnapshotStat> _snapshotStats(UserProgress progress, UserStats stats) => [
+List<SnapshotStat> _snapshotStats(
+  AppLocalizations l10n,
+  UserProgress progress,
+  UserStats stats,
+) => [
   SnapshotStat(
     value: '${stats.lessonsMastered}/${UserProgress.lastLesson}',
-    label: 'Lessons mastered',
+    label: l10n.statLessonsMastered,
     icon: LucideIcons.bookOpen,
   ),
   SnapshotStat(
     value: '${progress.currentLesson}',
-    label: 'Current lesson',
+    label: l10n.statCurrentLesson,
     icon: LucideIcons.play,
   ),
   SnapshotStat(
-    value: progress.cefrLevel ?? 'N/A',
-    label: 'CEFR estimate',
+    value: progress.cefrLevel ?? l10n.notAvailable,
+    label: l10n.statCefrEstimate,
     icon: LucideIcons.shieldCheck,
   ),
   SnapshotStat(
     value: '${stats.trackedMistakes}',
-    label: 'Tracked mistakes',
+    label: l10n.statTrackedMistakes,
     icon: LucideIcons.rotateCcw,
   ),
 ];
@@ -73,6 +77,7 @@ class HomeScreen extends ConsumerWidget {
         ref.watch(userProgressProvider).value ?? const UserProgress();
     final stats = ref.watch(userStatsProvider).value ?? const UserStats();
     final lesson = progress.currentLesson;
+    final l10n = context.l10n;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -86,7 +91,7 @@ class HomeScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
                 child: HomeHeader(
-                  greeting: greetingFor(DateTime.now()),
+                  greeting: greetingFor(DateTime.now(), l10n),
                   firstName: firstNameFrom(fullName),
                   cefrLevel: progress.cefrLevel,
                 ),
@@ -96,10 +101,8 @@ class HomeScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
                 child: HeroBannerCard(
                   masteryPercent: stats.currentLessonMastery,
-                  headline:
-                      'Your English grows every time you understand a mistake.',
-                  subtitle:
-                      'Keep the momentum going with your next guided practice.',
+                  headline: l10n.homeHeadline,
+                  subtitle: l10n.homeSubtitle,
                   nextLessonNumber: lesson,
                   onContinue:
                       () => context.push(AppRoutes.lessonDetailFor(lesson)),
@@ -108,20 +111,22 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               LearningSpaceSection(
-                items: _learningSpaceItems,
+                items: _learningSpaceItems(l10n),
                 horizontalPadding: _pagePadding,
                 onItemTap: (item) => context.go(item.route),
               ),
               const SizedBox(height: 32),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
-                child: SnapshotGrid(stats: _snapshotStats(progress, stats)),
+                child: SnapshotGrid(
+                  stats: _snapshotStats(l10n, progress, stats),
+                ),
               ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
                 child: LessonMasteryProgress(
-                  lessonLabel: 'Lesson $lesson',
+                  lessonLabel: l10n.lessonLabel(lesson),
                   progress: stats.currentLessonMastery / 100,
                 ),
               ),
@@ -142,8 +147,8 @@ String firstNameFrom(String? fullName) {
 }
 
 @visibleForTesting
-String greetingFor(DateTime now) => switch (now.hour) {
-  >= 5 && < 12 => 'Good morning',
-  >= 12 && < 17 => 'Good afternoon',
-  _ => 'Good evening',
+String greetingFor(DateTime now, AppLocalizations l10n) => switch (now.hour) {
+  >= 5 && < 12 => l10n.greetingMorning,
+  >= 12 && < 17 => l10n.greetingAfternoon,
+  _ => l10n.greetingEvening,
 };

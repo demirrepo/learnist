@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lesson_model.dart';
 import '../models/user_progress.dart';
 import '../router.dart';
@@ -64,16 +65,12 @@ class _TopicsScreenState extends ConsumerState<TopicsScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Row(
               children: [
-                Icon(LucideIcons.lock, color: Colors.white, size: 18),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    "Qulflangan. Bu dars oldingi darslarni tugatgach ochiladi.",
-                  ),
-                ),
+                const Icon(LucideIcons.lock, color: Colors.white, size: 18),
+                const SizedBox(width: 12),
+                Expanded(child: Text(context.l10n.topicLockedMessage)),
               ],
             ),
           ),
@@ -166,7 +163,7 @@ class _TopicsScreenState extends ConsumerState<TopicsScreen> {
         _CenteredSliver(
           child: LoadProblemView(
             icon: LucideIcons.bookOpen,
-            message: 'Hozircha darslar topilmadi.',
+            message: context.l10n.topicsEmpty,
             onRetry: _retry,
           ),
         ),
@@ -247,7 +244,7 @@ class _Header extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'MAVZULAR',
+          context.l10n.topicsEyebrow,
           style: GoogleFonts.manrope(
             fontSize: 12.5,
             fontWeight: FontWeight.w800,
@@ -257,7 +254,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          '52-lesson pathway',
+          context.l10n.topicsTitle,
           style: GoogleFonts.manrope(
             fontSize: 28,
             height: 1.15,
@@ -268,7 +265,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Semester 1: Lessons 1-30 • Semester 2: Lessons 31-52',
+          context.l10n.topicsSemesters,
           style: GoogleFonts.manrope(
             fontSize: 14,
             height: 1.4,
@@ -285,8 +282,8 @@ class _Header extends StatelessWidget {
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
-          decoration: const InputDecoration(
-            hintText: 'Search lessons',
+          decoration: InputDecoration(
+            hintText: context.l10n.topicsSearchHint,
             prefixIcon: Icon(LucideIcons.search, size: 20),
             contentPadding: EdgeInsets.symmetric(vertical: 16),
           ),
@@ -307,7 +304,7 @@ class _SemesterTitle extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: first ? 0 : 12, bottom: 12),
       child: Text(
-        'Semester $semester',
+        context.l10n.semesterLabel(semester),
         style: GoogleFonts.manrope(
           fontSize: 17,
           fontWeight: FontWeight.w800,
@@ -347,7 +344,7 @@ class _EmptyResults extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
       child: Text(
-        'No lessons match your search.',
+        context.l10n.topicsNoMatch,
         textAlign: TextAlign.center,
         style: GoogleFonts.manrope(
           fontSize: 14,

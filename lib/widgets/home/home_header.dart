@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 
 /// Greeting on the left; CEFR badge on the right.
@@ -27,7 +28,7 @@ class HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Welcome back',
+                context.l10n.homeWelcomeBack,
                 style: GoogleFonts.manrope(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
@@ -37,7 +38,7 @@ class HomeHeader extends StatelessWidget {
               const SizedBox(height: 2),
               // Wraps instead of truncating the name on narrow phones.
               Text(
-                '$greeting, $firstName 👋',
+                context.l10n.homeGreeting(greeting, firstName),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.manrope(
@@ -65,13 +66,14 @@ class _CefrBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final level = this.level;
     final colors = cefrColors(level);
 
     return Semantics(
       label:
           level == null
-              ? "CEFR daraja: hali aniqlanmagan"
-              : 'CEFR daraja: $level',
+              ? context.l10n.homeCefrBadgeUnknown
+              : context.l10n.homeCefrBadge(level),
       excludeSemantics: true,
       child: Container(
         key: const ValueKey('home-cefr-badge'),
@@ -83,7 +85,7 @@ class _CefrBadge extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Text(
-          level ?? 'N/A',
+          level ?? context.l10n.notAvailable,
           style: GoogleFonts.manrope(
             fontSize: level == null ? 12 : 14,
             fontWeight: FontWeight.w800,

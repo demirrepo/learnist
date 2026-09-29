@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../models/lesson_model.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 
 /// White roadmap card: lesson number (or a lock) on the left; title, grammar
@@ -26,13 +27,14 @@ class TopicCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const radius = BorderRadius.all(Radius.circular(16));
+    final l10n = context.l10n;
 
     return Semantics(
       button: true,
       label:
           '$displayTitle. ${lesson.grammarFocus}. '
-          'CEFR ${lesson.cefrLevel}. Semester ${lesson.semester}'
-          '${locked ? '. Qulflangan' : ''}',
+          'CEFR ${lesson.cefrLevel}. ${l10n.semesterLabel(lesson.semester)}'
+          '${locked ? '. ${l10n.topicLocked}' : ''}',
       excludeSemantics: true,
       child: Material(
         color: AppColors.surface,
@@ -154,7 +156,7 @@ class _Details extends StatelessWidget {
               colors: cefrColors(lesson.cefrLevel),
             ),
             _Pill(
-              label: 'Semester ${lesson.semester}',
+              label: context.l10n.semesterLabel(lesson.semester),
               colors: (
                 background: AppColors.primarySoft,
                 foreground: AppColors.primary,

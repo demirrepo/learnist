@@ -7,9 +7,7 @@ import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// The shared [OpenAIService]; overridden with a fake in tests.
-final openaiServiceProvider = Provider<OpenAIService>(
-  (ref) => OpenAIService(),
-);
+final openaiServiceProvider = Provider<OpenAIService>((ref) => OpenAIService());
 
 /// Thrown when an AI request can't be completed. [message] is already
 /// user-facing (Uzbek), so the UI can show it as-is. [statusCode] is set when
@@ -130,8 +128,9 @@ const _offline = OpenAIException(
 /// Reads `content` from an `evaluate_task` response. Throws an
 /// [OpenAIException] if it is missing or blank.
 String parseFunctionReply(Object? data) {
-  if (data case {'content': final String content}
-      when content.trim().isNotEmpty) {
+  if (data case {
+    'content': final String content,
+  } when content.trim().isNotEmpty) {
     return content.trim();
   }
   throw const OpenAIException(

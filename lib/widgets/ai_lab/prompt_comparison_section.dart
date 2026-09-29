@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 import 'ai_lab_common.dart';
 
@@ -11,29 +12,28 @@ class PromptComparisonSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final l10n = context.l10n;
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AiLabSectionHeader(
-          title: 'Bad prompt → better prompt',
-          subtitle: 'Same question, very different answers.',
+          title: l10n.comparisonTitle,
+          subtitle: l10n.comparisonSubtitle,
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         _PromptExampleCard(
+          // An English prompt, so it stays English in every language.
           prompt: 'Why answer B?',
-          note:
-              'No role, no context, no level. The AI has to guess what '
-              'you need, so the answer is vague.',
+          note: l10n.comparisonBadNote,
           icon: LucideIcons.xCircle,
           background: AppColors.dangerSoft,
           foreground: AppColors.dangerDark,
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         _PromptExampleCard(
           prompt: examplePrompt,
-          note:
-              'Role + question context + level + format. The AI knows '
-              'exactly how to help you.',
+          note: l10n.comparisonGoodNote,
           icon: LucideIcons.checkCircle2,
           background: AppColors.successSoft,
           foreground: AppColors.successDark,

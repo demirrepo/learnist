@@ -24,6 +24,7 @@ import '../support/fake_lesson_service.dart';
 import '../support/fake_openai_service.dart';
 import '../support/fake_progress_service.dart';
 import '../support/fake_speech_recorder.dart';
+import '../support/l10n.dart';
 
 /// The progress providers only listen to the auth service for changes.
 class _AuthStub extends ChangeNotifier implements SupabaseService {
@@ -58,6 +59,10 @@ Future<void> _pump(
         ),
       ],
       child: MaterialApp(
+        locale: testLocale,
+        localizationsDelegates: testLocalizationsDelegates,
+        supportedLocales: testSupportedLocales,
+
         theme: AppTheme.light,
         home: LessonDetailScreen(lessonId: lessonId),
       ),

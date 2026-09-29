@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 import 'ai_lab_common.dart';
 
@@ -18,45 +19,42 @@ class AiCourseStep {
   final String example;
 }
 
-// Placeholder course content until it comes from the backend.
-const _steps = [
+/// Placeholder course content until it comes from the backend. The
+/// examples are English prompts, so they stay English in every language.
+List<AiCourseStep> _steps(AppLocalizations l10n) => [
   AiCourseStep(
-    title: 'Prompt nima?',
-    description:
-        'A prompt is the message you send to an AI. The clearer it '
-        'is, the more useful the answer.',
+    title: l10n.aiStepWhatTitle,
+    description: l10n.aiStepWhatBody,
     example: 'Explain the present perfect.',
   ),
   AiCourseStep(
-    title: 'Role',
-    description: 'Tell the AI who to be, so it answers like an expert.',
+    title: l10n.promptPartRole,
+    description: l10n.aiStepRoleBody,
     example: 'You are an IELTS speaking examiner.',
   ),
   AiCourseStep(
-    title: 'Task',
-    description: 'Say exactly what you want it to do.',
+    title: l10n.promptPartTask,
+    description: l10n.aiStepTaskBody,
     example: 'Check my essay for tense mistakes.',
   ),
   AiCourseStep(
-    title: 'Level',
-    description: 'Give your English level so the answer fits you.',
+    title: l10n.promptPartLevel,
+    description: l10n.aiStepLevelBody,
     example: "I'm a B1 learner. Use simple words.",
   ),
   AiCourseStep(
-    title: 'Context',
-    description: 'Share the background: the text, the question, your goal.',
+    title: l10n.promptPartContext,
+    description: l10n.aiStepContextBody,
     example: 'This is question 4 from a reading test.',
   ),
   AiCourseStep(
-    title: 'Format',
-    description:
-        'Ask for the shape of the answer: a list, a table or a '
-        'short paragraph.',
+    title: l10n.promptPartFormat,
+    description: l10n.aiStepFormatBody,
     example: 'Answer in 3 bullet points.',
   ),
   AiCourseStep(
-    title: 'Examples & Tone',
-    description: 'Show an example and choose the tone you want.',
+    title: l10n.aiStepExamplesTitle,
+    description: l10n.aiStepExamplesBody,
     example: 'Be friendly and give one example sentence.',
   ),
 ];
@@ -67,23 +65,26 @@ class AiCourseList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final steps = _steps(l10n);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AiLabSectionHeader(
-          title: 'AI course',
-          subtitle: '${_steps.length} short steps to a strong prompt.',
+          title: l10n.aiCourseTitle,
+          subtitle: l10n.aiCourseSubtitle(steps.length),
         ),
         const SizedBox(height: 16),
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
-          itemCount: _steps.length,
+          itemCount: steps.length,
           itemBuilder:
               (context, index) => Padding(
                 padding: EdgeInsets.only(top: index == 0 ? 0 : 12),
-                child: AiCourseStepCard(number: index + 1, step: _steps[index]),
+                child: AiCourseStepCard(number: index + 1, step: steps[index]),
               ),
         ),
       ],

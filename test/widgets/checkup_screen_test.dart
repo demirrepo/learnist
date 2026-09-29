@@ -11,6 +11,7 @@ import 'package:learnist/widgets/lesson/lesson_quiz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../support/fake_progress_service.dart';
+import '../support/l10n.dart';
 
 final _now = DateTime(2026, 9, 22, 12);
 
@@ -31,7 +32,12 @@ Future<void> _pump(WidgetTester tester, FakeProgressService service) async {
         supabaseServiceProvider.overrideWithValue(_AuthStub()),
         progressServiceProvider.overrideWithValue(service),
       ],
-      child: MaterialApp(home: CheckUpScreen(clock: () => _now)),
+      child: MaterialApp(
+        locale: testLocale,
+        localizationsDelegates: testLocalizationsDelegates,
+        supportedLocales: testSupportedLocales,
+        home: CheckUpScreen(clock: () => _now),
+      ),
     ),
   );
   await tester.pumpAndSettle();
@@ -80,10 +86,10 @@ void main() {
     await _pump(tester, FakeProgressService());
 
     expect(find.byType(QuizQuestionCard), findsNWidgets(30));
-    expect(find.text('Submit check-up'), findsOneWidget);
+    expect(find.text('Tekshiruvni yuborish'), findsOneWidget);
     expect(find.text('0 / 30'), findsOneWidget);
-    expect(find.text('Next level check in'), findsNothing);
-    expect(find.text('CEFR growth'), findsNothing);
+    expect(find.text('Keyingi tekshiruvgacha'), findsNothing);
+    expect(find.text('CEFR o\'sishi'), findsNothing);
   });
 
   testWidgets('submitting with unanswered questions asks for all answers', (
@@ -133,26 +139,29 @@ void main() {
     expect(service.lastSubmitted, {
       for (final question in seedCheckupQuestions) question.id: 1,
     });
-    expect(find.text('Your level: B1'), findsOneWidget);
-    expect(find.textContaining('17/30 correct'), findsOneWidget);
+    expect(find.text('Darajangiz: B1'), findsOneWidget);
+    expect(find.textContaining('17/30 to\'g\'ri'), findsOneWidget);
 
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
 
     // Refetched: the cooldown card and the chart with the new point.
     expect(find.byType(QuizQuestionCard), findsNothing);
-    expect(find.text('10 days'), findsOneWidget);
+    expect(find.text('10 kun'), findsOneWidget);
     expect(
       tester
           .widget<FilledButton>(
-            find.widgetWithText(FilledButton, 'Retake unavailable'),
+            find.widgetWithText(
+              FilledButton,
+              'Hozircha qayta topshirib bo\'lmaydi',
+            ),
           )
           .onPressed,
       isNull,
     );
-    expect(find.text('Your last 2 checks'), findsOneWidget);
-    expect(find.text('+1 level'), findsOneWidget);
-    expect(find.text('B1 · 22 Sep'), findsOneWidget);
+    expect(find.text('Oxirgi 2 ta tekshiruvingiz'), findsOneWidget);
+    expect(find.text('+1 daraja'), findsOneWidget);
+    expect(find.text('B1 · 22 sen'), findsOneWidget);
   });
 
   testWidgets('a server-side cooldown refreshes into the cooldown state', (
@@ -175,7 +184,7 @@ void main() {
       find.text('Keyingi daraja tekshiruvi hali ochilmagan.'),
       findsOneWidget,
     );
-    expect(find.text('9 days'), findsOneWidget);
+    expect(find.text('9 kun'), findsOneWidget);
   });
 
   testWidgets('a failed submission keeps the answers for a retry', (
@@ -193,7 +202,7 @@ void main() {
 
     service.submitError = null;
     await _submitAndConfirm(tester);
-    expect(find.text('Your level: B1'), findsOneWidget);
+    expect(find.text('Darajangiz: B1'), findsOneWidget);
   });
 
   testWidgets('cooldown: countdown and history chart, no questions fetched', (
@@ -212,11 +221,11 @@ void main() {
     );
     await _pump(tester, service);
 
-    expect(find.text('7 days'), findsOneWidget);
-    expect(find.text('Submit check-up'), findsNothing);
-    expect(find.text('Your last 3 checks'), findsOneWidget);
-    expect(find.text('+2 levels'), findsOneWidget);
-    expect(find.text('A2 · 1 Aug'), findsOneWidget);
+    expect(find.text('7 kun'), findsOneWidget);
+    expect(find.text('Tekshiruvni yuborish'), findsNothing);
+    expect(find.text('Oxirgi 3 ta tekshiruvingiz'), findsOneWidget);
+    expect(find.text('+2 daraja'), findsOneWidget);
+    expect(find.text('A2 · 1 avg'), findsOneWidget);
     expect(service.questionFetches, 0);
   });
 
@@ -236,8 +245,8 @@ void main() {
     );
     await _pump(tester, service);
 
-    expect(find.text('Your last 6 checks'), findsOneWidget);
-    expect(find.text('A1 · 3 Jan'), findsNothing);
+    expect(find.text('Oxirgi 6 ta tekshiruvingiz'), findsOneWidget);
+    expect(find.text('A1 · 3 yan'), findsNothing);
   });
 
   testWidgets('cooldown without history shows the empty chart state', (
@@ -253,7 +262,7 @@ void main() {
       ),
     );
 
-    expect(find.text('1 day'), findsOneWidget);
+    expect(find.text('1 kun'), findsOneWidget);
     expect(
       find.text("Testni yechgach o'sish grafigi paydo bo'ladi"),
       findsOneWidget,
@@ -272,7 +281,7 @@ void main() {
     );
 
     expect(find.byType(QuizQuestionCard), findsNWidgets(30));
-    expect(find.text('Retake unavailable'), findsNothing);
+    expect(find.text('Hozircha qayta topshirib bo\'lmaydi'), findsNothing);
   });
 
   testWidgets('load failures show an Uzbek message and retry', (tester) async {

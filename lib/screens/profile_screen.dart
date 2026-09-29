@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../l10n/l10n.dart';
 import '../models/user_progress.dart';
 import '../models/user_stats.dart';
 import '../providers/app_language_provider.dart';
@@ -25,28 +26,30 @@ const _cardDecoration = BoxDecoration(
   ],
 );
 
-List<_Stat> _statsFrom(UserStats stats) => [
+List<_Stat> _statsFrom(AppLocalizations l10n, UserStats stats) => [
   _Stat(
     icon: LucideIcons.trophy,
     value: '${stats.lessonsMastered}/${UserProgress.lastLesson}',
-    label: "O'rganilgan mavzular",
+    label: l10n.profileTopicsMastered,
   ),
   _Stat(
     icon: LucideIcons.target,
     value: '${stats.overallAverage}%',
-    label: "O'rtacha natija",
+    label: l10n.profileAverageResult,
   ),
 ];
 
-const _settings = [
+List<({IconData icon, String label, String route})> _settings(
+  AppLocalizations l10n,
+) => [
   (
     icon: LucideIcons.userCog,
-    label: 'Tahrirlash',
+    label: l10n.profileEdit,
     route: AppRoutes.editProfile,
   ),
   (
     icon: Icons.troubleshoot,
-    label: 'Xatolar xaritasi',
+    label: l10n.profileErrorMap,
     route: AppRoutes.errorMap,
   ),
 ];
@@ -64,7 +67,7 @@ class ProfileScreen extends ConsumerWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-          'Profil',
+          context.l10n.profileTitle,
           style: GoogleFonts.manrope(
             fontSize: 18,
             fontWeight: FontWeight.w800,
@@ -93,7 +96,7 @@ class ProfileScreen extends ConsumerWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            _StatsRow(stats: _statsFrom(stats)),
+            _StatsRow(stats: _statsFrom(context.l10n, stats)),
             const SizedBox(height: 24),
             // Groups are joined by students; teachers create them.
             _SettingsCard(showJoinGroup: !auth.isTeacher),
@@ -147,7 +150,7 @@ class ProfileHeader extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            fullName ?? 'Foydalanuvchi',
+            fullName ?? context.l10n.profileDefaultName,
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -174,7 +177,9 @@ class ProfileHeader extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 14),
-          _UniversityBadge(label: university ?? 'Talaba'),
+          _UniversityBadge(
+            label: university ?? context.l10n.profileDefaultUniversity,
+          ),
         ],
       ),
     );
@@ -189,7 +194,7 @@ class _UniversityBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'Universitet: $label',
+      label: context.l10n.profileUniversity(label),
       excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -324,7 +329,7 @@ class _SettingsCard extends ConsumerWidget {
         color: Colors.transparent,
         child: Column(
           children: [
-            for (final setting in _settings) ...[
+            for (final setting in _settings(context.l10n)) ...[
               _SettingsTile(
                 icon: setting.icon,
                 label: setting.label,
@@ -335,14 +340,14 @@ class _SettingsCard extends ConsumerWidget {
             if (showJoinGroup) ...[
               _SettingsTile(
                 icon: LucideIcons.users,
-                label: "Guruhga qo'shilish",
+                label: context.l10n.profileJoinGroup,
                 onTap: () => showJoinGroupDialog(context),
               ),
               divider,
             ],
             _SettingsTile(
               icon: Icons.language,
-              label: 'Til',
+              label: context.l10n.profileLanguage,
               value: appLanguageLabel(language),
               onTap: () => _openLanguageSheet(context),
             ),
@@ -441,7 +446,7 @@ class _LanguageSheet extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
-                'Tilni tanlang',
+                context.l10n.profileChooseLanguage,
                 style: GoogleFonts.manrope(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -548,7 +553,7 @@ class _SignOutButtonState extends State<_SignOutButton> {
                 ),
               )
               : const Icon(LucideIcons.logOut, size: 20),
-      label: const Text('Tizimdan chiqish'),
+      label: Text(context.l10n.profileSignOut),
     );
   }
 }
