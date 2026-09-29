@@ -5,13 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:learnist/main.dart';
 import 'package:learnist/models/teacher_dashboard.dart';
+import 'package:learnist/models/tracked_mistake.dart';
 import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/models/user_stats.dart';
+import 'package:learnist/providers/app_language_provider.dart';
 import 'package:learnist/screens/ai_lab_screen.dart';
 import 'package:learnist/screens/auth_screen.dart';
 import 'package:learnist/screens/edit_profile_screen.dart';
@@ -632,6 +635,21 @@ void main() {
       expect(find.text('English'), findsOneWidget);
       expect(find.text("O'zbekcha"), findsNothing);
       expect(find.byType(LearnistNavBar), findsOneWidget);
+
+      // Reopened, the check follows the provider.
+      await _tapVisible(tester, find.text('Til'));
+      final checked = find.ancestor(
+        of: find.byIcon(Icons.check_circle),
+        matching: find.byType(ListTile),
+      );
+      expect(
+        find.descendant(of: checked, matching: find.text('English')),
+        findsOneWidget,
+      );
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ProfileScreen)),
+      );
+      expect(container.read(appLanguageProvider), 'en');
     });
 
     group('join group', () {
@@ -740,6 +758,30 @@ void main() {
       });
     });
 
+    testWidgets('switching tabs closes an open language sheet', (tester) async {
+      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+      await _tapVisible(tester, find.text('Til'));
+      expect(find.text('Tilni tanlang'), findsOneWidget);
+
+      // The sheet opens on the tab navigator, so the bar stays tappable.
+      await tester.tap(
+        find.descendant(
+          of: find.byType(LearnistNavBar),
+          matching: find.text('AI Lab'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AiLabScreen), findsOneWidget);
+      expect(find.text('Tilni tanlang'), findsNothing);
+
+      // Back on Profile, nothing is left floating either.
+      await tester.tap(find.text('Profile'));
+      await tester.pumpAndSettle();
+      expect(find.byType(ProfileScreen), findsOneWidget);
+      expect(find.text('Tilni tanlang'), findsNothing);
+    });
+
     testWidgets('error map is a menu item, not embedded in the profile', (
       tester,
     ) async {
@@ -750,27 +792,90 @@ void main() {
       expect(find.byIcon(Icons.troubleshoot), findsOneWidget);
     });
 
-    testWidgets('error map lists recurring patterns and opens the lesson', (
-      tester,
+    ({TrackedMistake mistake, bool resolved}) row(
+      int lesson,
+      String section,
+      int index,
+      int frequency, {
+      bool resolved = false,
+    }) => (
+      mistake: TrackedMistake(
+        lessonNumber: lesson,
+        section: section,
+        questionIndex: index,
+        frequency: frequency,
+      ),
+      resolved: resolved,
+    );
+
+    Future<void> openErrorMap(
+      WidgetTester tester,
+      FakeProgressService progress,
     ) async {
       // Tall view so the lazy ListView builds every card.
       tester.view.physicalSize = const Size(800, 1600);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
 
-      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+      await openProfile(
+        tester,
+        _FakeSupabaseService(signedIn: true),
+        progress: progress,
+      );
       await _tapVisible(tester, find.text('Xatolar xaritasi'));
-
       expect(find.byType(ErrorMapScreen), findsOneWidget);
+    }
+
+    Color dotColor(WidgetTester tester, String rule) {
+      final card = find.ancestor(
+        of: find.text(rule),
+        matching: find.byType(ErrorPatternCard),
+      );
+      return tester.widget<ErrorPatternCard>(card).pattern.severity.color;
+    }
+
+    testWidgets('error map lists recurring patterns and opens the lesson', (
+      tester,
+    ) async {
+      await openErrorMap(
+        tester,
+        FakeProgressService(
+          mistakes: [
+            row(1, 'listening', 5, 3),
+            row(1, 'reading', 6, 4),
+            row(1, 'reading', 7, 2),
+            // A single slip is not a pattern yet.
+            row(1, 'reading', 0, 1),
+            // Fixed since: resolved mistakes leave the map.
+            row(1, 'listening', 0, 6, resolved: true),
+          ],
+        ),
+      );
+
       expect(find.byType(LearnistNavBar), findsNothing);
       expect(find.byType(ErrorPatternCard), findsNWidgets(3));
-      expect(find.text('Subject pronouns: am / is / are'), findsOneWidget);
+      // Most frequent first.
+      final rules = tester
+          .widgetList<ErrorPatternCard>(find.byType(ErrorPatternCard))
+          .map((card) => card.pattern.rule);
+      expect(rules, [
+        'Subject pronouns: am / is / are',
+        'Questions with to be: Are you…? / Is he…?',
+        'Vocabulary: orientation',
+      ]);
       expect(
         find.text("So'nggi testlarda 4 marta xato qilingan"),
         findsOneWidget,
       );
-      // A one-off mistake is not a pattern.
-      expect(find.text('Articles: a / an'), findsNothing);
+      expect(find.text('She are a student.'), findsOneWidget);
+      expect(find.text('She is a student.'), findsOneWidget);
+      expect(
+        dotColor(tester, 'Subject pronouns: am / is / are'),
+        AppColors.danger,
+      );
+      expect(dotColor(tester, 'Vocabulary: orientation'), AppColors.warning);
+      expect(find.text('Reading: 1-savol'), findsNothing);
+      expect(find.text('Listening: 1-savol'), findsNothing);
 
       await _tapVisible(tester, find.text('Subject pronouns: am / is / are'));
       expect(find.byType(LessonDetailScreen), findsOneWidget);
@@ -783,6 +888,63 @@ void main() {
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       expect(find.byType(ProfileScreen), findsOneWidget);
+    });
+
+    testWidgets('mistakes missing from the registry get a generic card', (
+      tester,
+    ) async {
+      await openErrorMap(
+        tester,
+        FakeProgressService(mistakes: [row(3, 'listening', 2, 5)]),
+      );
+
+      expect(find.text('Listening: 3-savol'), findsOneWidget);
+      expect(find.text('Lesson 3'), findsOneWidget);
+      expect(find.byIcon(LucideIcons.x), findsNothing);
+      expect(dotColor(tester, 'Listening: 3-savol'), AppColors.danger);
+    });
+
+    testWidgets('no recurring mistakes shows the empty state', (tester) async {
+      await openErrorMap(
+        tester,
+        FakeProgressService(
+          mistakes: [
+            row(1, 'reading', 6, 1),
+            row(1, 'reading', 7, 5, resolved: true),
+          ],
+        ),
+      );
+
+      expect(find.byType(ErrorPatternCard), findsNothing);
+      expect(
+        find.text("Ajoyib! Hozircha takrorlangan xatolar yo'q"),
+        findsOneWidget,
+      );
+      expect(find.byIcon(LucideIcons.badgeCheck), findsOneWidget);
+    });
+
+    testWidgets('a failed load retries into the map', (tester) async {
+      final progress = FakeProgressService(mistakes: [row(1, 'reading', 6, 2)])
+        ..mistakesError = Exception('down');
+      await openErrorMap(tester, progress);
+
+      expect(find.textContaining('Nimadir xato ketdi'), findsOneWidget);
+      progress.mistakesError = null;
+      await _tapVisible(tester, find.text('Qayta urinish'));
+
+      expect(find.text('Subject pronouns: am / is / are'), findsOneWidget);
+    });
+
+    testWidgets('the map refetches after a graded quiz', (tester) async {
+      final progress = FakeProgressService(mistakes: [row(1, 'reading', 6, 1)]);
+      await openErrorMap(tester, progress);
+      expect(find.byType(ErrorPatternCard), findsNothing);
+
+      progress.mistakes[0] = row(1, 'reading', 6, 2);
+      await progress.saveMistakes(1, 'reading', [6]);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Subject pronouns: am / is / are'), findsOneWidget);
     });
 
     test('only recurring patterns are kept, most frequent first', () {

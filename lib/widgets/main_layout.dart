@@ -55,6 +55,12 @@ class MainLayout extends ConsumerWidget {
     final currentIndex = foundIndex < 0 ? 0 : foundIndex;
 
     void onSelected(int index) {
+      // Bottom sheets opened from a tab sit on the tab navigator, below
+      // the bar, so they would otherwise float over the next tab. Only
+      // pageless routes (sheets, dialogs) are popped, never go_router pages.
+      shellNavigatorKey.currentState?.popUntil(
+        (route) => route.settings is Page,
+      );
       if (index != currentIndex) context.go(tabs[index].path);
     }
 

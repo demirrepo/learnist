@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/checkup.dart';
+import '../models/tracked_mistake.dart';
 import '../models/user_progress.dart';
 import '../models/user_stats.dart';
 import 'supabase_service.dart' show isNetworkError, supabaseServiceProvider;
@@ -44,6 +45,18 @@ final userStatsProvider = FutureProvider<UserStats>((ref) {
   return service.fetchStats();
 }, retry: noRetry);
 
+/// Unresolved mistakes made at least twice, most frequent first, for
+/// "Xatolar xaritasi". Refetched after every quiz the service grades, as
+/// well as on auth changes.
+final recurringMistakesProvider = FutureProvider<List<TrackedMistake>>((ref) {
+  refetchOnAuthChange(ref);
+  final service = ref.watch(progressServiceProvider);
+  void refresh() => ref.invalidateSelf();
+  service.addListener(refresh);
+  ref.onDispose(() => service.removeListener(refresh));
+  return service.fetchRecurringMistakes();
+}, retry: noRetry);
+
 /// Past check-ups, oldest first, for the growth chart.
 final checkupHistoryProvider = FutureProvider<List<CheckupHistoryEntry>>((ref) {
   refetchOnAuthChange(ref);
@@ -57,7 +70,8 @@ final checkupQuestionsProvider = FutureProvider<List<CheckupQuestion>>(
   retry: noRetry,
 );
 
-/// Reads `user_progress`, `checkup_history` and `checkup_questions`,
+/// Reads `user_progress`, `checkup_history`, `checkup_questions` and
+/// recurring `user_mistakes`,
 /// submits check-ups through the `submit_checkup` database function,
 /// records section scores through `save_section_score` and quiz mistakes
 /// through `upsert_mistakes`, completes lessons through `complete_lesson`
@@ -101,6 +115,32 @@ class ProgressService extends ChangeNotifier {
       return UserStats.fromJson(json);
     } catch (error, stackTrace) {
       _log('fetchStats', error, stackTrace);
+      rethrow;
+    }
+  }
+
+  /// The signed-in student's unresolved `user_mistakes` with a frequency
+  /// of at least [TrackedMistake.recurringThreshold], most frequent first.
+  Future<List<TrackedMistake>> fetchRecurringMistakes() async {
+    final userId = _userId;
+    if (userId == null) return const [];
+    try {
+      final rows = await _supabase
+          .from('user_mistakes')
+          .select('lesson_number, section, question_index, frequency')
+          .eq('user_id', userId)
+          .eq('resolved', false)
+          .gte('frequency', TrackedMistake.recurringThreshold)
+          .order('frequency', ascending: false)
+          // Stable order among equal frequencies.
+          .order('lesson_number', ascending: true)
+          .order('question_index', ascending: true);
+      return [
+        for (final row in rows)
+          if (TrackedMistake.tryParse(row) case final mistake?) mistake,
+      ];
+    } catch (error, stackTrace) {
+      _log('fetchRecurringMistakes (user_mistakes)', error, stackTrace);
       rethrow;
     }
   }

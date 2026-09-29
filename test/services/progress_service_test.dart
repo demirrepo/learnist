@@ -23,6 +23,14 @@ class _AuthStub extends ChangeNotifier implements SupabaseService {
 ({ProgressService service, List<http.Request> requests}) _service(
   Future<http.Response> Function(http.Request request) handler,
 ) {
+  final (:service, :requests, client: _) = _serviceWithClient(handler);
+  return (service: service, requests: requests);
+}
+
+({ProgressService service, List<http.Request> requests, SupabaseClient client})
+_serviceWithClient(
+  Future<http.Response> Function(http.Request request) handler,
+) {
   final requests = <http.Request>[];
   final client = SupabaseClient(
     'https://example.supabase.co',
@@ -41,7 +49,38 @@ class _AuthStub extends ChangeNotifier implements SupabaseService {
     authOptions: const AuthClientOptions(autoRefreshToken: false),
   );
   addTearDown(client.dispose);
-  return (service: ProgressService(client), requests: requests);
+  return (service: ProgressService(client), requests: requests, client: client);
+}
+
+/// An unsigned JWT that expires in an hour; gotrue only decodes it.
+String _accessToken() {
+  String part(Map<String, Object> json) =>
+      base64Url.encode(utf8.encode(jsonEncode(json))).replaceAll('=', '');
+  final exp = DateTime.now().add(const Duration(hours: 1));
+  return '${part({'alg': 'HS256', 'typ': 'JWT'})}.'
+      '${part({'sub': 'user-1', 'exp': exp.millisecondsSinceEpoch ~/ 1000})}'
+      '.signature';
+}
+
+/// Restores an unexpired session locally, without a request.
+Future<void> _signIn(SupabaseClient client) {
+  final expiresAt = DateTime.now().add(const Duration(hours: 1));
+  return client.auth.recoverSession(
+    jsonEncode({
+      'access_token': _accessToken(),
+      'token_type': 'bearer',
+      'expires_in': 3600,
+      'expires_at': expiresAt.millisecondsSinceEpoch ~/ 1000,
+      'refresh_token': 'refresh',
+      'user': {
+        'id': 'user-1',
+        'aud': 'authenticated',
+        'app_metadata': <String, Object>{},
+        'user_metadata': <String, Object>{},
+        'created_at': '2026-09-01T00:00:00Z',
+      },
+    }),
+  );
 }
 
 http.Response _postgrestError(Map<String, Object?> body) => http.Response(
@@ -216,6 +255,64 @@ void main() {
         throwsA(isA<PostgrestException>()),
       );
       expect(notified, 0);
+    });
+  });
+
+  group('fetchRecurringMistakes', () {
+    test(
+      'asks for unresolved mistakes made twice, most frequent first',
+      () async {
+        final (:service, :requests, :client) = _serviceWithClient(
+          (_) async => http.Response(
+            jsonEncode([
+              {
+                'lesson_number': 1,
+                'section': 'reading',
+                'question_index': 6,
+                'frequency': 5,
+              },
+              {
+                'lesson_number': 2,
+                'section': 'listening',
+                'question_index': 0,
+                'frequency': 2,
+              },
+              // Malformed rows are skipped.
+              {'lesson_number': 1, 'section': 'reading', 'frequency': 3},
+            ]),
+            200,
+            headers: {'content-type': 'application/json'},
+          ),
+        );
+        await _signIn(client);
+
+        final mistakes = await service.fetchRecurringMistakes();
+
+        final url = requests.single.url;
+        expect(url.path, '/rest/v1/user_mistakes');
+        expect(url.queryParameters, {
+          'select': 'lesson_number,section,question_index,frequency',
+          'user_id': 'eq.user-1',
+          'resolved': 'eq.false',
+          'frequency': 'gte.2',
+          'order':
+              'frequency.desc.nullslast,lesson_number.asc.nullslast,'
+              'question_index.asc.nullslast',
+        });
+        expect(mistakes.map((m) => (m.section, m.frequency)), [
+          ('reading', 5),
+          ('listening', 2),
+        ]);
+      },
+    );
+
+    test('returns nothing without a request when signed out', () async {
+      final (:service, :requests) = _service(
+        (_) async => http.Response('', 500),
+      );
+
+      expect(await service.fetchRecurringMistakes(), isEmpty);
+      expect(requests, isEmpty);
     });
   });
 

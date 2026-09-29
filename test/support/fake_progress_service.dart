@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:learnist/models/checkup.dart';
+import 'package:learnist/models/tracked_mistake.dart';
 import 'package:flutter/foundation.dart';
 import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/models/user_stats.dart';
@@ -17,7 +18,7 @@ final seedCheckupQuestions = [
     CheckupQuestion.tryParse(row as Map<String, dynamic>)!,
 ];
 
-/// In-memory stand-in for the four tables, `submit_checkup`,
+/// In-memory stand-in for the five tables, `submit_checkup`,
 /// `save_section_score` and `complete_lesson`.
 ///
 /// [completeLesson] does not check [sectionScores]; set [completeError] to
@@ -35,14 +36,19 @@ class FakeProgressService extends ChangeNotifier implements ProgressService {
     this.stats = const UserStats(),
     List<CheckupHistoryEntry>? history,
     List<CheckupQuestion>? questions,
+    List<({TrackedMistake mistake, bool resolved})>? mistakes,
     this.nextResult,
   }) : history = [...?history],
+       mistakes = [...?mistakes],
        questions = questions ?? seedCheckupQuestions;
 
   UserProgress progress;
   UserStats stats;
   final List<CheckupHistoryEntry> history;
   final List<CheckupQuestion> questions;
+
+  /// Every `user_mistakes` row, resolved or not.
+  final List<({TrackedMistake mistake, bool resolved})> mistakes;
 
   /// What the next submission returns; defaults to B1, 18/30, now.
   CheckupResult? nextResult;
@@ -55,10 +61,12 @@ class FakeProgressService extends ChangeNotifier implements ProgressService {
   Object? saveScoreError;
   Object? statsError;
   Object? saveMistakesError;
+  Object? mistakesError;
 
   int progressFetches = 0;
   int questionFetches = 0;
   int statsFetches = 0;
+  int mistakeFetches = 0;
   Map<int, int>? lastSubmitted;
   final List<int> completedLessons = [];
 
@@ -88,6 +96,19 @@ class FakeProgressService extends ChangeNotifier implements ProgressService {
       wrong: List.of(wrongQuestionIndexes),
     ));
     notifyListeners();
+  }
+
+  /// Like the query: unresolved, at least twice, most frequent first.
+  @override
+  Future<List<TrackedMistake>> fetchRecurringMistakes() async {
+    mistakeFetches++;
+    if (mistakesError case final error?) throw error;
+    return [
+      for (final row in mistakes)
+        if (!row.resolved &&
+            row.mistake.frequency >= TrackedMistake.recurringThreshold)
+          row.mistake,
+    ]..sort((a, b) => b.frequency.compareTo(a.frequency));
   }
 
   @override

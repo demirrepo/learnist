@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../models/tracked_mistake.dart';
 import '../../theme/app_theme.dart';
 
 enum ErrorSeverity {
@@ -19,8 +20,8 @@ enum ErrorSeverity {
 class ErrorPattern {
   const ErrorPattern({
     required this.rule,
-    required this.example,
-    required this.correction,
+    this.example,
+    this.correction,
     required this.mistakeCount,
     required this.lessonLabel,
     required this.lessonNumber,
@@ -29,9 +30,10 @@ class ErrorPattern {
   /// The grammar point the mistakes have in common.
   final String rule;
 
-  /// A typical wrong sentence and its fix, to show what the pattern is.
-  final String example;
-  final String correction;
+  /// A typical wrong sentence and its fix, to show what the pattern is;
+  /// null when the mistake isn't described yet.
+  final String? example;
+  final String? correction;
 
   /// Mistakes of this kind in recent tests.
   final int mistakeCount;
@@ -40,15 +42,11 @@ class ErrorPattern {
   final String lessonLabel;
   final int lessonNumber;
 
-  /// Mistakes needed before a pattern appears on the map; one slip is
-  /// not a weakness.
-  static const recurringThreshold = 2;
-  static const _highThreshold = 4;
+  bool get isRecurring => mistakeCount >= TrackedMistake.recurringThreshold;
 
-  bool get isRecurring => mistakeCount >= recurringThreshold;
-
+  /// Red from [TrackedMistake.highThreshold], yellow below it.
   ErrorSeverity get severity =>
-      mistakeCount >= _highThreshold
+      mistakeCount >= TrackedMistake.highThreshold
           ? ErrorSeverity.high
           : ErrorSeverity.medium;
 }
@@ -140,8 +138,13 @@ class ErrorPatternCard extends StatelessWidget {
                     color: AppColors.textMuted,
                   ),
                 ),
-                const SizedBox(height: 12),
-                _ExampleBox(wrong: pattern.example, right: pattern.correction),
+                if ((pattern.example, pattern.correction) case (
+                  final wrong?,
+                  final right?,
+                )) ...[
+                  const SizedBox(height: 12),
+                  _ExampleBox(wrong: wrong, right: right),
+                ],
                 const SizedBox(height: 10),
                 const Divider(height: 1, color: AppColors.border),
                 const SizedBox(height: 10),

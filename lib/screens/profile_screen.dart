@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../models/user_progress.dart';
 import '../models/user_stats.dart';
+import '../providers/app_language_provider.dart';
 import '../router.dart';
 import '../services/progress_service.dart';
 import '../services/supabase_service.dart';
@@ -49,9 +50,6 @@ const _settings = [
     route: AppRoutes.errorMap,
   ),
 ];
-
-// UI only for now; strings are not translated until l10n lands.
-const _languages = ["O'zbekcha", 'English', 'Русский'];
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -298,38 +296,25 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-class _SettingsCard extends StatefulWidget {
+class _SettingsCard extends ConsumerWidget {
   const _SettingsCard({required this.showJoinGroup});
 
   final bool showJoinGroup;
 
-  @override
-  State<_SettingsCard> createState() => _SettingsCardState();
-}
-
-class _SettingsCardState extends State<_SettingsCard> {
-  String _language = _languages.first;
-
-  void _openLanguageSheet() {
+  void _openLanguageSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder:
-          (sheetContext) => _LanguageSheet(
-            selected: _language,
-            onSelected: (language) {
-              setState(() => _language = language);
-              sheetContext.pop();
-            },
-          ),
+      builder: (_) => const _LanguageSheet(),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     const divider = Divider(height: 1, indent: 64, color: AppColors.border);
 
     return Container(
@@ -347,7 +332,7 @@ class _SettingsCardState extends State<_SettingsCard> {
               ),
               divider,
             ],
-            if (widget.showJoinGroup) ...[
+            if (showJoinGroup) ...[
               _SettingsTile(
                 icon: LucideIcons.users,
                 label: "Guruhga qo'shilish",
@@ -358,8 +343,8 @@ class _SettingsCardState extends State<_SettingsCard> {
             _SettingsTile(
               icon: Icons.language,
               label: 'Til',
-              value: _language,
-              onTap: _openLanguageSheet,
+              value: appLanguageLabel(language),
+              onTap: () => _openLanguageSheet(context),
             ),
           ],
         ),
@@ -427,14 +412,14 @@ class _SettingsTile extends StatelessWidget {
   }
 }
 
-class _LanguageSheet extends StatelessWidget {
-  const _LanguageSheet({required this.selected, required this.onSelected});
-
-  final String selected;
-  final ValueChanged<String> onSelected;
+/// Picks the app language; the check follows [appLanguageProvider].
+class _LanguageSheet extends ConsumerWidget {
+  const _LanguageSheet();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selected = ref.watch(appLanguageProvider);
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
@@ -465,11 +450,14 @@ class _LanguageSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            for (final language in _languages)
+            for (final (code, label) in appLanguages)
               _LanguageOption(
-                label: language,
-                selected: language == selected,
-                onTap: () => onSelected(language),
+                label: label,
+                selected: code == selected,
+                onTap: () {
+                  ref.read(appLanguageProvider.notifier).select(code);
+                  Navigator.of(context).pop();
+                },
               ),
           ],
         ),

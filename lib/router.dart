@@ -17,7 +17,10 @@ import 'services/supabase_service.dart';
 import 'widgets/main_layout.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-final _shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+
+/// The navigator inside the tab shell. Sheets opened from a tab live here,
+/// under the tab bar, so [MainLayout] closes them on a tab switch.
+final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 /// Route paths.
 abstract final class AppRoutes {
@@ -103,7 +106,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 LessonDetailScreen(lessonId: _lessonIdFrom(state)!),
       ),
       ShellRoute(
-        navigatorKey: _shellNavigatorKey,
+        navigatorKey: shellNavigatorKey,
         builder: (context, state, child) => MainLayout(child: child),
         routes: [
           GoRoute(
