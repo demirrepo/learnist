@@ -54,7 +54,4 @@ class FakeOpenAIService implements OpenAIService {
     if (error case final error?) throw error;
     return promptFeedback;
   }
-
-  @override
-  void close() {}
 }

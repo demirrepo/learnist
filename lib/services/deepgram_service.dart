@@ -1,21 +1,19 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart' show Uint8List;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show ClientException;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// The shared [DeepgramService]; overridden with a fake in tests.
-final deepgramServiceProvider = Provider<DeepgramService>((ref) {
-  final service = DeepgramService();
-  ref.onDispose(service.close);
-  return service;
-});
+final deepgramServiceProvider = Provider<DeepgramService>(
+  (ref) => DeepgramService(),
+);
 
 /// Thrown when a recording can't be transcribed. [message] is already
 /// user-facing (Uzbek), so the UI can show it as-is. [statusCode] is set when
-/// Deepgram answered with an error.
+/// the `transcribe_audio` function answered with an error.
 class DeepgramException implements Exception {
   const DeepgramException(this.message, {this.statusCode});
 
@@ -28,42 +26,25 @@ class DeepgramException implements Exception {
       '$message';
 }
 
-/// Speech-to-text for the speaking tab via Deepgram's pre-recorded REST API
-/// (Nova-2), which is steadier on mobile networks than streaming.
+/// Speech-to-text for the speaking tab through the `transcribe_audio`
+/// Supabase Edge Function (see
+/// `supabase/functions/transcribe_audio/index.ts`), which holds the
+/// Deepgram key and calls its pre-recorded Nova-2 API.
 class DeepgramService {
-  /// [apiKey] defaults to `DEEPGRAM_API_KEY` from `.env`.
-  DeepgramService({http.Client? client, String? apiKey})
-    : _client = client ?? http.Client(),
-      _apiKeyOverride = apiKey;
+  DeepgramService([SupabaseClient? client])
+    : _supabase = client ?? Supabase.instance.client;
 
-  static final endpoint = Uri.https('api.deepgram.com', '/v1/listen', {
-    'model': 'nova-2',
-    'smart_format': 'true',
-    'language': 'en',
-  });
+  static const function = 'transcribe_audio';
 
-  /// Long enough to upload a five-minute answer on a slow connection.
-  static const _timeout = Duration(seconds: 60);
+  /// Long enough to upload a five-minute answer on a slow connection, a
+  /// little over the function's own 60-second limit on Deepgram.
+  static const _timeout = Duration(seconds: 70);
 
-  final http.Client _client;
-  final String? _apiKeyOverride;
-
-  /// Read on first use: [dotenv] is only loaded after `main()` runs.
-  String get _apiKey {
-    final apiKey = _apiKeyOverride ?? dotenv.env['DEEPGRAM_API_KEY'];
-    if (apiKey == null || apiKey.isEmpty) {
-      throw const DeepgramException(
-        'DEEPGRAM_API_KEY topilmadi. .env faylini tekshiring.',
-      );
-    }
-    return apiKey;
-  }
+  final SupabaseClient _supabase;
 
   /// Uploads the audio file at [filePath] and returns what was said.
   Future<String> transcribeAudio(String filePath) async {
-    final apiKey = _apiKey;
-
-    final List<int> audio;
+    final Uint8List audio;
     try {
       audio = await File(filePath).readAsBytes();
     } on FileSystemException {
@@ -73,42 +54,31 @@ class DeepgramService {
       throw const DeepgramException("Yozib olingan audio bo'sh.");
     }
 
-    final http.Response response;
+    final FunctionResponse response;
     try {
-      response = await _client
-          .post(
-            endpoint,
-            headers: {
-              'Authorization': 'Token $apiKey',
-              'Content-Type': _contentType(filePath),
-            },
+      response = await _supabase.functions
+          .invoke(
+            function,
+            headers: {'Content-Type': _contentType(filePath)},
             body: audio,
           )
           .timeout(_timeout);
+    } on FunctionException catch (error) {
+      throw DeepgramException(
+        "Nutqni matnga aylantirib bo'lmadi. Iltimos qayta urinib ko'ring.",
+        statusCode: error.status,
+      );
     } on TimeoutException {
       throw const DeepgramException(
         "Server javob bermadi. Iltimos qayta urinib ko'ring.",
       );
-    } on http.ClientException {
-      throw const DeepgramException(
-        "Internet aloqasi yo'q. Iltimos qayta urinib ko'ring.",
-      );
+    } on ClientException {
+      throw _offline;
     } on SocketException {
-      throw const DeepgramException(
-        "Internet aloqasi yo'q. Iltimos qayta urinib ko'ring.",
-      );
+      throw _offline;
     }
-
-    if (response.statusCode != 200) {
-      throw DeepgramException(
-        "Nutqni matnga aylantirib bo'lmadi. Iltimos qayta urinib ko'ring.",
-        statusCode: response.statusCode,
-      );
-    }
-    return parseTranscript(response.body);
+    return parseTranscript(response.data);
   }
-
-  void close() => _client.close();
 
   static String _contentType(String filePath) => switch (filePath
       .split('.')
@@ -123,27 +93,15 @@ class DeepgramService {
   };
 }
 
-/// Reads `results.channels[0].alternatives[0].transcript` from a Deepgram
-/// response. Silence comes back as an empty transcript, which is an error
-/// here: there is nothing for the student to review.
-String parseTranscript(String body) {
-  const malformed = DeepgramException(
-    "Nutqni matnga aylantirib bo'lmadi. Iltimos qayta urinib ko'ring.",
-  );
-  final Object? json;
-  try {
-    json = jsonDecode(body);
-  } on FormatException {
-    throw malformed;
-  }
-  if (json case {
-    'results': {
-      'channels': [
-        {'alternatives': [{'transcript': final String transcript}, ...]},
-        ...,
-      ],
-    },
-  }) {
+const _offline = DeepgramException(
+  "Internet aloqasi yo'q. Iltimos qayta urinib ko'ring.",
+);
+
+/// Reads `transcript` from a `transcribe_audio` response. Silence comes
+/// back as an empty transcript, which is an error here: there is nothing
+/// for the student to review.
+String parseTranscript(Object? data) {
+  if (data case {'transcript': final String transcript}) {
     final text = transcript.trim();
     if (text.isEmpty) {
       throw const DeepgramException(
@@ -153,5 +111,7 @@ String parseTranscript(String body) {
     }
     return text;
   }
-  throw malformed;
+  throw const DeepgramException(
+    "Nutqni matnga aylantirib bo'lmadi. Iltimos qayta urinib ko'ring.",
+  );
 }

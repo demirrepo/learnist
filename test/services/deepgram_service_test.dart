@@ -5,18 +5,28 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:learnist/services/deepgram_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-String _response(String transcript) => jsonEncode({
-  'results': {
-    'channels': [
-      {
-        'alternatives': [
-          {'transcript': transcript, 'confidence': 0.98},
-        ],
-      },
-    ],
-  },
-});
+/// A [DeepgramService] on a real [SupabaseClient] whose HTTP calls go to
+/// [handler], so functions_client's error handling is exercised too.
+DeepgramService _service(
+  Future<http.Response> Function(http.Request request) handler,
+) {
+  final client = SupabaseClient(
+    'https://example.supabase.co',
+    'anon-key',
+    httpClient: MockClient(handler),
+    authOptions: const AuthClientOptions(autoRefreshToken: false),
+  );
+  addTearDown(client.dispose);
+  return DeepgramService(client);
+}
+
+http.Response _json(Object body, [int status = 200]) => http.Response(
+  jsonEncode(body),
+  status,
+  headers: {'content-type': 'application/json'},
+);
 
 Matcher _deepgramError(String message, {int? statusCode}) => throwsA(
   isA<DeepgramException>()
@@ -29,13 +39,16 @@ const _failedMessage =
 
 void main() {
   group('parseTranscript', () {
-    test('reads the first alternative and trims it', () {
-      expect(parseTranscript(_response(' Hello, world. ')), 'Hello, world.');
+    test('reads the transcript and trims it', () {
+      expect(
+        parseTranscript({'transcript': ' Hello, world. '}),
+        'Hello, world.',
+      );
     });
 
     test('an empty transcript means no speech was heard', () {
       expect(
-        () => parseTranscript(_response('  ')),
+        () => parseTranscript({'transcript': '  '}),
         _deepgramError(
           "Ovozingiz aniqlanmadi. Mikrofonga yaqinroq gapirib, qayta urinib "
           "ko'ring.",
@@ -44,18 +57,18 @@ void main() {
     });
 
     test('rejects anything else', () {
-      for (final body in [
-        'not json',
-        '[]',
-        '{}',
-        '{"results": {"channels": []}}',
-        '{"results": {"channels": [{"alternatives": []}]}}',
-        '{"results": {"channels": [{"alternatives": [{"transcript": 1}]}]}}',
+      for (final data in [
+        null,
+        'text',
+        <Object>[],
+        <String, Object>{},
+        {'transcript': 1},
+        {'error': 'upstream_error'},
       ]) {
         expect(
-          () => parseTranscript(body),
+          () => parseTranscript(data),
           _deepgramError(_failedMessage),
-          reason: body,
+          reason: '$data',
         );
       }
     });
@@ -73,48 +86,55 @@ void main() {
 
     tearDown(() => dir.deleteSync(recursive: true));
 
-    test('posts the raw audio to Nova-2 and returns the transcript', () async {
+    test('uploads the raw audio to transcribe_audio', () async {
       late http.Request sent;
-      final service = DeepgramService(
-        apiKey: 'secret',
-        client: MockClient((request) async {
-          sent = request;
-          return http.Response(_response('I like football.'), 200);
-        }),
-      );
+      final service = _service((request) async {
+        sent = request;
+        return _json({'transcript': 'I like football.'});
+      });
 
       expect(await service.transcribeAudio(audioPath), 'I like football.');
       expect(sent.method, 'POST');
-      expect(sent.url.host, 'api.deepgram.com');
-      expect(sent.url.path, '/v1/listen');
-      expect(sent.url.queryParameters, {
-        'model': 'nova-2',
-        'smart_format': 'true',
-        'language': 'en',
-      });
-      expect(sent.headers['Authorization'], 'Token secret');
+      expect(
+        sent.url.toString(),
+        'https://example.supabase.co/functions/v1/transcribe_audio',
+      );
       expect(sent.headers['Content-Type'], 'audio/mp4');
+      // Raw bytes, not base64 or JSON.
       expect(sent.bodyBytes, [1, 2, 3, 4]);
+      expect(sent.headers['Authorization'], isNot(startsWith('Token ')));
+    });
+
+    test('a WAV fallback recording is labelled as WAV', () async {
+      late http.Request sent;
+      final service = _service((request) async {
+        sent = request;
+        return _json({'transcript': 'Hi.'});
+      });
+      final wav = '${dir.path}/answer.wav';
+      File(wav).writeAsBytesSync([5, 6]);
+
+      await service.transcribeAudio(wav);
+      expect(sent.headers['Content-Type'], 'audio/wav');
     });
 
     test('an error status throws with the status code', () async {
-      final service = DeepgramService(
-        apiKey: 'secret',
-        client: MockClient(
-          (_) async => http.Response('{"err_msg": "Invalid credentials"}', 401),
-        ),
-      );
+      for (final status in [401, 413, 429, 502]) {
+        final service = _service(
+          (_) async => _json({'error': 'upstream_error'}, status),
+        );
 
-      await expectLater(
-        service.transcribeAudio(audioPath),
-        _deepgramError(_failedMessage, statusCode: 401),
-      );
+        await expectLater(
+          service.transcribeAudio(audioPath),
+          _deepgramError(_failedMessage, statusCode: status),
+          reason: '$status',
+        );
+      }
     });
 
     test('a network failure says there is no internet', () async {
-      final service = DeepgramService(
-        apiKey: 'secret',
-        client: MockClient((_) async => throw http.ClientException('offline')),
+      final service = _service(
+        (_) async => throw http.ClientException('offline'),
       );
 
       await expectLater(
@@ -123,18 +143,13 @@ void main() {
       );
     });
 
-    test('checks the key and the file before calling Deepgram', () async {
+    test('checks the file before calling the function', () async {
       var calls = 0;
-      final client = MockClient((_) async {
+      final service = _service((_) async {
         calls++;
-        return http.Response(_response('x'), 200);
+        return _json({'transcript': 'x'});
       });
 
-      await expectLater(
-        DeepgramService(apiKey: '', client: client).transcribeAudio(audioPath),
-        _deepgramError('DEEPGRAM_API_KEY topilmadi. .env faylini tekshiring.'),
-      );
-      final service = DeepgramService(apiKey: 'secret', client: client);
       await expectLater(
         service.transcribeAudio('${dir.path}/missing.m4a'),
         _deepgramError('Yozib olingan audio topilmadi.'),

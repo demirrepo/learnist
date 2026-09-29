@@ -4,18 +4,32 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:learnist/services/openai_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// A Chat Completions response whose reply is [content].
-http.Response _completion(String content, {int status = 200}) => http.Response(
-  jsonEncode({
-    'choices': [
-      {
-        'index': 0,
-        'message': {'role': 'assistant', 'content': content},
-        'finish_reason': 'stop',
-      },
-    ],
-  }),
+/// An [OpenAIService] on a real [SupabaseClient] whose HTTP calls go to
+/// [handler], so functions_client's error handling is exercised too.
+OpenAIService _service(
+  Future<http.Response> Function(http.Request request) handler,
+) {
+  final client = SupabaseClient(
+    'https://example.supabase.co',
+    'anon-key',
+    httpClient: MockClient(handler),
+    authOptions: const AuthClientOptions(autoRefreshToken: false),
+  );
+  addTearDown(client.dispose);
+  return OpenAIService(client);
+}
+
+/// An `evaluate_task` success whose model reply is [content].
+http.Response _reply(String content) => http.Response.bytes(
+  utf8.encode(jsonEncode({'content': content})),
+  200,
+  headers: {'content-type': 'application/json'},
+);
+
+http.Response _functionError(int status, String code) => http.Response(
+  jsonEncode({'error': code}),
   status,
   headers: {'content-type': 'application/json'},
 );
@@ -66,96 +80,82 @@ void main() {
     });
   });
 
-  group('parseCompletion', () {
-    test('reads the first choice and trims it', () {
-      expect(parseCompletion(_completion(' Zo\u2018r! ').body), 'Zo\u2018r!');
+  group('parseFunctionReply', () {
+    test('reads the content and trims it', () {
+      expect(parseFunctionReply({'content': ' Zo\u2018r! '}), 'Zo\u2018r!');
     });
 
     test('rejects a missing or blank reply', () {
-      for (final body in [
-        'not json',
-        '{}',
-        '{"choices": []}',
-        '{"choices": [{"message": {"content": null, "refusal": "No."}}]}',
-        '{"choices": [{"message": {"content": "  "}}]}',
+      for (final data in [
+        null,
+        '',
+        'text',
+        <String, Object>{},
+        {'content': null},
+        {'content': '  '},
+        {'error': 'upstream_error'},
       ]) {
         expect(
-          () => parseCompletion(body),
+          () => parseFunctionReply(data),
           _openAIError("AI bo'sh javob qaytardi. Qaytadan urinib ko'ring."),
-          reason: body,
+          reason: '$data',
         );
       }
     });
   });
 
   group('OpenAIService', () {
-    test('grades with gpt-4o-mini in JSON mode', () async {
+    test('grades through evaluate_task without any OpenAI key', () async {
       late http.Request sent;
-      final ai = OpenAIService(
-        apiKey: 'sk-test',
-        client: MockClient((request) async {
-          sent = request;
-          return _completion('{"score": 88, "feedback": "Ajoyib."}');
-        }),
-      );
+      final ai = _service((request) async {
+        sent = request;
+        return _reply('{"score": 88, "feedback": "Ajoyib."}');
+      });
 
-      expect(await ai.evaluateSpeaking(' I like tea. ', 'Your drink'), (
+      expect(await ai.evaluateSpeaking(' I like tea. ', ' Your drink '), (
         score: 88,
         feedback: 'Ajoyib.',
       ));
       expect(sent.method, 'POST');
-      expect(sent.url.toString(), 'https://api.openai.com/v1/chat/completions');
-      expect(sent.headers['Authorization'], 'Bearer sk-test');
+      expect(
+        sent.url.toString(),
+        'https://example.supabase.co/functions/v1/evaluate_task',
+      );
       expect(sent.headers['Content-Type'], startsWith('application/json'));
-
-      final body = jsonDecode(sent.body) as Map<String, dynamic>;
-      expect(body['model'], 'gpt-4o-mini');
-      expect(body['response_format'], {'type': 'json_object'});
-      final messages = body['messages'] as List;
-      expect(messages, hasLength(2));
-      expect(messages[0]['role'], 'system');
-      // JSON mode is rejected unless the instructions mention JSON.
-      expect(messages[0]['content'], contains('JSON'));
-      expect(messages[1], {
-        'role': 'user',
-        'content':
-            'Speaking task: Your drink\n\nStudent text:\n"""\nI like tea.\n"""',
+      // Only the anon key or the user's session; never an OpenAI key.
+      expect(sent.headers['Authorization'], isNot(contains('sk-')));
+      expect(jsonDecode(sent.body), {
+        'kind': 'speaking',
+        'text': 'I like tea.',
+        'context': 'Your drink',
       });
+    });
+
+    test('each check sends its kind', () async {
+      final kinds = <Object?>[];
+      final ai = _service((request) async {
+        kinds.add((jsonDecode(request.body) as Map)['kind']);
+        return _reply('{"score": 70, "feedback": "Yaxshi."}');
+      });
+
+      await ai.evaluateGrammar('I am here.', 'to be');
+      await ai.evaluateWriting('My city is big.', 'Your city');
+      expect(kinds, ['grammar', 'writing']);
     });
 
     test('checks prompts as free text, decoding UTF-8', () async {
       late Map<String, dynamic> body;
-      final ai = OpenAIService(
-        apiKey: 'sk-test',
-        client: MockClient((request) async {
-          body = jsonDecode(request.body) as Map<String, dynamic>;
-          // No charset: package:http alone would read this as Latin-1.
-          return http.Response.bytes(
-            utf8.encode(
-              jsonEncode({
-                'choices': [
-                  {
-                    'message': {'content': '**Rol** yo\u2018q.'},
-                  },
-                ],
-              }),
-            ),
-            200,
-            headers: {'content-type': 'application/json'},
-          );
-        }),
-      );
+      final ai = _service((request) async {
+        body = jsonDecode(request.body) as Map<String, dynamic>;
+        return _reply('**Rol** yo\u2018q.');
+      });
 
-      expect(await ai.evaluatePrompt('Write a poem'), '**Rol** yo\u2018q.');
-      expect(body.containsKey('response_format'), isFalse);
-      expect(body['messages'][1], {'role': 'user', 'content': 'Write a poem'});
+      expect(await ai.evaluatePrompt(' Write a poem '), '**Rol** yo\u2018q.');
+      expect(body, {'kind': 'prompt', 'text': 'Write a poem'});
     });
 
     test('a malformed grading reply is rejected', () async {
-      final ai = OpenAIService(
-        apiKey: 'sk-test',
-        client: MockClient((_) async => _completion('{"score": 90}')),
-      );
+      final ai = _service((_) async => _reply('{"score": 90}'));
       await expectLater(
         ai.evaluateGrammar('I am here.', 'to be'),
         _openAIError("AI javobini o'qib bo'lmadi. Qaytadan urinib ko'ring."),
@@ -163,17 +163,20 @@ void main() {
     });
 
     test('error statuses keep their code; 429 says the AI is busy', () async {
-      for (final (status, message) in [
-        (429, "AI hozir band. Birozdan so'ng qaytadan urinib ko'ring."),
-        (401, "AI javob bera olmadi. Qaytadan urinib ko'ring."),
-        (503, "AI javob bera olmadi. Qaytadan urinib ko'ring."),
+      for (final (status, code, message) in [
+        (
+          429,
+          'rate_limited',
+          "AI hozir band. Birozdan so'ng qaytadan urinib ko'ring.",
+        ),
+        (401, 'unauthorized', "AI javob bera olmadi. Qaytadan urinib ko'ring."),
+        (
+          502,
+          'upstream_error',
+          "AI javob bera olmadi. Qaytadan urinib ko'ring.",
+        ),
       ]) {
-        final ai = OpenAIService(
-          apiKey: 'sk-test',
-          client: MockClient(
-            (_) async => http.Response('{"error": {"message": "x"}}', status),
-          ),
-        );
+        final ai = _service((_) async => _functionError(status, code));
         await expectLater(
           ai.evaluateWriting('My city is big.', 'Your city'),
           _openAIError(message, statusCode: status),
@@ -183,23 +186,19 @@ void main() {
     });
 
     test('a network failure says there is no internet', () async {
-      final ai = OpenAIService(
-        apiKey: 'sk-test',
-        client: MockClient((_) async => throw http.ClientException('offline')),
-      );
+      final ai = _service((_) async => throw http.ClientException('offline'));
       await expectLater(
         ai.evaluatePrompt('Hi'),
         _openAIError("Internetga ulanib bo'lmadi. Qaytadan urinib ko'ring."),
       );
     });
 
-    test('checks the answer and the key before calling OpenAI', () async {
+    test('checks the answer before calling the function', () async {
       var calls = 0;
-      final client = MockClient((_) async {
+      final ai = _service((_) async {
         calls++;
-        return _completion('{}');
+        return _reply('{}');
       });
-      final ai = OpenAIService(apiKey: 'sk-test', client: client);
 
       for (final grade in [
         () => ai.evaluateGrammar('   ', 'Present Simple'),
@@ -211,10 +210,6 @@ void main() {
       await expectLater(
         ai.evaluatePrompt(' '),
         _openAIError('Avval promptingizni yozing.'),
-      );
-      await expectLater(
-        OpenAIService(apiKey: '', client: client).evaluatePrompt('Hi'),
-        _openAIError('OPENAI_API_KEY topilmadi. .env faylini tekshiring.'),
       );
       expect(calls, 0);
     });

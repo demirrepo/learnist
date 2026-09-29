@@ -20,7 +20,4 @@ class FakeDeepgramService implements DeepgramService {
     if (error case final error?) throw error;
     return transcript;
   }
-
-  @override
-  void close() {}
 }
