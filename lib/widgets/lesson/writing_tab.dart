@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
+import 'ai_graded_task.dart';
 import 'lesson_common.dart';
 
-// Placeholder content until lessons come from the backend.
+const _noWritingMessage = "Ushbu darsda yozish mashqi yo'q.";
+
 const _lenses = [
-  (level: 'A1', focus: 'Short, correct sentences with am / is / are.'),
+  (level: 'A1', focus: "Short, correct sentences using the lesson's grammar."),
   (level: 'A2', focus: 'Link ideas with and, but and because.'),
   (level: 'B1', focus: 'Add details and reasons in clear paragraphs.'),
   (level: 'B2', focus: 'Vary your vocabulary and sentence structure.'),
@@ -16,26 +19,18 @@ const _lenses = [
 const _minWords = 80;
 const _maxWords = 120;
 
-class WritingTab extends StatefulWidget {
-  const WritingTab({super.key});
+/// The writing task, graded by the AI as the lesson's `writing` section.
+class WritingTab extends StatelessWidget {
+  const WritingTab({super.key, required this.lesson});
 
-  @override
-  State<WritingTab> createState() => _WritingTabState();
-}
-
-class _WritingTabState extends State<WritingTab> {
-  int _wordCount = 0;
-
-  void _onChanged(String text) {
-    final count = text.trim().isEmpty
-        ? 0
-        : text.trim().split(RegExp(r'\s+')).length;
-    if (count != _wordCount) setState(() => _wordCount = count);
-  }
+  final Lesson lesson;
 
   @override
   Widget build(BuildContext context) {
-    final inRange = _wordCount >= _minWords && _wordCount <= _maxWords;
+    final prompt = lesson.writingPrompt;
+    if (prompt == null) {
+      return const LessonTabBody(children: [LessonNotice(_noWritingMessage)]);
+    }
 
     return LessonTabBody(
       children: [
@@ -43,36 +38,22 @@ class _WritingTabState extends State<WritingTab> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const LessonPrompt(
+              LessonPrompt(
                 tagIcon: LucideIcons.pencil,
                 tag: 'Writing task',
-                title: 'An email to your new group',
-                body: 'Write a short email to your new English group. '
-                    'Introduce yourself, describe your family and say what '
-                    'you like about your university. Write $_minWords–'
-                    '$_maxWords words.',
+                title: lesson.title,
+                body: prompt,
               ),
               const SizedBox(height: 18),
-              LessonTextField(
-                hint: 'Hi everyone, my name is…',
+              AiGradedTask(
+                lessonNumber: lesson.lessonNumber,
+                section: 'writing',
+                buttonLabel: 'Assess my writing',
+                hint: 'Write your text here…',
                 minLines: 10,
                 maxLines: 20,
-                onChanged: _onChanged,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '$_wordCount / $_minWords–$_maxWords words',
-                textAlign: TextAlign.end,
-                style: GoogleFonts.manrope(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: inRange ? AppColors.success : AppColors.hint,
-                ),
-              ),
-              const SizedBox(height: 12),
-              LessonActionRow(
-                primaryLabel: 'Assess my writing',
-                onPrimary: () => showComingSoon(context, 'Writing assessment'),
+                evaluate: (ai, answer) => ai.evaluateWriting(answer, prompt),
+                fieldFooter: _WordCount.new,
                 onAskAi: () => showComingSoon(context, 'Ask AI'),
               ),
             ],
@@ -80,6 +61,29 @@ class _WritingTabState extends State<WritingTab> {
         ),
         const _CefrLenses(),
       ],
+    );
+  }
+}
+
+class _WordCount extends StatelessWidget {
+  const _WordCount(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final trimmed = text.trim();
+    final count = trimmed.isEmpty ? 0 : trimmed.split(RegExp(r'\s+')).length;
+    final inRange = count >= _minWords && count <= _maxWords;
+
+    return Text(
+      '$count / $_minWords–$_maxWords words',
+      textAlign: TextAlign.end,
+      style: GoogleFonts.manrope(
+        fontSize: 12.5,
+        fontWeight: FontWeight.w700,
+        color: inRange ? AppColors.success : AppColors.hint,
+      ),
     );
   }
 }

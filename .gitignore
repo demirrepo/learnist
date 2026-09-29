@@ -43,3 +43,16 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment variables (contains secrets)
+.env
+# Public Supabase settings bundled into the app; see supabase.env.example
+supabase.env
+
+# Python tooling (final_scraper.py)
+.venv/
+.env.seed
+__pycache__/
+
+# Generated listening MP3s (uploaded to Supabase, then deleted)
+audio_out/

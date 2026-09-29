@@ -1,58 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../data/mistakes_metadata.dart';
+import '../models/tracked_mistake.dart';
 import '../router.dart';
+import '../services/progress_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/error_map/error_pattern_card.dart';
+import '../widgets/load_problem_view.dart';
 
-// Placeholder mistake groups until AI feedback is stored. All point at
-// Lesson 1, the only lesson screen that exists so far.
-const _patterns = [
-  ErrorPattern(
-    rule: 'Subject pronouns: am / is / are',
-    example: 'She are a student.',
-    correction: 'She is a student.',
-    mistakeCount: 4,
-    lessonLabel: 'Lesson 1: Hello, everybody!',
-  ),
-  ErrorPattern(
-    rule: 'Questions with to be: Are you…? / Is he…?',
-    example: 'You are from Tashkent?',
-    correction: 'Are you from Tashkent?',
-    mistakeCount: 3,
-    lessonLabel: 'Lesson 1: Hello, everybody!',
-  ),
-  ErrorPattern(
-    rule: 'Contractions: I’m / you’re / it’s',
-    example: 'Im a first-year student.',
-    correction: 'I’m a first-year student.',
-    mistakeCount: 2,
-    lessonLabel: 'Lesson 1: Hello, everybody!',
-  ),
-  // A single slip — filtered out because it isn't a pattern yet.
-  ErrorPattern(
-    rule: 'Articles: a / an',
-    example: 'He is a engineer.',
-    correction: 'He is an engineer.',
-    mistakeCount: 1,
-    lessonLabel: 'Lesson 1: Hello, everybody!',
-  ),
-];
+const _sectionNames = {'reading': 'Reading', 'listening': 'Listening'};
+
+/// Card content for a tracked mistake, from [mistakesMetadata]. Mistakes
+/// without an entry are named after their quiz question instead.
+@visibleForTesting
+ErrorPattern errorPatternFrom(TrackedMistake mistake) {
+  final metadata = mistakeMetadataFor(
+    mistake.lessonNumber,
+    mistake.section,
+    mistake.questionIndex,
+  );
+  final section = _sectionNames[mistake.section] ?? mistake.section;
+  return ErrorPattern(
+    rule: metadata?.title ?? '$section: ${mistake.questionIndex + 1}-savol',
+    example: metadata?.wrongText,
+    correction: metadata?.rightText,
+    mistakeCount: mistake.frequency,
+    lessonLabel: 'Lesson ${mistake.lessonNumber}',
+    lessonNumber: mistake.lessonNumber,
+  );
+}
 
 /// Recurring patterns only, most frequent first.
+///
+/// The server already filters and sorts; this keeps the map right even if
+/// a row slips through.
 @visibleForTesting
 List<ErrorPattern> recurringPatterns(List<ErrorPattern> patterns) =>
     patterns.where((pattern) => pattern.isRecurring).toList()
       ..sort((a, b) => b.mistakeCount.compareTo(a.mistakeCount));
 
-class ErrorMapScreen extends StatelessWidget {
+/// "Xatolar xaritasi": the student's unresolved quiz mistakes made at
+/// least twice, from [recurringMistakesProvider].
+class ErrorMapScreen extends ConsumerWidget {
   const ErrorMapScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final patterns = recurringPatterns(_patterns);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mistakes = ref.watch(recurringMistakesProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -76,19 +74,46 @@ class ErrorMapScreen extends StatelessWidget {
         children: [
           const _Intro(),
           const SizedBox(height: 20),
-          if (patterns.isEmpty)
-            const _EmptyState()
-          else
-            for (var i = 0; i < patterns.length; i++) ...[
-              if (i > 0) const SizedBox(height: 12),
-              ErrorPatternCard(
-                pattern: patterns[i],
-                onReview: () => context.push(AppRoutes.lessonDetail),
+          ...switch (mistakes) {
+            AsyncData(:final value) => _cards(context, value),
+            AsyncError(:final error) => [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: LoadProblemView(
+                  message: checkupErrorMessage(error),
+                  onRetry: () => ref.invalidate(recurringMistakesProvider),
+                ),
               ),
             ],
+            _ => const [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 48),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            ],
+          },
         ],
       ),
     );
+  }
+
+  List<Widget> _cards(BuildContext context, List<TrackedMistake> mistakes) {
+    final patterns = recurringPatterns([
+      for (final mistake in mistakes) errorPatternFrom(mistake),
+    ]);
+    if (patterns.isEmpty) return const [_EmptyState()];
+    return [
+      for (var i = 0; i < patterns.length; i++) ...[
+        if (i > 0) const SizedBox(height: 12),
+        ErrorPatternCard(
+          pattern: patterns[i],
+          onReview:
+              () => context.push(
+                AppRoutes.lessonDetailFor(patterns[i].lessonNumber),
+              ),
+        ),
+      ],
+    ];
   }
 }
 
@@ -123,9 +148,9 @@ class _Intro extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Takrorlanayotgan xatolaringiz qoidalar bo\'yicha guruhlangan. '
-          'Kamida ${ErrorPattern.recurringThreshold} marta uchragan xatolar '
-          "ko'rsatiladi — mavzuni qayta o'rganish uchun kartani bosing.",
+          'Testlarda qayta-qayta xato qilayotgan savollaringiz. '
+          'Kamida ${TrackedMistake.recurringThreshold} marta takrorlangan '
+          "xatolar ko'rsatiladi — mavzuni qayta o'rganish uchun kartani bosing.",
           style: GoogleFonts.manrope(
             fontSize: 14,
             height: 1.5,
@@ -163,12 +188,24 @@ class _EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            "Takrorlanayotgan xatolar yo'q. Ajoyib!",
+            "Ajoyib! Hozircha takrorlangan xatolar yo'q",
             textAlign: TextAlign.center,
             style: GoogleFonts.manrope(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "Testlarda bir xil savolda ikki marta xato qilsangiz, "
+            "u shu yerda paydo bo'ladi.",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.manrope(
+              fontSize: 13.5,
+              height: 1.45,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textMuted,
             ),
           ),
         ],

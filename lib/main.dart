@@ -9,7 +9,9 @@ import 'theme/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load();
+  // Public values only (see supabase.env.example). The OpenAI and
+  // Deepgram keys live in Edge Function secrets, never in the app.
+  await dotenv.load(fileName: 'supabase.env');
   await Supabase.initialize(
     url: dotenv.get('SUPABASE_URL'),
     publishableKey: dotenv.get('SUPABASE_ANON_KEY'),

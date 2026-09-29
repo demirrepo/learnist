@@ -185,15 +185,17 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
                 hintText: 'Kamida 6 ta belgi',
                 prefixIcon: const Icon(LucideIcons.lock, size: 20),
                 suffixIcon: IconButton(
-                  tooltip: _obscurePassword
-                      ? "Parolni ko'rsatish"
-                      : 'Parolni yashirish',
+                  tooltip:
+                      _obscurePassword
+                          ? "Parolni ko'rsatish"
+                          : 'Parolni yashirish',
                   icon: Icon(
                     _obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
                     size: 20,
                   ),
-                  onPressed: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
+                  onPressed:
+                      () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                 ),
               ),
               validator: (value) {
@@ -209,22 +211,23 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
             FilledButton(
               key: const ValueKey('update-password-submit'),
               onPressed: _saving ? null : _save,
-              child: _saving
-                  ? const SizedBox.square(
-                      dimension: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.white,
+              child:
+                  _saving
+                      ? const SizedBox.square(
+                        dimension: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
+                      )
+                      : const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Parolni saqlash'),
+                          SizedBox(width: 8),
+                          Icon(LucideIcons.arrowRight, size: 20),
+                        ],
                       ),
-                    )
-                  : const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Parolni saqlash'),
-                        SizedBox(width: 8),
-                        Icon(LucideIcons.arrowRight, size: 20),
-                      ],
-                    ),
             ),
           ],
         ),

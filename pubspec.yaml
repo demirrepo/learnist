@@ -41,6 +41,11 @@ dependencies:
   lucide_icons: ^0.257.0
   flutter_dotenv: ^6.0.1
   http: ^1.6.0
+  flutter_markdown: ^0.7.7+1
+  just_audio: ^0.10.6
+  record: ^6.2.1
+  permission_handler: ^12.0.1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +57,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -65,8 +71,10 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/data/
     - assets/design_mockups/
-    - .env
+    # Only the public Supabase URL and anon key; see supabase.env.example.
+    - supabase.env
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -98,3 +106,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Regenerate the launcher icons with `dart run flutter_launcher_icons`.
+flutter_launcher_icons:
+  image_path: "assets/logo.png"
+  android: true
+  ios: true
+  # The App Store rejects icons with an alpha channel.
+  remove_alpha_ios: true

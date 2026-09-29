@@ -83,10 +83,11 @@ class LearningSpaceSection extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             itemCount: items.length,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, index) => _LearningSpaceCard(
-              item: items[index],
-              onTap: () => onItemTap(items[index]),
-            ),
+            itemBuilder:
+                (context, index) => _LearningSpaceCard(
+                  item: items[index],
+                  onTap: () => onItemTap(items[index]),
+                ),
           ),
         ),
       ],

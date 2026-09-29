@@ -4,9 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../models/user_progress.dart';
+import '../models/user_stats.dart';
+import '../providers/app_language_provider.dart';
 import '../router.dart';
+import '../services/progress_service.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/join_group_dialog.dart';
 
 const _pagePadding = 20.0;
 const _cardRadius = BorderRadius.all(Radius.circular(16));
@@ -20,10 +25,17 @@ const _cardDecoration = BoxDecoration(
   ],
 );
 
-// Placeholder stats until progress comes from the backend.
-const _stats = [
-  _Stat(icon: LucideIcons.trophy, value: '1/52', label: "O'rganilgan mavzular"),
-  _Stat(icon: LucideIcons.target, value: '85%', label: "O'rtacha natija"),
+List<_Stat> _statsFrom(UserStats stats) => [
+  _Stat(
+    icon: LucideIcons.trophy,
+    value: '${stats.lessonsMastered}/${UserProgress.lastLesson}',
+    label: "O'rganilgan mavzular",
+  ),
+  _Stat(
+    icon: LucideIcons.target,
+    value: '${stats.overallAverage}%',
+    label: "O'rtacha natija",
+  ),
 ];
 
 const _settings = [
@@ -39,15 +51,14 @@ const _settings = [
   ),
 ];
 
-// UI only for now; strings are not translated until l10n lands.
-const _languages = ["O'zbekcha", 'English', 'Русский'];
-
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(supabaseServiceProvider);
+    // Zeros while loading or if the fetch fails, like Home.
+    final stats = ref.watch(userStatsProvider).value ?? const UserStats();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -82,9 +93,10 @@ class ProfileScreen extends ConsumerWidget {
                   ),
             ),
             const SizedBox(height: 16),
-            const _StatsRow(stats: _stats),
+            _StatsRow(stats: _statsFrom(stats)),
             const SizedBox(height: 24),
-            const _SettingsCard(),
+            // Groups are joined by students; teachers create them.
+            _SettingsCard(showJoinGroup: !auth.isTeacher),
             const SizedBox(height: 16),
             _SignOutButton(onSignOut: auth.signOut),
           ],
@@ -284,36 +296,25 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-class _SettingsCard extends StatefulWidget {
-  const _SettingsCard();
+class _SettingsCard extends ConsumerWidget {
+  const _SettingsCard({required this.showJoinGroup});
 
-  @override
-  State<_SettingsCard> createState() => _SettingsCardState();
-}
+  final bool showJoinGroup;
 
-class _SettingsCardState extends State<_SettingsCard> {
-  String _language = _languages.first;
-
-  void _openLanguageSheet() {
+  void _openLanguageSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder:
-          (sheetContext) => _LanguageSheet(
-            selected: _language,
-            onSelected: (language) {
-              setState(() => _language = language);
-              sheetContext.pop();
-            },
-          ),
+      builder: (_) => const _LanguageSheet(),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(appLanguageProvider);
     const divider = Divider(height: 1, indent: 64, color: AppColors.border);
 
     return Container(
@@ -331,11 +332,19 @@ class _SettingsCardState extends State<_SettingsCard> {
               ),
               divider,
             ],
+            if (showJoinGroup) ...[
+              _SettingsTile(
+                icon: LucideIcons.users,
+                label: "Guruhga qo'shilish",
+                onTap: () => showJoinGroupDialog(context),
+              ),
+              divider,
+            ],
             _SettingsTile(
               icon: Icons.language,
               label: 'Til',
-              value: _language,
-              onTap: _openLanguageSheet,
+              value: appLanguageLabel(language),
+              onTap: () => _openLanguageSheet(context),
             ),
           ],
         ),
@@ -403,14 +412,14 @@ class _SettingsTile extends StatelessWidget {
   }
 }
 
-class _LanguageSheet extends StatelessWidget {
-  const _LanguageSheet({required this.selected, required this.onSelected});
-
-  final String selected;
-  final ValueChanged<String> onSelected;
+/// Picks the app language; the check follows [appLanguageProvider].
+class _LanguageSheet extends ConsumerWidget {
+  const _LanguageSheet();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selected = ref.watch(appLanguageProvider);
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
@@ -441,11 +450,14 @@ class _LanguageSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            for (final language in _languages)
+            for (final (code, label) in appLanguages)
               _LanguageOption(
-                label: language,
-                selected: language == selected,
-                onTap: () => onSelected(language),
+                label: label,
+                selected: code == selected,
+                onTap: () {
+                  ref.read(appLanguageProvider.notifier).select(code);
+                  Navigator.of(context).pop();
+                },
               ),
           ],
         ),

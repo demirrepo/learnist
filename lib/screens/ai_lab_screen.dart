@@ -31,17 +31,7 @@ class AiLabScreen extends StatelessWidget {
             children: [
               const AiHeroSection(),
               const SizedBox(height: _sectionGap),
-              PromptCheckerCard(
-                onCheck:
-                    () =>
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            const SnackBar(
-                              content: Text('Prompt checker: tez orada.'),
-                            ),
-                          ),
-              ),
+              const PromptCheckerCard(),
               const SizedBox(height: _sectionGap),
               const PromptComparisonSection(),
               const SizedBox(height: _sectionGap),

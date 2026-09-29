@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../models/user_progress.dart';
+import '../models/user_stats.dart';
 import '../router.dart';
+import '../services/progress_service.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/home/hero_banner_card.dart';
@@ -36,20 +39,24 @@ const _learningSpaceItems = [
   ),
 ];
 
-const _snapshotStats = [
+List<SnapshotStat> _snapshotStats(UserProgress progress, UserStats stats) => [
   SnapshotStat(
-    value: '1/52',
+    value: '${stats.lessonsMastered}/${UserProgress.lastLesson}',
     label: 'Lessons mastered',
     icon: LucideIcons.bookOpen,
   ),
-  SnapshotStat(value: '2', label: 'Current lesson', icon: LucideIcons.play),
   SnapshotStat(
-    value: 'C2',
+    value: '${progress.currentLesson}',
+    label: 'Current lesson',
+    icon: LucideIcons.play,
+  ),
+  SnapshotStat(
+    value: progress.cefrLevel ?? 'N/A',
     label: 'CEFR estimate',
     icon: LucideIcons.shieldCheck,
   ),
   SnapshotStat(
-    value: '0',
+    value: '${stats.trackedMistakes}',
     label: 'Tracked mistakes',
     icon: LucideIcons.rotateCcw,
   ),
@@ -61,6 +68,11 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final fullName = ref.watch(supabaseServiceProvider).currentUserFullName;
+    // Defaults while loading or if the fetch fails; Home never blocks on it.
+    final progress =
+        ref.watch(userProgressProvider).value ?? const UserProgress();
+    final stats = ref.watch(userStatsProvider).value ?? const UserStats();
+    final lesson = progress.currentLesson;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -76,20 +88,21 @@ class HomeScreen extends ConsumerWidget {
                 child: HomeHeader(
                   greeting: greetingFor(DateTime.now()),
                   firstName: firstNameFrom(fullName),
-                  cefrLevel: 'C2',
+                  cefrLevel: progress.cefrLevel,
                 ),
               ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
                 child: HeroBannerCard(
-                  masteryPercent: 100,
+                  masteryPercent: stats.currentLessonMastery,
                   headline:
                       'Your English grows every time you understand a mistake.',
                   subtitle:
                       'Keep the momentum going with your next guided practice.',
-                  nextLessonNumber: 2,
-                  onContinue: () => context.go(AppRoutes.topics),
+                  nextLessonNumber: lesson,
+                  onContinue:
+                      () => context.push(AppRoutes.lessonDetailFor(lesson)),
                   onOpenAiLab: () => context.go(AppRoutes.aiLab),
                 ),
               ),
@@ -100,16 +113,16 @@ class HomeScreen extends ConsumerWidget {
                 onItemTap: (item) => context.go(item.route),
               ),
               const SizedBox(height: 32),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: _pagePadding),
-                child: SnapshotGrid(stats: _snapshotStats),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
+                child: SnapshotGrid(stats: _snapshotStats(progress, stats)),
               ),
               const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: _pagePadding),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: _pagePadding),
                 child: LessonMasteryProgress(
-                  lessonLabel: 'Lesson 1 · Present Simple',
-                  progress: 1,
+                  lessonLabel: 'Lesson $lesson',
+                  progress: stats.currentLessonMastery / 100,
                 ),
               ),
             ],
@@ -130,7 +143,7 @@ String firstNameFrom(String? fullName) {
 
 @visibleForTesting
 String greetingFor(DateTime now) => switch (now.hour) {
-      >= 5 && < 12 => 'Good morning',
-      >= 12 && < 17 => 'Good afternoon',
-      _ => 'Good evening',
-    };
+  >= 5 && < 12 => 'Good morning',
+  >= 12 && < 17 => 'Good afternoon',
+  _ => 'Good evening',
+};

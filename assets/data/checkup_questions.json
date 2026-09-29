@@ -1,0 +1,37 @@
+[
+  {"id": 1, "level": "A1", "question": "I ___ from Urgench.", "options": ["am", "is", "are"], "answer_index": 0},
+  {"id": 2, "level": "A1", "question": "They ___ students at the university.", "options": ["is", "am", "are", "be"], "answer_index": 2},
+  {"id": 3, "level": "A1", "question": "___ you like coffee?", "options": ["Does", "Do", "Are", "Is"], "answer_index": 1},
+  {"id": 4, "level": "A1", "question": "There ___ two books on the table.", "options": ["is", "are", "am", "be"], "answer_index": 1},
+  {"id": 5, "level": "A1", "question": "My brother ___ football every Sunday.", "options": ["play", "plays", "playing", "is play"], "answer_index": 1},
+
+  {"id": 6, "level": "A2", "question": "I ___ to the cinema last night.", "options": ["go", "goes", "went", "gone"], "answer_index": 2},
+  {"id": 7, "level": "A2", "question": "My sister is ___ than me.", "options": ["tall", "taller", "tallest", "more tall"], "answer_index": 1},
+  {"id": 8, "level": "A2", "question": "We ___ dinner when the phone rang.", "options": ["had", "were having", "have", "are having"], "answer_index": 1},
+  {"id": 9, "level": "A2", "question": "How ___ water do you drink every day?", "options": ["many", "much", "few", "lot"], "answer_index": 1},
+  {"id": 10, "level": "A2", "question": "I'm going ___ my grandparents next weekend.", "options": ["visit", "visiting", "to visit", "visited"], "answer_index": 2},
+
+  {"id": 11, "level": "B1", "question": "I have lived in Tashkent ___ 2019.", "options": ["for", "since", "from", "during"], "answer_index": 1},
+  {"id": 12, "level": "B1", "question": "If it rains tomorrow, we ___ at home.", "options": ["stay", "will stay", "would stay", "stayed"], "answer_index": 1},
+  {"id": 13, "level": "B1", "question": "The letter ___ yesterday morning.", "options": ["was sent", "sent", "is sending", "has sent"], "answer_index": 0},
+  {"id": 14, "level": "B1", "question": "She asked me where I ___.", "options": ["live", "lived", "am living", "do live"], "answer_index": 1},
+  {"id": 15, "level": "B1", "question": "You ___ smoke here. It's against the rules.", "options": ["mustn't", "don't have to", "needn't", "wouldn't"], "answer_index": 0},
+
+  {"id": 16, "level": "B2", "question": "If I ___ more free time, I would learn another language.", "options": ["have", "had", "would have", "will have"], "answer_index": 1},
+  {"id": 17, "level": "B2", "question": "By the time we arrived, the film ___.", "options": ["started", "has started", "had started", "was starting"], "answer_index": 2},
+  {"id": 18, "level": "B2", "question": "I'm not used to ___ up so early.", "options": ["get", "getting", "got", "have got"], "answer_index": 1},
+  {"id": 19, "level": "B2", "question": "She ___ have forgotten the meeting — she never misses one.", "options": ["can't", "mustn't", "shouldn't", "needn't"], "answer_index": 0},
+  {"id": 20, "level": "B2", "question": "The man ___ car was stolen called the police.", "options": ["who", "whose", "whom", "which"], "answer_index": 1},
+
+  {"id": 21, "level": "C1", "question": "___ had I left the house than it started to rain.", "options": ["No sooner", "Hardly", "Barely", "Scarcely"], "answer_index": 0},
+  {"id": 22, "level": "C1", "question": "I wish I ___ to her advice last year.", "options": ["listened", "had listened", "would listen", "have listened"], "answer_index": 1},
+  {"id": 23, "level": "C1", "question": "It's high time we ___ this problem seriously.", "options": ["take", "took", "have taken", "will take"], "answer_index": 1},
+  {"id": 24, "level": "C1", "question": "The report is said ___ several serious errors.", "options": ["to contain", "containing", "contained", "that it contains"], "answer_index": 0},
+  {"id": 25, "level": "C1", "question": "Not only ___ the exam, but she also got the highest score.", "options": ["she passed", "did she pass", "she did pass", "passed she"], "answer_index": 1},
+
+  {"id": 26, "level": "C2", "question": "Had it not been for her help, we ___ the project on time.", "options": ["wouldn't finish", "won't finish", "wouldn't have finished", "hadn't finished"], "answer_index": 2},
+  {"id": 27, "level": "C2", "question": "The committee insisted that the proposal ___ reconsidered.", "options": ["be", "is", "was", "will be"], "answer_index": 0},
+  {"id": 28, "level": "C2", "question": "Little ___ that the decision would change everything.", "options": ["they knew", "did they know", "they did know", "knew they"], "answer_index": 1},
+  {"id": 29, "level": "C2", "question": "Hardly a day goes by ___ I don't think about that trip.", "options": ["when", "than", "that", "which"], "answer_index": 0},
+  {"id": 30, "level": "C2", "question": "I'd rather you ___ anyone about this yet.", "options": ["didn't tell", "don't tell", "won't tell", "not tell"], "answer_index": 0}
+]
