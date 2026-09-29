@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../models/teacher_dashboard.dart';
 import '../../theme/app_theme.dart';
 import 'teacher_common.dart';
-import 'teacher_data.dart';
 
 /// One group: name, class credentials and its students. Wide cards show a
 /// table; narrow ones stack a tile per student.
@@ -121,7 +121,7 @@ class _GroupHeader extends StatelessWidget {
 }
 
 // Flex weights shared by the header row and every student row.
-const _columnFlex = [6, 4, 3, 3, 4];
+const _columnFlex = [6, 4, 3, 3];
 const _actionWidth = 96.0;
 
 class _StudentTable extends StatelessWidget {
@@ -150,7 +150,6 @@ class _StudentTable extends StatelessWidget {
               'CURRENT LESSON',
               'MASTERY',
               'CEFR',
-              'TOP WEAKNESS',
             ])
               Text(label, style: headerStyle),
           ],
@@ -163,8 +162,7 @@ class _StudentTable extends StatelessWidget {
               _NameCell(student: student),
               _BodyText('L${student.currentLesson}'),
               _BodyText('${student.masteryPercent}%'),
-              _BodyText(student.cefrLevel),
-              _BodyText(student.topWeakness ?? '—'),
+              _BodyText(student.cefrLevel ?? '—'),
             ],
             action: Align(
               alignment: Alignment.centerRight,
@@ -231,8 +229,7 @@ class _StudentTile extends StatelessWidget {
             children: [
               _InfoChip('Lesson', 'L${student.currentLesson}'),
               _InfoChip('Mastery', '${student.masteryPercent}%'),
-              _InfoChip('CEFR', student.cefrLevel),
-              _InfoChip('Weakness', student.topWeakness ?? '—'),
+              _InfoChip('CEFR', student.cefrLevel ?? '—'),
             ],
           ),
         ],
@@ -289,6 +286,8 @@ class _NameCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final username = student.username;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -302,16 +301,17 @@ class _NameCell extends StatelessWidget {
             color: AppColors.textPrimary,
           ),
         ),
-        Text(
-          '@${student.username}',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.manrope(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textMuted,
+        if (username != null)
+          Text(
+            '@$username',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.manrope(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textMuted,
+            ),
           ),
-        ),
       ],
     );
   }

@@ -9,6 +9,7 @@ import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:learnist/main.dart';
+import 'package:learnist/models/teacher_dashboard.dart';
 import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/models/user_stats.dart';
 import 'package:learnist/screens/ai_lab_screen.dart';
@@ -24,9 +25,11 @@ import 'package:learnist/screens/update_password_screen.dart';
 import 'package:learnist/services/lesson_service.dart';
 import 'package:learnist/services/progress_service.dart';
 import 'package:learnist/services/supabase_service.dart';
+import 'package:learnist/services/teacher_service.dart';
 import 'package:learnist/theme/app_theme.dart';
 import 'package:learnist/widgets/error_map/error_pattern_card.dart';
 import 'package:learnist/widgets/home/lesson_mastery_progress.dart';
+import 'package:learnist/widgets/join_group_dialog.dart';
 import 'package:learnist/widgets/lesson/speaking_tab.dart';
 import 'package:learnist/widgets/main_layout.dart';
 import 'package:learnist/widgets/teacher/student_detail_dialog.dart';
@@ -34,6 +37,7 @@ import 'package:learnist/widgets/topics/topic_card.dart';
 
 import 'support/fake_lesson_service.dart';
 import 'support/fake_progress_service.dart';
+import 'support/fake_teacher_service.dart';
 
 /// In-memory auth so tests never touch Supabase.
 class _FakeSupabaseService extends ChangeNotifier implements SupabaseService {
@@ -186,6 +190,7 @@ Widget _app(
   _FakeSupabaseService auth, {
   FakeLessonService? lessons,
   FakeProgressService? progress,
+  FakeTeacherService? teacher,
 }) => ProviderScope(
   overrides: [
     supabaseServiceProvider.overrideWithValue(auth),
@@ -193,6 +198,7 @@ Widget _app(
     progressServiceProvider.overrideWithValue(
       progress ?? FakeProgressService(),
     ),
+    teacherServiceProvider.overrideWithValue(teacher ?? FakeTeacherService()),
   ],
   child: const LearnistApp(),
 );
@@ -545,7 +551,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.byIcon(Icons.school), findsOneWidget);
-      expect(find.byIcon(Icons.chevron_right), findsNWidgets(3));
+      // Edit, error map, join group and language.
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(4));
       expect(tester.takeException(), isNull);
     });
 
@@ -625,6 +632,112 @@ void main() {
       expect(find.text('English'), findsOneWidget);
       expect(find.text("O'zbekcha"), findsNothing);
       expect(find.byType(LearnistNavBar), findsOneWidget);
+    });
+
+    group('join group', () {
+      Future<FakeTeacherService> openJoinDialog(WidgetTester tester) async {
+        final teacher = FakeTeacherService(
+          joinableGroups: {('ELT301', 'elt301'): 'English group 301'},
+        );
+        await tester.pumpWidget(
+          _app(_FakeSupabaseService(signedIn: true), teacher: teacher),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Profile'));
+        await tester.pumpAndSettle();
+        await _tapVisible(tester, find.text("Guruhga qo'shilish"));
+        expect(find.byType(JoinGroupDialog), findsOneWidget);
+        return teacher;
+      }
+
+      Future<void> submit(
+        WidgetTester tester,
+        String login,
+        String password,
+      ) async {
+        await tester.enterText(_byKey('join-group-login'), login);
+        await tester.enterText(_byKey('join-group-password'), password);
+        await tester.tap(_byKey('join-group-submit'));
+        await tester.pumpAndSettle();
+      }
+
+      testWidgets('valid credentials join and show a snackbar', (tester) async {
+        await openJoinDialog(tester);
+        expect(find.text('Class login'), findsOneWidget);
+        expect(find.text('Password'), findsOneWidget);
+
+        // Logins are case-insensitive.
+        await submit(tester, 'elt301', 'elt301');
+
+        expect(find.byType(JoinGroupDialog), findsNothing);
+        expect(
+          find.text("«English group 301» guruhiga qo'shildingiz."),
+          findsOneWidget,
+        );
+
+        await _tapVisible(tester, find.text("Guruhga qo'shilish"));
+        await submit(tester, 'ELT301', 'elt301');
+        expect(
+          find.text('Siz allaqachon «English group 301» guruhidasiz.'),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('a wrong password keeps the dialog open in Uzbek', (
+        tester,
+      ) async {
+        await openJoinDialog(tester);
+
+        await submit(tester, 'ELT301', 'wrong');
+
+        expect(find.byType(JoinGroupDialog), findsOneWidget);
+        expect(find.text("Login yoki parol noto'g'ri."), findsOneWidget);
+
+        // The fields are kept, so fixing the password is enough.
+        await tester.enterText(_byKey('join-group-password'), 'elt301');
+        await tester.tap(_byKey('join-group-submit'));
+        await tester.pumpAndSettle();
+        expect(find.byType(JoinGroupDialog), findsNothing);
+      });
+
+      testWidgets('empty fields are caught before any request', (tester) async {
+        final teacher = await openJoinDialog(tester);
+        teacher.joinError = StateError('must not be called');
+
+        await tester.tap(_byKey('join-group-submit'));
+        await tester.pumpAndSettle();
+
+        expect(find.text("Maydonni to'ldiring."), findsNWidgets(2));
+        expect(find.byType(JoinGroupDialog), findsOneWidget);
+      });
+
+      testWidgets('a network failure says so', (tester) async {
+        final teacher = await openJoinDialog(tester);
+        teacher.joinError = ClientException('offline');
+
+        await submit(tester, 'ELT301', 'elt301');
+
+        expect(find.textContaining("Internet aloqasi yo'q"), findsOneWidget);
+      });
+
+      testWidgets('cancel closes without joining', (tester) async {
+        await openJoinDialog(tester);
+
+        await tester.tap(find.text('Bekor qilish'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(JoinGroupDialog), findsNothing);
+        expect(find.byType(SnackBar), findsNothing);
+      });
+
+      testWidgets('teachers have no join tile', (tester) async {
+        await openProfile(
+          tester,
+          _FakeSupabaseService(signedIn: true, role: UserRole.teacher),
+        );
+
+        expect(find.text("Guruhga qo'shilish"), findsNothing);
+      });
     });
 
     testWidgets('error map is a menu item, not embedded in the profile', (
@@ -1065,23 +1178,66 @@ void main() {
       expect(await lockedTopicCount(tester, teacher()), 0);
     });
 
+    // What get_teacher_dashboard and get_student_detail return.
+    FakeTeacherService teacherData() => FakeTeacherService(
+      dashboard: const TeacherDashboard(
+        totalStudents: 1,
+        totalGroups: 1,
+        averageMastery: 93,
+        groups: [
+          ClassGroup(
+            id: 'g1',
+            name: 'English group 301',
+            login: 'ELT301',
+            password: 'elt301',
+            students: [
+              TeacherStudent(
+                id: 's1',
+                fullName: 'Demirbek Razzaqov',
+                username: 'redscorpnoir',
+                currentLesson: 2,
+                masteryPercent: 93,
+                cefrLevel: 'C2',
+              ),
+            ],
+          ),
+        ],
+      ),
+      studentLessons: {
+        's1': [
+          const LessonSkillProgress(
+            lessonNumber: 2,
+            title: 'A world of sport',
+            isCurrent: true,
+            reading: 100,
+          ),
+          const LessonSkillProgress(
+            lessonNumber: 1,
+            title: 'Hello, everybody!',
+            grammar: 85,
+          ),
+        ],
+      },
+    );
+
     testWidgets('teacher opens the panel and a student detail dialog', (
       tester,
     ) async {
-      await tester.pumpWidget(_app(teacher()));
+      await tester.pumpWidget(_app(teacher(), teacher: teacherData()));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Panel'));
       await tester.pumpAndSettle();
       expect(find.byType(TeacherPanelScreen), findsOneWidget);
       expect(find.text("O'qituvchi paneli"), findsOneWidget);
-      expect(find.text('No error data yet.'), findsOneWidget);
+      expect(find.text('English group 301'), findsOneWidget);
+      expect(find.text('Common issues'), findsNothing);
 
       await _tapVisible(tester, find.text('View'));
       expect(find.byType(StudentDetailDialog), findsOneWidget);
       expect(find.text('@redscorpnoir • current Lesson 2'), findsOneWidget);
-      expect(find.text('No recurring mistakes recorded yet.'), findsOneWidget);
       expect(find.textContaining('Grammar 85%'), findsOneWidget);
+      expect(find.textContaining('Reading 100%'), findsOneWidget);
 
       await tester.tap(_byKey('student-detail-close'));
       await tester.pumpAndSettle();
@@ -1095,7 +1251,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
 
-      await tester.pumpWidget(_app(teacher()));
+      await tester.pumpWidget(_app(teacher(), teacher: teacherData()));
       await tester.pumpAndSettle();
 
       expect(find.byType(LearnistSidebar), findsOneWidget);

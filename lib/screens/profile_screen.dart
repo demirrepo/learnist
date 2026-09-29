@@ -10,6 +10,7 @@ import '../router.dart';
 import '../services/progress_service.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/join_group_dialog.dart';
 
 const _pagePadding = 20.0;
 const _cardRadius = BorderRadius.all(Radius.circular(16));
@@ -96,7 +97,8 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             _StatsRow(stats: _statsFrom(stats)),
             const SizedBox(height: 24),
-            const _SettingsCard(),
+            // Groups are joined by students; teachers create them.
+            _SettingsCard(showJoinGroup: !auth.isTeacher),
             const SizedBox(height: 16),
             _SignOutButton(onSignOut: auth.signOut),
           ],
@@ -297,7 +299,9 @@ class _StatCard extends StatelessWidget {
 }
 
 class _SettingsCard extends StatefulWidget {
-  const _SettingsCard();
+  const _SettingsCard({required this.showJoinGroup});
+
+  final bool showJoinGroup;
 
   @override
   State<_SettingsCard> createState() => _SettingsCardState();
@@ -340,6 +344,14 @@ class _SettingsCardState extends State<_SettingsCard> {
                 icon: setting.icon,
                 label: setting.label,
                 onTap: () => context.push(setting.route),
+              ),
+              divider,
+            ],
+            if (widget.showJoinGroup) ...[
+              _SettingsTile(
+                icon: LucideIcons.users,
+                label: "Guruhga qo'shilish",
+                onTap: () => showJoinGroupDialog(context),
               ),
               divider,
             ],

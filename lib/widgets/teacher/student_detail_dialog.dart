@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../models/teacher_dashboard.dart';
+import '../../services/teacher_service.dart';
 import '../../theme/app_theme.dart';
 import 'teacher_common.dart';
-import 'teacher_data.dart';
 
 Future<void> showStudentDetailDialog(
   BuildContext context,
@@ -17,15 +19,17 @@ Future<void> showStudentDetailDialog(
   );
 }
 
-/// Centered modal with a student's metrics, recurring mistakes and
-/// per-lesson skill breakdown.
-class StudentDetailDialog extends StatelessWidget {
+/// Centered modal with a student's metrics and the section scores of each
+/// lesson, fetched through [studentLessonsProvider] when it opens.
+class StudentDetailDialog extends ConsumerWidget {
   const StudentDetailDialog({super.key, required this.student});
 
   final TeacherStudent student;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lessons = ref.watch(studentLessonsProvider(student.id));
+
     return Dialog(
       backgroundColor: const Color(0xFFF1F2F6),
       surfaceTintColor: Colors.transparent,
@@ -56,36 +60,39 @@ class StudentDetailDialog extends StatelessWidget {
                         Expanded(
                           child: TeacherMetric(
                             label: 'CEFR',
-                            value: student.cefrLevel,
+                            value: student.cefrLevel ?? '—',
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const TeacherSectionTitle('Recurring mistakes'),
-                  const SizedBox(height: 12),
-                  if (student.recurringMistakes.isEmpty)
-                    const TeacherEmptyText(
-                      'No recurring mistakes recorded yet.',
-                    )
-                  else
-                    for (final mistake in student.recurringMistakes)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: _MistakeRow(mistake),
-                      ),
-                  const SizedBox(height: 24),
                   const TeacherSectionTitle('Lesson progress'),
                   const SizedBox(height: 12),
-                  if (student.lessonProgress.isEmpty)
-                    const TeacherEmptyText('No lessons completed yet.')
-                  else
-                    for (final (i, lesson)
-                        in student.lessonProgress.indexed) ...[
-                      if (i > 0) const SizedBox(height: 16),
-                      _LessonProgressRow(lesson: lesson),
-                    ],
+                  switch (lessons) {
+                    AsyncData(value: final lessons) when lessons.isEmpty =>
+                      const TeacherEmptyText('No lessons started yet.'),
+                    AsyncData(value: final lessons) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (final (i, lesson) in lessons.indexed) ...[
+                          if (i > 0) const SizedBox(height: 16),
+                          _LessonProgressRow(lesson: lesson),
+                        ],
+                      ],
+                    ),
+                    AsyncError(:final error) => _LoadError(
+                      message: teacherLoadErrorMessage(error),
+                      onRetry:
+                          () => ref.invalidate(
+                            studentLessonsProvider(student.id),
+                          ),
+                    ),
+                    _ => const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                  },
                 ],
               ),
             ),
@@ -144,7 +151,10 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '@${student.username} • current Lesson ${student.currentLesson}',
+            [
+              if (student.username case final username?) '@$username',
+              'current Lesson ${student.currentLesson}',
+            ].join(' • '),
             style: GoogleFonts.manrope(
               fontSize: 13.5,
               fontWeight: FontWeight.w500,
@@ -157,34 +167,24 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _MistakeRow extends StatelessWidget {
-  const _MistakeRow(this.mistake);
+class _LoadError extends StatelessWidget {
+  const _LoadError({required this.message, required this.onRetry});
 
-  final String mistake;
+  final String message;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 2),
-          child: Icon(
-            LucideIcons.alertCircle,
-            size: 16,
-            color: AppColors.danger,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            mistake,
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-          ),
+        TeacherEmptyText(message),
+        const SizedBox(height: 8),
+        TextButton.icon(
+          onPressed: onRetry,
+          icon: const Icon(LucideIcons.refreshCw, size: 16),
+          label: const Text('Qayta urinish'),
+          style: TextButton.styleFrom(foregroundColor: AppColors.teacherAccent),
         ),
       ],
     );
@@ -228,7 +228,9 @@ class _LessonProgressRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                lesson.title,
+                lesson.isCurrent
+                    ? '${lesson.title} • in progress'
+                    : lesson.title,
                 style: GoogleFonts.manrope(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'teacher_common.dart';
 
-/// Stat cards in one row when there is room, otherwise two per row.
+/// Stat cards in one row when there is room, otherwise two per row; a
+/// card left alone in the last row takes the full width.
 class ClassOverviewGrid extends StatelessWidget {
   const ClassOverviewGrid({super.key, required this.stats});
 
@@ -16,7 +17,8 @@ class ClassOverviewGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final perRow = constraints.maxWidth >= _singleRowWidth ? 4 : 2;
+        final perRow =
+            constraints.maxWidth >= _singleRowWidth ? stats.length : 2;
 
         return Column(
           children: [
@@ -26,16 +28,17 @@ class ClassOverviewGrid extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    for (var i = start; i < start + perRow; i++) ...[
+                    for (
+                      var i = start;
+                      i < start + perRow && i < stats.length;
+                      i++
+                    ) ...[
                       if (i > start) const SizedBox(width: _gap),
                       Expanded(
-                        child:
-                            i < stats.length
-                                ? TeacherMetric(
-                                  label: stats[i].$1,
-                                  value: stats[i].$2,
-                                )
-                                : const SizedBox.shrink(),
+                        child: TeacherMetric(
+                          label: stats[i].$1,
+                          value: stats[i].$2,
+                        ),
                       ),
                     ],
                   ],

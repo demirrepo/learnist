@@ -15,11 +15,11 @@ final progressServiceProvider = Provider<ProgressService>((ref) {
 
 /// These screens have their own "Qayta urinish" button; Riverpod's
 /// automatic retries would only delay the error state.
-Duration? _noRetry(int retryCount, Object error) => null;
+Duration? noRetry(int retryCount, Object error) => null;
 
 /// Refetch whenever the auth service notifies (sign-in, sign-out, a
 /// different user), so one user's data never shows for another.
-void _refetchOnAuthChange(Ref ref) {
+void refetchOnAuthChange(Ref ref) {
   final auth = ref.watch(supabaseServiceProvider);
   void refresh() => ref.invalidateSelf();
   auth.addListener(refresh);
@@ -29,32 +29,32 @@ void _refetchOnAuthChange(Ref ref) {
 /// The signed-in user's `user_progress` row, or defaults before their first
 /// check-up.
 final userProgressProvider = FutureProvider<UserProgress>((ref) {
-  _refetchOnAuthChange(ref);
+  refetchOnAuthChange(ref);
   return ref.watch(progressServiceProvider).fetchProgress();
-}, retry: _noRetry);
+}, retry: noRetry);
 
 /// The Home and Profile statistics. Refetched after every score, mistake
 /// or lesson the service saves, as well as on auth changes.
 final userStatsProvider = FutureProvider<UserStats>((ref) {
-  _refetchOnAuthChange(ref);
+  refetchOnAuthChange(ref);
   final service = ref.watch(progressServiceProvider);
   void refresh() => ref.invalidateSelf();
   service.addListener(refresh);
   ref.onDispose(() => service.removeListener(refresh));
   return service.fetchStats();
-}, retry: _noRetry);
+}, retry: noRetry);
 
 /// Past check-ups, oldest first, for the growth chart.
 final checkupHistoryProvider = FutureProvider<List<CheckupHistoryEntry>>((ref) {
-  _refetchOnAuthChange(ref);
+  refetchOnAuthChange(ref);
   return ref.watch(progressServiceProvider).fetchCheckupHistory();
-}, retry: _noRetry);
+}, retry: noRetry);
 
 /// The 30 check-up questions, without answers. Only watched while a
 /// check-up can be taken.
 final checkupQuestionsProvider = FutureProvider<List<CheckupQuestion>>(
   (ref) => ref.watch(progressServiceProvider).fetchCheckupQuestions(),
-  retry: _noRetry,
+  retry: noRetry,
 );
 
 /// Reads `user_progress`, `checkup_history` and `checkup_questions`,
