@@ -409,4 +409,116 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get profileSignOut => 'Tizimdan chiqish';
+
+  @override
+  String get lessonTabGrammar => 'Grammatika';
+
+  @override
+  String get lessonTabReading => 'O\'qish';
+
+  @override
+  String get lessonTabListening => 'Tinglab tushunish';
+
+  @override
+  String get lessonTabWriting => 'Yozish';
+
+  @override
+  String get lessonTabSpeaking => 'Gapirish';
+
+  @override
+  String get lessonGeneralRule => 'Umumiy qoida';
+
+  @override
+  String get lessonNoGrammar => 'Ushbu darsda grammatika qoidalari yo\'q.';
+
+  @override
+  String get lessonNoReading => 'Ushbu darsda o\'qish mashqi yo\'q.';
+
+  @override
+  String get lessonNoListening =>
+      'Ushbu darsda tinglab tushunish mashqi yo\'q.';
+
+  @override
+  String get lessonNoWriting => 'Ushbu darsda yozish mashqi yo\'q.';
+
+  @override
+  String get lessonNoSpeaking => 'Ushbu darsda gapirish mashqi yo\'q.';
+
+  @override
+  String get lessonVocabulary => 'Lug\'at';
+
+  @override
+  String get lessonCheckResults => 'Natijani tekshirish';
+
+  @override
+  String get lessonAudioPending =>
+      'Bu dars uchun audio hali tayyorlanmoqda. Hozircha matndan foydalaning.';
+
+  @override
+  String get lessonAudioError =>
+      'Audioni yuklab bo\'lmadi. Internet aloqasini tekshirib, qayta urinib ko\'ring.';
+
+  @override
+  String get lessonFinish => 'Darsni yakunlash';
+
+  @override
+  String get lessonUnlocked => 'Tabriklaymiz! Yangi dars ochildi';
+
+  @override
+  String get lessonSaveScoreError =>
+      'Ball saqlanmadi. Iltimos qayta urinib ko\'ring.';
+
+  @override
+  String get taskEmptyAnswer => 'Avval javobingizni yozing.';
+
+  @override
+  String get taskEvaluationError =>
+      'Baholashda xatolik yuz berdi. Iltimos qayta urinib ko\'ring.';
+
+  @override
+  String get taskMicDenied => 'Ovoz yozish uchun mikrofonga ruxsat bering.';
+
+  @override
+  String get taskMicBlocked =>
+      'Mikrofonga ruxsat berilmagan. Uni telefon sozlamalaridan yoqing.';
+
+  @override
+  String get taskRecordingError =>
+      'Ovoz yozishni boshlab bo\'lmadi. Iltimos qayta urinib ko\'ring.';
+
+  @override
+  String get taskTranscriptionError =>
+      'Nutqni matnga aylantirib bo\'lmadi. Iltimos qayta urinib ko\'ring.';
+
+  @override
+  String get taskRecordingMissing => 'Yozib olingan audio topilmadi.';
+
+  @override
+  String get errorOffline =>
+      'Internet aloqasi yo\'q. Tarmoqni tekshirib, qayta urinib ko\'ring.';
+
+  @override
+  String get lessonNotFound => 'Dars topilmadi.';
+
+  @override
+  String get lessonLoadFailed =>
+      'Darslarni yuklab bo\'lmadi. Birozdan so\'ng qayta urinib ko\'ring.';
+
+  @override
+  String get errorGeneric =>
+      'Nimadir xato ketdi. Iltimos, qayta urinib ko\'ring.';
+
+  @override
+  String lessonCompleteLowScore(int min) {
+    return 'O\'rtacha ballingiz $min% dan past. Keyingi darsga o\'tish uchun bo\'limlarni yaxshilang.';
+  }
+
+  @override
+  String lessonCompleteLowScoreWithAverage(int min, int average) {
+    return 'O\'rtacha ballingiz $min% dan past (hozirgi: $average%). Keyingi darsga o\'tish uchun bo\'limlarni yaxshilang.';
+  }
+
+  @override
+  String get lessonCompleteFailed =>
+      'Darsni yakunlab bo\'lmadi. Iltimos, qayta urinib ko\'ring.';
 }

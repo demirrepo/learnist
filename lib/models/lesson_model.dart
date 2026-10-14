@@ -16,6 +16,7 @@ class Lesson {
     this.topic,
     this.taskMeta = const [],
     this.grammarRules,
+    this.grammarRulesTranslations = const {},
     this.grammarRulesSource,
     this.readingPassage,
     this.readingFormat,
@@ -41,6 +42,11 @@ class Lesson {
       topic: _optionalString(json['topic']),
       taskMeta: _stringList(json['task_meta']),
       grammarRules: _optionalString(json['grammar_rules']),
+      grammarRulesTranslations: {
+        for (final code in grammarRulesLanguages)
+          if (_optionalString(json['grammar_rules_$code']) case final text?)
+            code: text,
+      },
       grammarRulesSource: _optionalString(json['grammar_rules_source']),
       readingPassage: _optionalString(json['reading_passage']),
       readingFormat: _optionalString(json['reading_format']),
@@ -68,8 +74,16 @@ class Lesson {
   final String? topic;
   final List<String> taskMeta;
 
+  /// Languages with a `grammar_rules_<code>` column; Uzbek is
+  /// [grammarRules] itself.
+  static const grammarRulesLanguages = ['en', 'ru', 'kk'];
+
   /// Uzbek explanation of the lesson's grammar.
   final String? grammarRules;
+
+  /// [grammarRules] in other languages, keyed by language code. Only
+  /// languages whose column is filled in appear.
+  final Map<String, String> grammarRulesTranslations;
 
   /// `lesson`, or `site_fallback_guide` when [grammarRules] is the generic
   /// category guide used because the lesson had no rule of its own.
@@ -97,6 +111,11 @@ class Lesson {
   final String? audioUrl;
   final String? writingPrompt;
   final String? speakingPrompt;
+
+  /// The grammar explanation in [languageCode], or the Uzbek one when it
+  /// has not been translated yet.
+  String? grammarRulesFor(String languageCode) =>
+      grammarRulesTranslations[languageCode] ?? grammarRules;
 
   bool get isFallbackGrammarRule => grammarRulesSource == 'site_fallback_guide';
 

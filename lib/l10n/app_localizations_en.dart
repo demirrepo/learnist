@@ -430,4 +430,114 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSignOut => 'Sign out';
+
+  @override
+  String get lessonTabGrammar => 'Grammar';
+
+  @override
+  String get lessonTabReading => 'Reading';
+
+  @override
+  String get lessonTabListening => 'Listening';
+
+  @override
+  String get lessonTabWriting => 'Writing';
+
+  @override
+  String get lessonTabSpeaking => 'Speaking';
+
+  @override
+  String get lessonGeneralRule => 'General rule';
+
+  @override
+  String get lessonNoGrammar => 'This lesson has no grammar rules.';
+
+  @override
+  String get lessonNoReading => 'This lesson has no reading exercise.';
+
+  @override
+  String get lessonNoListening => 'This lesson has no listening exercise.';
+
+  @override
+  String get lessonNoWriting => 'This lesson has no writing task.';
+
+  @override
+  String get lessonNoSpeaking => 'This lesson has no speaking task.';
+
+  @override
+  String get lessonVocabulary => 'Vocabulary';
+
+  @override
+  String get lessonCheckResults => 'Check results';
+
+  @override
+  String get lessonAudioPending =>
+      'Audio for this lesson is still being prepared. Use the transcript for now.';
+
+  @override
+  String get lessonAudioError =>
+      'Couldn\'t load the audio. Check your internet connection and try again.';
+
+  @override
+  String get lessonFinish => 'Finish lesson';
+
+  @override
+  String get lessonUnlocked => 'Congratulations! A new lesson is unlocked';
+
+  @override
+  String get lessonSaveScoreError =>
+      'Your score wasn\'t saved. Please try again.';
+
+  @override
+  String get taskEmptyAnswer => 'Write your answer first.';
+
+  @override
+  String get taskEvaluationError =>
+      'Something went wrong while grading. Please try again.';
+
+  @override
+  String get taskMicDenied => 'Allow microphone access to record your voice.';
+
+  @override
+  String get taskMicBlocked =>
+      'Microphone access is blocked. Turn it on in your phone settings.';
+
+  @override
+  String get taskRecordingError =>
+      'Couldn\'t start recording. Please try again.';
+
+  @override
+  String get taskTranscriptionError =>
+      'Couldn\'t turn your speech into text. Please try again.';
+
+  @override
+  String get taskRecordingMissing => 'No recorded audio was found.';
+
+  @override
+  String get errorOffline =>
+      'No internet connection. Check your network and try again.';
+
+  @override
+  String get lessonNotFound => 'Lesson not found.';
+
+  @override
+  String get lessonLoadFailed =>
+      'Couldn\'t load the lessons. Please try again in a moment.';
+
+  @override
+  String get errorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String lessonCompleteLowScore(int min) {
+    return 'Your average score is below $min%. Improve your sections to move on to the next lesson.';
+  }
+
+  @override
+  String lessonCompleteLowScoreWithAverage(int min, int average) {
+    return 'Your average score is below $min% (currently $average%). Improve your sections to move on to the next lesson.';
+  }
+
+  @override
+  String get lessonCompleteFailed =>
+      'Couldn\'t finish the lesson. Please try again.';
 }

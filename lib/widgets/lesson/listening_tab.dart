@@ -7,18 +7,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/lesson_model.dart';
 import '../../services/progress_service.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 import 'lesson_quiz.dart';
 import 'section_score.dart';
-
-const _noListeningMessage = "Ushbu darsda tinglab tushunish mashqi yo'q.";
-const _noAudioMessage =
-    "Bu dars uchun audio hali tayyorlanmoqda. Hozircha matndan foydalaning.";
-const _audioErrorMessage =
-    "Audioni yuklab bo'lmadi. Internet aloqasini tekshirib, qayta urinib ko'ring.";
 
 const _speeds = [0.75, 1.0, 1.25, 1.5];
 
@@ -33,7 +28,9 @@ class ListeningTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final transcript = lesson.listeningTranscript;
     if (transcript == null) {
-      return const LessonTabBody(children: [LessonNotice(_noListeningMessage)]);
+      return LessonTabBody(
+        children: [LessonNotice(context.l10n.lessonNoListening)],
+      );
     }
 
     final questions = QuizQuestion.listFrom(lesson.listeningQuestions);
@@ -131,7 +128,7 @@ class _AudioPending extends StatelessWidget {
         const SizedBox(width: 10),
         Expanded(
           child: Text(
-            _noAudioMessage,
+            context.l10n.lessonAudioPending,
             style: lessonBodyStyle.copyWith(fontSize: 14),
           ),
         ),
@@ -416,7 +413,7 @@ class _AudioError extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                _audioErrorMessage,
+                context.l10n.lessonAudioError,
                 style: lessonBodyStyle.copyWith(fontSize: 14),
               ),
             ),
@@ -426,7 +423,7 @@ class _AudioError extends StatelessWidget {
         TextButton.icon(
           onPressed: onRetry,
           icon: const Icon(LucideIcons.refreshCw, size: 16),
-          label: const Text('Qayta urinish'),
+          label: Text(context.l10n.retry),
         ),
       ],
     );

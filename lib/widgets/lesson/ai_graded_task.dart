@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../services/deepgram_service.dart';
 import '../../services/openai_service.dart';
 import '../../services/progress_service.dart';
@@ -13,17 +14,6 @@ import '../../services/speech_recorder.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 import 'section_score.dart';
-
-const _emptyAnswerMessage = 'Avval javobingizni yozing.';
-const _evaluationErrorMessage =
-    "Baholashda xatolik yuz berdi. Iltimos qayta urinib ko'ring.";
-const _micDeniedMessage = 'Ovoz yozish uchun mikrofonga ruxsat bering.';
-const _micBlockedMessage =
-    'Mikrofonga ruxsat berilmagan. Uni telefon sozlamalaridan yoqing.';
-const _recordingErrorMessage =
-    "Ovoz yozishni boshlab bo'lmadi. Iltimos qayta urinib ko'ring.";
-const _transcriptionErrorMessage =
-    "Nutqni matnga aylantirib bo'lmadi. Iltimos qayta urinib ko'ring.";
 
 /// Answer field, grading button and result for an AI-graded task.
 ///
@@ -107,6 +97,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
   Future<void> _startRecording() async {
     if (_evaluating) return;
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     final recorder = ref.read(speechRecorderProvider);
     FocusScope.of(context).unfocus();
     setState(() => _mic = _MicState.starting);
@@ -118,8 +109,8 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
         showLessonError(
           messenger,
           permission == MicPermission.permanentlyDenied
-              ? _micBlockedMessage
-              : _micDeniedMessage,
+              ? l10n.taskMicBlocked
+              : l10n.taskMicDenied,
         );
         return;
       }
@@ -127,7 +118,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
     } catch (error) {
       if (kDebugMode) debugPrint('[Lesson] recording failed: $error');
       if (mounted) setState(() => _mic = _MicState.idle);
-      showLessonError(messenger, _recordingErrorMessage);
+      showLessonError(messenger, l10n.taskRecordingError);
       return;
     }
 
@@ -145,6 +136,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
     final recorder = _recorder;
     if (recorder == null) return;
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     final deepgram = ref.read(deepgramServiceProvider);
     setState(() {
       _recorder = null;
@@ -155,7 +147,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
     try {
       path = await recorder.stop();
       if (path == null) {
-        throw const DeepgramException('Yozib olingan audio topilmadi.');
+        throw DeepgramException(l10n.taskRecordingMissing);
       }
       final text = await deepgram.transcribeAudio(path);
       if (mounted) {
@@ -168,7 +160,9 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
       if (kDebugMode) debugPrint('[Lesson] transcription failed: $error');
       showLessonError(
         messenger,
-        error is DeepgramException ? error.message : _transcriptionErrorMessage,
+        error is DeepgramException
+            ? error.message
+            : l10n.taskTranscriptionError,
       );
     } finally {
       if (path != null) unawaited(recorder.delete(path));
@@ -179,9 +173,10 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
   Future<void> _grade() async {
     if (_evaluating) return;
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     final text = _answer.text;
     if (text.trim().isEmpty) {
-      showLessonError(messenger, _emptyAnswerMessage);
+      showLessonError(messenger, l10n.taskEmptyAnswer);
       return;
     }
 
@@ -200,7 +195,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
     } catch (error) {
       if (kDebugMode) debugPrint('[Lesson] grading $section failed: $error');
       if (mounted) setState(() => _evaluating = false);
-      showLessonError(messenger, _evaluationErrorMessage);
+      showLessonError(messenger, l10n.taskEvaluationError);
       return;
     }
 

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/lesson_model.dart';
 import 'supabase_service.dart' show isNetworkError;
 
@@ -24,7 +25,8 @@ class LessonService {
   /// instead of silently parsing as null.
   static const _columns =
       'lesson_number, original_number, semester, title, grammar_focus, '
-      'cefr_level, topic, task_meta, grammar_rules, grammar_rules_source, '
+      'cefr_level, topic, task_meta, grammar_rules, grammar_rules_en, '
+      'grammar_rules_ru, grammar_rules_kk, grammar_rules_source, '
       'reading_passage, reading_format, reading_vocabulary, reading_questions, '
       'listening_transcript, listening_format, listening_speakers, '
       'listening_questions, audio_url, writing_prompt, speaking_prompt';
@@ -83,16 +85,12 @@ class LessonNotFoundException implements Exception {
   String toString() => 'LessonNotFoundException: lesson $lessonNumber';
 }
 
-/// User-facing Uzbek message for a failed lesson load.
-String lessonLoadErrorMessage(Object error) {
-  if (isNetworkError(error)) {
-    return "Internet aloqasi yo'q. Tarmoqni tekshirib, qayta urinib ko'ring.";
-  }
-  if (error is LessonNotFoundException) return 'Dars topilmadi.';
-  if (error is PostgrestException) {
-    return "Darslarni yuklab bo'lmadi. Birozdan so'ng qayta urinib ko'ring.";
-  }
-  return "Nimadir xato ketdi. Iltimos, qayta urinib ko'ring.";
+/// User-facing message for a failed lesson load.
+String lessonLoadErrorMessage(Object error, AppLocalizations l10n) {
+  if (isNetworkError(error)) return l10n.errorOffline;
+  if (error is LessonNotFoundException) return l10n.lessonNotFound;
+  if (error is PostgrestException) return l10n.lessonLoadFailed;
+  return l10n.errorGeneric;
 }
 
 void _log(String action, Object error, StackTrace stackTrace) {

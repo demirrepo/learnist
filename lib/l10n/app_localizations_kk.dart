@@ -406,4 +406,113 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get profileSignOut => 'Sistemadan shıǵıw';
+
+  @override
+  String get lessonTabGrammar => 'Grammatika';
+
+  @override
+  String get lessonTabReading => 'Oqıw';
+
+  @override
+  String get lessonTabListening => 'Tıńlap túsiniw';
+
+  @override
+  String get lessonTabWriting => 'Jazıw';
+
+  @override
+  String get lessonTabSpeaking => 'Sóylew';
+
+  @override
+  String get lessonGeneralRule => 'Ulıwma qaǵıyda';
+
+  @override
+  String get lessonNoGrammar => 'Bul sabaqta grammatika qaǵıydaları joq.';
+
+  @override
+  String get lessonNoReading => 'Bul sabaqta oqıw shınıǵıwı joq.';
+
+  @override
+  String get lessonNoListening => 'Bul sabaqta tıńlap túsiniw shınıǵıwı joq.';
+
+  @override
+  String get lessonNoWriting => 'Bul sabaqta jazıw tapsırması joq.';
+
+  @override
+  String get lessonNoSpeaking => 'Bul sabaqta sóylew tapsırması joq.';
+
+  @override
+  String get lessonVocabulary => 'Sózlik';
+
+  @override
+  String get lessonCheckResults => 'Nátiyjeni tekseriw';
+
+  @override
+  String get lessonAudioPending =>
+      'Bul sabaq ushın audio ele tayarlanbaqta. Házirshe tekstten paydalanıń.';
+
+  @override
+  String get lessonAudioError =>
+      'Audionı júklep bolmadı. Internet baylanısın tekserip, qaytadan urınıp kóriń.';
+
+  @override
+  String get lessonFinish => 'Sabaqtı juwmaqlaw';
+
+  @override
+  String get lessonUnlocked => 'Qutlıqlaymız! Jańa sabaq ashıldı';
+
+  @override
+  String get lessonSaveScoreError => 'Ball saqlanbadı. Qaytadan urınıp kóriń.';
+
+  @override
+  String get taskEmptyAnswer => 'Aldı menen juwabıńızdı jazıń.';
+
+  @override
+  String get taskEvaluationError =>
+      'Bahalawda qátelik júz berdi. Qaytadan urınıp kóriń.';
+
+  @override
+  String get taskMicDenied => 'Dawıs jazıw ushın mikrofonǵa ruqsat beriń.';
+
+  @override
+  String get taskMicBlocked =>
+      'Mikrofonǵa ruqsat berilmegen. Onı telefon sazlamalarınan qosıń.';
+
+  @override
+  String get taskRecordingError =>
+      'Dawıs jazıwdı baslap bolmadı. Qaytadan urınıp kóriń.';
+
+  @override
+  String get taskTranscriptionError =>
+      'Sóylewdi tekstke aylandırıp bolmadı. Qaytadan urınıp kóriń.';
+
+  @override
+  String get taskRecordingMissing => 'Jazıp alınǵan audio tabılmadı.';
+
+  @override
+  String get errorOffline =>
+      'Internet baylanısı joq. Tarmaqtı tekserip, qaytadan urınıp kóriń.';
+
+  @override
+  String get lessonNotFound => 'Sabaq tabılmadı.';
+
+  @override
+  String get lessonLoadFailed =>
+      'Sabaqlardı júklep bolmadı. Azdan soń qaytadan urınıp kóriń.';
+
+  @override
+  String get errorGeneric => 'Bir nárse qáte boldı. Qaytadan urınıp kóriń.';
+
+  @override
+  String lessonCompleteLowScore(int min) {
+    return 'Ortasha ballıńız $min% dan tómen. Keyingi sabaqqa ótiw ushın bólimlerdi jaqsılań.';
+  }
+
+  @override
+  String lessonCompleteLowScoreWithAverage(int min, int average) {
+    return 'Ortasha ballıńız $min% dan tómen (házirgi: $average%). Keyingi sabaqqa ótiw ushın bólimlerdi jaqsılań.';
+  }
+
+  @override
+  String get lessonCompleteFailed =>
+      'Sabaqtı juwmaqlap bolmadı. Qaytadan urınıp kóriń.';
 }

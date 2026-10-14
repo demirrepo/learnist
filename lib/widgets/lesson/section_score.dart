@@ -1,10 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../../services/progress_service.dart';
 import '../../theme/app_theme.dart';
-
-const saveScoreErrorMessage = "Ball saqlanmadi. Iltimos qayta urinib ko'ring.";
 
 /// Red snackbar for a lesson task that failed.
 void showLessonError(ScaffoldMessengerState messenger, String message) {
@@ -17,7 +16,7 @@ void showLessonError(ScaffoldMessengerState messenger, String message) {
 
 /// Saves a graded reading or listening quiz: its score as the lesson's
 /// [section] score, then its [wrongIndexes] as tracked mistakes. A failed
-/// score shows [saveScoreErrorMessage]; a failed mistake update is only
+/// score shows a "score not saved" warning; a failed mistake update is only
 /// logged, since the student has nothing to retry.
 Future<void> saveQuizResultOrWarn({
   required ProgressService progress,
@@ -42,7 +41,7 @@ Future<void> saveQuizResultOrWarn({
 }
 
 /// Saves the lesson's [section] score (0–100); a failure shows
-/// [saveScoreErrorMessage] instead of throwing.
+/// a "score not saved" warning instead of throwing.
 ///
 /// Takes the service and messenger rather than a context so callers can
 /// read them before an await and still save after the student leaves.
@@ -57,6 +56,8 @@ Future<void> saveSectionScoreOrWarn({
     await progress.saveSectionScore(lessonNumber, section, score);
   } catch (error) {
     if (kDebugMode) debugPrint('[Lesson] saving the $section score: $error');
-    showLessonError(messenger, saveScoreErrorMessage);
+    // The app-wide messenger outlives the lesson, so its context is still
+    // valid if the student left meanwhile.
+    showLessonError(messenger, messenger.context.l10n.lessonSaveScoreError);
   }
 }

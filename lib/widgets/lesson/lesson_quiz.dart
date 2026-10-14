@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 
@@ -123,7 +124,7 @@ class _LessonQuizState extends State<LessonQuiz> {
         ],
         const SizedBox(height: 16),
         LessonPrimaryButton(
-          label: 'Natijani tekshirish',
+          label: context.l10n.lessonCheckResults,
           icon: LucideIcons.checkCircle,
           onPressed: _checkResults,
         ),

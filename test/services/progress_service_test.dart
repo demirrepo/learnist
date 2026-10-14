@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:flutter/widgets.dart' show Locale;
+import 'package:learnist/l10n/app_localizations.dart';
 import 'package:learnist/models/user_stats.dart';
 import 'package:learnist/services/progress_service.dart';
 import 'package:learnist/services/supabase_service.dart';
@@ -379,10 +381,13 @@ void main() {
   });
 
   group('lessonCompletionErrorMessage', () {
+    final uz = lookupAppLocalizations(const Locale('uz'));
+
     test('explains an insufficient average with the current score', () {
       expect(
         lessonCompletionErrorMessage(
           const InsufficientScoreException(average: 65),
+          uz,
         ),
         "O'rtacha ballingiz 80% dan past (hozirgi: 65%). "
         "Keyingi darsga o'tish uchun bo'limlarni yaxshilang.",
@@ -391,9 +396,18 @@ void main() {
 
     test('omits the score when it is unknown', () {
       expect(
-        lessonCompletionErrorMessage(const InsufficientScoreException()),
+        lessonCompletionErrorMessage(const InsufficientScoreException(), uz),
         "O'rtacha ballingiz 80% dan past. "
         "Keyingi darsga o'tish uchun bo'limlarni yaxshilang.",
+      );
+    });
+    test('follows the picked language', () {
+      expect(
+        lessonCompletionErrorMessage(
+          const InsufficientScoreException(average: 65),
+          lookupAppLocalizations(const Locale('ru')),
+        ),
+        startsWith('Ваш средний балл ниже 80% (сейчас: 65%).'),
       );
     });
   });

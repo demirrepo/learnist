@@ -53,16 +53,49 @@ void main() {
       expect(question['options'], isA<List>());
     });
 
+    test('every grammar explanation is translated', () {
+      for (final lesson in lessons) {
+        expect(
+          lesson.grammarRulesTranslations.keys,
+          unorderedEquals(Lesson.grammarRulesLanguages),
+          reason: 'lesson ${lesson.lessonNumber}',
+        );
+      }
+      expect(
+        lessons.first.grammarRulesFor('uz'),
+        startsWith('Tasavvur qiling'),
+      );
+      expect(lessons.first.grammarRulesFor('en'), startsWith('Imagine'));
+      expect(lessons.first.grammarRulesFor('ru'), startsWith('Представьте'));
+      expect(lessons.first.grammarRulesFor('kk'), startsWith('Kóz aldıńızǵa'));
+    });
+
     test('lesson 38 is flagged as using the fallback guide', () {
       expect(lessons[37].isFallbackGrammarRule, isTrue);
       expect(lessons[37].grammarRules, isNotNull);
     });
   });
 
+  test('an untranslated language falls back to the Uzbek rule', () {
+    final lesson = Lesson.fromJson({
+      ..._minimalRow(),
+      'grammar_rules': 'Sifat',
+      'grammar_rules_ru': 'Прилагательное',
+      'grammar_rules_en': '   ',
+    });
+    expect(lesson.grammarRulesFor('ru'), 'Прилагательное');
+    expect(lesson.grammarRulesFor('en'), 'Sifat');
+    expect(lesson.grammarRulesFor('kk'), 'Sifat');
+    expect(lesson.grammarRulesFor('uz'), 'Sifat');
+    expect(lesson.grammarRulesTranslations, {'ru': 'Прилагательное'});
+  });
+
   test('missing optional columns become null or empty', () {
     final lesson = Lesson.fromJson(_minimalRow());
     expect(lesson.topic, isNull);
     expect(lesson.grammarRules, isNull);
+    expect(lesson.grammarRulesFor('en'), isNull);
+    expect(lesson.grammarRulesTranslations, isEmpty);
     expect(lesson.readingPassage, isNull);
     expect(lesson.listeningTranscript, isNull);
     expect(lesson.audioUrl, isNull);

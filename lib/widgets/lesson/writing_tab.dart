@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 import 'ai_graded_task.dart';
 import 'lesson_common.dart';
-
-const _noWritingMessage = "Ushbu darsda yozish mashqi yo'q.";
 
 const _lenses = [
   (level: 'A1', focus: "Short, correct sentences using the lesson's grammar."),
@@ -29,7 +28,9 @@ class WritingTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final prompt = lesson.writingPrompt;
     if (prompt == null) {
-      return const LessonTabBody(children: [LessonNotice(_noWritingMessage)]);
+      return LessonTabBody(
+        children: [LessonNotice(context.l10n.lessonNoWriting)],
+      );
     }
 
     return LessonTabBody(

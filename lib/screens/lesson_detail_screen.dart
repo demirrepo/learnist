@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../l10n/l10n.dart';
 import '../models/lesson_model.dart';
 import '../services/lesson_service.dart';
 import '../theme/app_theme.dart';
@@ -11,14 +12,6 @@ import '../widgets/lesson/reading_tab.dart';
 import '../widgets/lesson/speaking_tab.dart';
 import '../widgets/lesson/writing_tab.dart';
 import '../widgets/load_problem_view.dart';
-
-const _tabs = [
-  'Grammatika',
-  "O'qish",
-  'Tinglab tushunish',
-  'Yozish',
-  'Gapirish',
-];
 
 /// One live lesson from the `lessons` table, split into five skill tabs.
 class LessonDetailScreen extends ConsumerStatefulWidget {
@@ -72,7 +65,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
           return _StatusScaffold(
             title: 'Lesson ${widget.lessonId}',
             child: LoadProblemView(
-              message: lessonLoadErrorMessage(snapshot.error!),
+              message: lessonLoadErrorMessage(snapshot.error!, context.l10n),
               onRetry: _retry,
             ),
           );
@@ -131,7 +124,7 @@ class _LessonView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: _tabs.length,
+      length: 5,
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: _lessonAppBar(
@@ -205,6 +198,7 @@ class _LessonTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const radius = BorderRadius.all(Radius.circular(99));
+    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -232,7 +226,13 @@ class _LessonTabBar extends StatelessWidget {
           fontWeight: FontWeight.w600,
         ),
         tabs: [
-          for (final label in _tabs)
+          for (final label in [
+            l10n.lessonTabGrammar,
+            l10n.lessonTabReading,
+            l10n.lessonTabListening,
+            l10n.lessonTabWriting,
+            l10n.lessonTabSpeaking,
+          ])
             Tab(
               height: 40,
               child: Padding(

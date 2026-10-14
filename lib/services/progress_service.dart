@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/checkup.dart';
 import '../models/tracked_mistake.dart';
 import '../models/user_progress.dart';
@@ -337,19 +338,17 @@ String checkupErrorMessage(Object error) {
   return message;
 }
 
-/// User-facing Uzbek message for a failed [ProgressService.completeLesson].
-String lessonCompletionErrorMessage(Object error) {
+/// User-facing message for a failed [ProgressService.completeLesson].
+String lessonCompletionErrorMessage(Object error, AppLocalizations l10n) {
   if (error is InsufficientScoreException) {
     const min = InsufficientScoreException.minAverage;
-    final current =
-        error.average == null ? '' : ' (hozirgi: ${error.average}%)';
-    return "O'rtacha ballingiz $min% dan past$current. "
-        "Keyingi darsga o'tish uchun bo'limlarni yaxshilang.";
+    final average = error.average;
+    return average == null
+        ? l10n.lessonCompleteLowScore(min)
+        : l10n.lessonCompleteLowScoreWithAverage(min, average);
   }
   final message =
-      isNetworkError(error)
-          ? "Internet aloqasi yo'q. Tarmoqni tekshirib, qayta urinib ko'ring."
-          : "Darsni yakunlab bo'lmadi. Iltimos, qayta urinib ko'ring.";
+      isNetworkError(error) ? l10n.errorOffline : l10n.lessonCompleteFailed;
   if (kDebugMode && error is PostgrestException) {
     return '$message\n\n[debug] ${error.code ?? 'no code'}: ${error.message}';
   }

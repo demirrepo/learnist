@@ -779,6 +779,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign out'**
   String get profileSignOut;
+
+  /// No description provided for @lessonTabGrammar.
+  ///
+  /// In en, this message translates to:
+  /// **'Grammar'**
+  String get lessonTabGrammar;
+
+  /// No description provided for @lessonTabReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading'**
+  String get lessonTabReading;
+
+  /// No description provided for @lessonTabListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening'**
+  String get lessonTabListening;
+
+  /// No description provided for @lessonTabWriting.
+  ///
+  /// In en, this message translates to:
+  /// **'Writing'**
+  String get lessonTabWriting;
+
+  /// No description provided for @lessonTabSpeaking.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking'**
+  String get lessonTabSpeaking;
+
+  /// No description provided for @lessonGeneralRule.
+  ///
+  /// In en, this message translates to:
+  /// **'General rule'**
+  String get lessonGeneralRule;
+
+  /// No description provided for @lessonNoGrammar.
+  ///
+  /// In en, this message translates to:
+  /// **'This lesson has no grammar rules.'**
+  String get lessonNoGrammar;
+
+  /// No description provided for @lessonNoReading.
+  ///
+  /// In en, this message translates to:
+  /// **'This lesson has no reading exercise.'**
+  String get lessonNoReading;
+
+  /// No description provided for @lessonNoListening.
+  ///
+  /// In en, this message translates to:
+  /// **'This lesson has no listening exercise.'**
+  String get lessonNoListening;
+
+  /// No description provided for @lessonNoWriting.
+  ///
+  /// In en, this message translates to:
+  /// **'This lesson has no writing task.'**
+  String get lessonNoWriting;
+
+  /// No description provided for @lessonNoSpeaking.
+  ///
+  /// In en, this message translates to:
+  /// **'This lesson has no speaking task.'**
+  String get lessonNoSpeaking;
+
+  /// No description provided for @lessonVocabulary.
+  ///
+  /// In en, this message translates to:
+  /// **'Vocabulary'**
+  String get lessonVocabulary;
+
+  /// No description provided for @lessonCheckResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Check results'**
+  String get lessonCheckResults;
+
+  /// No description provided for @lessonAudioPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio for this lesson is still being prepared. Use the transcript for now.'**
+  String get lessonAudioPending;
+
+  /// No description provided for @lessonAudioError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the audio. Check your internet connection and try again.'**
+  String get lessonAudioError;
+
+  /// No description provided for @lessonFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish lesson'**
+  String get lessonFinish;
+
+  /// No description provided for @lessonUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations! A new lesson is unlocked'**
+  String get lessonUnlocked;
+
+  /// No description provided for @lessonSaveScoreError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your score wasn\'t saved. Please try again.'**
+  String get lessonSaveScoreError;
+
+  /// No description provided for @taskEmptyAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your answer first.'**
+  String get taskEmptyAnswer;
+
+  /// No description provided for @taskEvaluationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while grading. Please try again.'**
+  String get taskEvaluationError;
+
+  /// No description provided for @taskMicDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow microphone access to record your voice.'**
+  String get taskMicDenied;
+
+  /// No description provided for @taskMicBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone access is blocked. Turn it on in your phone settings.'**
+  String get taskMicBlocked;
+
+  /// No description provided for @taskRecordingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t start recording. Please try again.'**
+  String get taskRecordingError;
+
+  /// No description provided for @taskTranscriptionError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t turn your speech into text. Please try again.'**
+  String get taskTranscriptionError;
+
+  /// No description provided for @taskRecordingMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No recorded audio was found.'**
+  String get taskRecordingMissing;
+
+  /// No description provided for @errorOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Check your network and try again.'**
+  String get errorOffline;
+
+  /// No description provided for @lessonNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson not found.'**
+  String get lessonNotFound;
+
+  /// No description provided for @lessonLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the lessons. Please try again in a moment.'**
+  String get lessonLoadFailed;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errorGeneric;
+
+  /// No description provided for @lessonCompleteLowScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Your average score is below {min}%. Improve your sections to move on to the next lesson.'**
+  String lessonCompleteLowScore(int min);
+
+  /// No description provided for @lessonCompleteLowScoreWithAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your average score is below {min}% (currently {average}%). Improve your sections to move on to the next lesson.'**
+  String lessonCompleteLowScoreWithAverage(int min, int average);
+
+  /// No description provided for @lessonCompleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t finish the lesson. Please try again.'**
+  String get lessonCompleteFailed;
 }
 
 class _AppLocalizationsDelegate

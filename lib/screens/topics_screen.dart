@@ -149,7 +149,7 @@ class _TopicsScreenState extends ConsumerState<TopicsScreen> {
         _CenteredSliver(
           child: LoadProblemView(
             icon: LucideIcons.wifiOff,
-            message: lessonLoadErrorMessage(snapshot.error!),
+            message: lessonLoadErrorMessage(snapshot.error!, context.l10n),
             onRetry: _retry,
           ),
         ),

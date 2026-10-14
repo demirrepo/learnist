@@ -40,6 +40,7 @@ Future<void> _pump(
   FakeOpenAIService? ai,
   FakeDeepgramService? deepgram,
   FakeSpeechRecorder? recorder,
+  Locale locale = testLocale,
   bool settle = true,
 }) async {
   await tester.pumpWidget(
@@ -59,7 +60,7 @@ Future<void> _pump(
         ),
       ],
       child: MaterialApp(
-        locale: testLocale,
+        locale: locale,
         localizationsDelegates: testLocalizationsDelegates,
         supportedLocales: testSupportedLocales,
 
@@ -170,6 +171,68 @@ void main() {
     expect(find.text(lesson1.grammarFocus), findsOneWidget);
     expect(find.text(lesson1.grammarRules!), findsOneWidget);
     expect(find.text('Umumiy qoida'), findsNothing);
+  });
+
+  group('follows the interface language', () {
+    for (final (code, tab, firstWords) in [
+      ('en', 'Reading', 'Imagine you are'),
+      ('ru', 'Чтение', 'Представьте, что'),
+      ('kk', 'Oqıw', 'Kóz aldıńızǵa'),
+    ]) {
+      testWidgets('$code: tabs and grammar explanation', (tester) async {
+        _useTallView(tester);
+        await _pump(tester, locale: Locale(code));
+
+        expect(find.text(tab), findsOneWidget);
+        expect(find.text("O'qish"), findsNothing);
+        final rules = lesson1.grammarRulesFor(code)!;
+        expect(rules, startsWith(firstWords));
+        expect(find.text(rules), findsOneWidget);
+        expect(find.text(lesson1.grammarRules!), findsNothing);
+        // Course-book titles and grammar terms stay English everywhere.
+        expect(find.text('Lesson 1: ${lesson1.title}'), findsOneWidget);
+        expect(find.text(lesson1.grammarFocus), findsOneWidget);
+      });
+    }
+
+    testWidgets('switching language swaps the explanation in place', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      final service = FakeLessonService();
+      await _pump(tester, service: service);
+      expect(find.text(lesson1.grammarRules!), findsOneWidget);
+      expect(find.text('Grammatika'), findsOneWidget);
+
+      await _pump(tester, service: service, locale: const Locale('ru'));
+
+      expect(find.text(lesson1.grammarRulesFor('ru')!), findsOneWidget);
+      expect(find.text(lesson1.grammarRules!), findsNothing);
+      expect(find.text('Грамматика'), findsOneWidget);
+      // Rebuilt from the loaded lesson, not fetched again.
+      expect(service.fetchCount, 1);
+    });
+
+    testWidgets('a missing translation falls back to Uzbek', (tester) async {
+      _useTallView(tester);
+      final untranslated = Lesson.fromJson({
+        'lesson_number': 1,
+        'original_number': 1,
+        'semester': 1,
+        'title': 'Hello, everybody!',
+        'grammar_focus': 'To be',
+        'cefr_level': 'A1',
+        'grammar_rules': "Faqat o'zbekcha qoida.",
+      });
+      await _pump(
+        tester,
+        service: FakeLessonService(lessons: [untranslated]),
+        locale: const Locale('en'),
+      );
+
+      expect(find.text("Faqat o'zbekcha qoida."), findsOneWidget);
+      expect(find.text('Grammar'), findsOneWidget);
+    });
   });
 
   testWidgets('lesson 38 marks its general grammar guide', (tester) async {

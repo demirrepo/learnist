@@ -461,4 +461,116 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get profileSignOut => 'Выйти';
+
+  @override
+  String get lessonTabGrammar => 'Грамматика';
+
+  @override
+  String get lessonTabReading => 'Чтение';
+
+  @override
+  String get lessonTabListening => 'Аудирование';
+
+  @override
+  String get lessonTabWriting => 'Письмо';
+
+  @override
+  String get lessonTabSpeaking => 'Говорение';
+
+  @override
+  String get lessonGeneralRule => 'Общее правило';
+
+  @override
+  String get lessonNoGrammar => 'В этом уроке нет грамматических правил.';
+
+  @override
+  String get lessonNoReading => 'В этом уроке нет упражнения на чтение.';
+
+  @override
+  String get lessonNoListening => 'В этом уроке нет упражнения на аудирование.';
+
+  @override
+  String get lessonNoWriting => 'В этом уроке нет письменного задания.';
+
+  @override
+  String get lessonNoSpeaking => 'В этом уроке нет задания на говорение.';
+
+  @override
+  String get lessonVocabulary => 'Словарь';
+
+  @override
+  String get lessonCheckResults => 'Проверить результат';
+
+  @override
+  String get lessonAudioPending =>
+      'Аудио для этого урока ещё готовится. Пока используйте текст.';
+
+  @override
+  String get lessonAudioError =>
+      'Не удалось загрузить аудио. Проверьте подключение к интернету и попробуйте снова.';
+
+  @override
+  String get lessonFinish => 'Завершить урок';
+
+  @override
+  String get lessonUnlocked => 'Поздравляем! Открыт новый урок';
+
+  @override
+  String get lessonSaveScoreError =>
+      'Балл не сохранён. Пожалуйста, попробуйте снова.';
+
+  @override
+  String get taskEmptyAnswer => 'Сначала напишите ответ.';
+
+  @override
+  String get taskEvaluationError =>
+      'При оценке произошла ошибка. Пожалуйста, попробуйте снова.';
+
+  @override
+  String get taskMicDenied =>
+      'Разрешите доступ к микрофону, чтобы записать голос.';
+
+  @override
+  String get taskMicBlocked =>
+      'Доступ к микрофону запрещён. Включите его в настройках телефона.';
+
+  @override
+  String get taskRecordingError =>
+      'Не удалось начать запись. Пожалуйста, попробуйте снова.';
+
+  @override
+  String get taskTranscriptionError =>
+      'Не удалось преобразовать речь в текст. Пожалуйста, попробуйте снова.';
+
+  @override
+  String get taskRecordingMissing => 'Записанное аудио не найдено.';
+
+  @override
+  String get errorOffline =>
+      'Нет подключения к интернету. Проверьте сеть и попробуйте снова.';
+
+  @override
+  String get lessonNotFound => 'Урок не найден.';
+
+  @override
+  String get lessonLoadFailed =>
+      'Не удалось загрузить уроки. Попробуйте чуть позже.';
+
+  @override
+  String get errorGeneric =>
+      'Что-то пошло не так. Пожалуйста, попробуйте снова.';
+
+  @override
+  String lessonCompleteLowScore(int min) {
+    return 'Ваш средний балл ниже $min%. Улучшите результаты по разделам, чтобы перейти к следующему уроку.';
+  }
+
+  @override
+  String lessonCompleteLowScoreWithAverage(int min, int average) {
+    return 'Ваш средний балл ниже $min% (сейчас: $average%). Улучшите результаты по разделам, чтобы перейти к следующему уроку.';
+  }
+
+  @override
+  String get lessonCompleteFailed =>
+      'Не удалось завершить урок. Пожалуйста, попробуйте снова.';
 }

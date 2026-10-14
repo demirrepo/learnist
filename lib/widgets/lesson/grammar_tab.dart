@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 import 'ai_graded_task.dart';
 import 'lesson_common.dart';
-
-const _noRulesMessage = "Ushbu darsda grammatika qoidalari yo'q.";
 
 /// The lesson's grammar rule and a practical task that the AI scores as
 /// the lesson's `grammar` section.
@@ -18,12 +17,16 @@ class GrammarTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rules = lesson.grammarRules;
+    // The locale follows the picked app language, so switching it rebuilds
+    // this tab with that language's explanation.
+    final rules = lesson.grammarRulesFor(
+      Localizations.localeOf(context).languageCode,
+    );
 
     return LessonTabBody(
       children: [
         if (rules == null)
-          const LessonNotice(_noRulesMessage)
+          LessonNotice(context.l10n.lessonNoGrammar)
         else
           _RulesCard(
             focus: lesson.grammarFocus,
@@ -86,7 +89,7 @@ class _RulesCard extends StatelessWidget {
           if (isGeneralGuide) ...[
             const SizedBox(height: 6),
             Text(
-              'Umumiy qoida',
+              context.l10n.lessonGeneralRule,
               style: GoogleFonts.manrope(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w700,

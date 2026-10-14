@@ -3,14 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/lesson_model.dart';
 import '../../services/progress_service.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
 import 'lesson_quiz.dart';
 import 'section_score.dart';
-
-const _noReadingMessage = "Ushbu darsda o'qish mashqi yo'q.";
 
 typedef _VocabularyItem = ({String word, String? definition});
 
@@ -44,7 +43,7 @@ class ReadingTab extends ConsumerWidget {
     return LessonTabBody(
       children: [
         if (passage == null)
-          const LessonNotice(_noReadingMessage)
+          LessonNotice(context.l10n.lessonNoReading)
         else
           LessonCard(
             child: Column(
@@ -106,7 +105,7 @@ class _VocabularyCard extends StatelessWidget {
           collapsedIconColor: AppColors.textMuted,
           leading: const Icon(LucideIcons.languages, color: AppColors.primary),
           title: Text(
-            "Lug'at",
+            context.l10n.lessonVocabulary,
             style: GoogleFonts.manrope(
               fontSize: 16,
               fontWeight: FontWeight.w800,

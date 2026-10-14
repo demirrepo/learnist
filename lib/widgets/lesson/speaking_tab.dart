@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/lesson_model.dart';
 import '../../models/user_progress.dart';
 import '../../services/progress_service.dart';
@@ -10,8 +11,6 @@ import '../../theme/app_theme.dart';
 import 'ai_graded_task.dart';
 import 'complete_lesson_button.dart';
 import 'lesson_common.dart';
-
-const _noSpeakingMessage = "Ushbu darsda gapirish mashqi yo'q.";
 
 /// The last tab, so it ends with "Darsni yakunlash" on the student's
 /// current lesson. Reviewing an earlier lesson, or while progress is still
@@ -33,7 +32,7 @@ class SpeakingTab extends ConsumerWidget {
     final prompt = lesson.speakingPrompt;
     if (prompt == null) {
       return LessonTabBody(
-        children: [const LessonNotice(_noSpeakingMessage), ...complete],
+        children: [LessonNotice(context.l10n.lessonNoSpeaking), ...complete],
       );
     }
 
