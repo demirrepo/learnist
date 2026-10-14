@@ -23,32 +23,68 @@
     "reading_vocabulary": [
       {
         "word": "orientation",
+        "phonetic": "/ˌɔriənˈteɪʃən/",
         "definition": "the process of helping new people understand a place or course",
+        "translations": {
+          "uz": "tanishtiruv mashg‘uloti",
+          "ru": "вводное занятие, ориентация",
+          "kk": "tanıstırıw sabaǵı"
+        },
         "example": "The lesson uses “orientation” in the context of meeting new classmates."
       },
       {
         "word": "classmate",
+        "phonetic": "/ˈklæsmeɪt/",
         "definition": "a person who studies in the same class",
+        "translations": {
+          "uz": "sinfdosh",
+          "ru": "одноклассник",
+          "kk": "klaslas"
+        },
         "example": "The lesson uses “classmate” in the context of meeting new classmates."
       },
       {
         "word": "hometown",
+        "phonetic": "/ˈhoʊmtaʊn/",
         "definition": "the town or city where a person comes from",
+        "translations": {
+          "uz": "tug‘ilgan shahar",
+          "ru": "родной город",
+          "kk": "tuwılǵan qala"
+        },
         "example": "The lesson uses “hometown” in the context of meeting new classmates."
       },
       {
         "word": "introduce",
+        "phonetic": "/ˌɪntrəˈdus/",
         "definition": "to tell someone your name or present another person",
+        "translations": {
+          "uz": "tanishtirmoq",
+          "ru": "представлять, знакомить",
+          "kk": "tanıstırıw"
+        },
         "example": "The lesson uses “introduce” in the context of meeting new classmates."
       },
       {
         "word": "surname",
+        "phonetic": "/ˈsɝneɪm/",
         "definition": "family name",
+        "translations": {
+          "uz": "familiya",
+          "ru": "фамилия",
+          "kk": "familiya"
+        },
         "example": "The lesson uses “surname” in the context of meeting new classmates."
       },
       {
         "word": "comfortable",
+        "phonetic": "/ˈkʌmftɚbəl/",
         "definition": "relaxed and not worried",
+        "translations": {
+          "uz": "xotirjam, qulay",
+          "ru": "спокойный, комфортный",
+          "kk": "tınısh, qolaylı"
+        },
         "example": "The lesson uses “comfortable” in the context of meeting new classmates."
       }
     ],
@@ -309,32 +345,68 @@
     "reading_vocabulary": [
       {
         "word": "coach",
+        "phonetic": "/koʊtʃ/",
         "definition": "a person who trains a sports team",
+        "translations": {
+          "uz": "murabbiy",
+          "ru": "тренер",
+          "kk": "trener"
+        },
         "example": "The lesson uses “coach” in the context of joining an international sports club."
       },
       {
         "word": "training",
+        "phonetic": "/ˈtreɪnɪŋ/",
         "definition": "practice that develops a skill",
+        "translations": {
+          "uz": "mashg‘ulot",
+          "ru": "тренировка",
+          "kk": "shınıǵıw"
+        },
         "example": "The lesson uses “training” in the context of joining an international sports club."
       },
       {
         "word": "member",
+        "phonetic": "/ˈmɛmbɚ/",
         "definition": "a person who belongs to a group",
+        "translations": {
+          "uz": "a’zo",
+          "ru": "член, участник",
+          "kk": "aǵza"
+        },
         "example": "The lesson uses “member” in the context of joining an international sports club."
       },
       {
         "word": "athlete",
+        "phonetic": "/ˈæθlit/",
         "definition": "a person who is skilled in sport",
+        "translations": {
+          "uz": "sportchi",
+          "ru": "спортсмен",
+          "kk": "sportshı"
+        },
         "example": "The lesson uses “athlete” in the context of joining an international sports club."
       },
       {
         "word": "schedule",
+        "phonetic": "/ˈskɛdʒul/",
         "definition": "a plan showing times and activities",
+        "translations": {
+          "uz": "jadval",
+          "ru": "расписание",
+          "kk": "keste"
+        },
         "example": "The lesson uses “schedule” in the context of joining an international sports club."
       },
       {
         "word": "enthusiastic",
+        "phonetic": "/ɪnˌθuziˈæstɪk/",
         "definition": "very interested and excited",
+        "translations": {
+          "uz": "ishtiyoqli",
+          "ru": "полный энтузиазма",
+          "kk": "ıqlaslı"
+        },
         "example": "The lesson uses “enthusiastic” in the context of joining an international sports club."
       }
     ],
@@ -594,32 +666,68 @@
     "reading_vocabulary": [
       {
         "word": "cloud",
+        "phonetic": "/klaʊd/",
         "definition": "online storage or computing available through the internet",
+        "translations": {
+          "uz": "bulut (onlayn xotira)",
+          "ru": "облако (облачное хранилище)",
+          "kk": "bult (onlayn saqlaw)"
+        },
         "example": "The lesson uses “cloud” in the context of how students use digital tools."
       },
       {
         "word": "deadline",
+        "phonetic": "/ˈdɛdlaɪn/",
         "definition": "the time by which work must be finished",
+        "translations": {
+          "uz": "oxirgi muddat",
+          "ru": "крайний срок",
+          "kk": "aqırǵı múddet"
+        },
         "example": "The lesson uses “deadline” in the context of how students use digital tools."
       },
       {
         "word": "notification",
+        "phonetic": "/ˌnoʊtəfəˈkeɪʃən/",
         "definition": "a message that tells you about new activity",
+        "translations": {
+          "uz": "bildirishnoma",
+          "ru": "уведомление",
+          "kk": "xabarlama"
+        },
         "example": "The lesson uses “notification” in the context of how students use digital tools."
       },
       {
         "word": "folder",
+        "phonetic": "/ˈfoʊldɚ/",
         "definition": "a place used to organize papers or files",
+        "translations": {
+          "uz": "papka",
+          "ru": "папка",
+          "kk": "papka"
+        },
         "example": "The lesson uses “folder” in the context of how students use digital tools."
       },
       {
         "word": "digital",
+        "phonetic": "/ˈdɪdʒətəl/",
         "definition": "using computer technology",
+        "translations": {
+          "uz": "raqamli",
+          "ru": "цифровой",
+          "kk": "cifrlı"
+        },
         "example": "The lesson uses “digital” in the context of how students use digital tools."
       },
       {
         "word": "routine",
+        "phonetic": "/ruˈtin/",
         "definition": "a regular way of doing things",
+        "translations": {
+          "uz": "kun tartibi",
+          "ru": "распорядок",
+          "kk": "kún tártibi"
+        },
         "example": "The lesson uses “routine” in the context of how students use digital tools."
       }
     ],
@@ -879,32 +987,68 @@
     "reading_vocabulary": [
       {
         "word": "belongings",
+        "phonetic": "/bɪˈlɔŋɪŋz/",
         "definition": "personal things that someone owns",
+        "translations": {
+          "uz": "shaxsiy buyumlar",
+          "ru": "личные вещи",
+          "kk": "jeke buyımlar"
+        },
         "example": "The lesson uses “belongings” in the context of a classroom lost-and-found table."
       },
       {
         "word": "owner",
+        "phonetic": "/ˈoʊnɚ/",
         "definition": "the person something belongs to",
+        "translations": {
+          "uz": "egasi",
+          "ru": "владелец",
+          "kk": "iyesi"
+        },
         "example": "The lesson uses “owner” in the context of a classroom lost-and-found table."
       },
       {
         "word": "label",
+        "phonetic": "/ˈleɪbəl/",
         "definition": "a small piece of information attached to an object",
+        "translations": {
+          "uz": "yorliq",
+          "ru": "ярлык, этикетка",
+          "kk": "jarlıq"
+        },
         "example": "The lesson uses “label” in the context of a classroom lost-and-found table."
       },
       {
         "word": "headphones",
+        "phonetic": "/ˈhɛdfoʊnz/",
         "definition": "equipment worn over the ears to listen privately",
+        "translations": {
+          "uz": "quloqchin",
+          "ru": "наушники",
+          "kk": "qulaqshın"
+        },
         "example": "The lesson uses “headphones” in the context of a classroom lost-and-found table."
       },
       {
         "word": "recognize",
+        "phonetic": "/ˈrɛkəɡnaɪz/",
         "definition": "to know someone or something because you have seen it before",
+        "translations": {
+          "uz": "tanimoq",
+          "ru": "узнавать",
+          "kk": "tanıw"
+        },
         "example": "The lesson uses “recognize” in the context of a classroom lost-and-found table."
       },
       {
         "word": "return",
+        "phonetic": "/rɪˈtɝn/",
         "definition": "to give something back",
+        "translations": {
+          "uz": "qaytarmoq",
+          "ru": "возвращать",
+          "kk": "qaytarıw"
+        },
         "example": "The lesson uses “return” in the context of a classroom lost-and-found table."
       }
     ],
@@ -1164,32 +1308,68 @@
     "reading_vocabulary": [
       {
         "word": "shelf",
+        "phonetic": "/ʃɛlf/",
         "definition": "a flat surface used for storing objects",
+        "translations": {
+          "uz": "javon",
+          "ru": "полка",
+          "kk": "tekshe"
+        },
         "example": "The lesson uses “shelf” in the context of organising a study desk."
       },
       {
         "word": "cable",
+        "phonetic": "/ˈkeɪbəl/",
         "definition": "a wire used to connect electrical devices",
+        "translations": {
+          "uz": "kabel",
+          "ru": "кабель",
+          "kk": "kabel"
+        },
         "example": "The lesson uses “cable” in the context of organising a study desk."
       },
       {
         "word": "crowded",
+        "phonetic": "/ˈkraʊdɪd/",
         "definition": "containing too many things or people",
+        "translations": {
+          "uz": "gavjum, tiqilinch",
+          "ru": "переполненный",
+          "kk": "tıǵız"
+        },
         "example": "The lesson uses “crowded” in the context of organising a study desk."
       },
       {
         "word": "organise",
+        "phonetic": "/ˈɔrɡənaɪz/",
         "definition": "to arrange things in a clear order",
+        "translations": {
+          "uz": "tartibga solmoq",
+          "ru": "упорядочивать",
+          "kk": "tártipke salıw"
+        },
         "example": "The lesson uses “organise” in the context of organising a study desk."
       },
       {
         "word": "beside",
+        "phonetic": "/bɪˈsaɪd/",
         "definition": "next to",
+        "translations": {
+          "uz": "yonida",
+          "ru": "рядом с",
+          "kk": "qasında"
+        },
         "example": "The lesson uses “beside” in the context of organising a study desk."
       },
       {
         "word": "folder",
+        "phonetic": "/ˈfoʊldɚ/",
         "definition": "a place used to organize papers or files",
+        "translations": {
+          "uz": "papka",
+          "ru": "папка",
+          "kk": "papka"
+        },
         "example": "The lesson uses “folder” in the context of organising a study desk."
       }
     ],
@@ -1449,32 +1629,68 @@
     "reading_vocabulary": [
       {
         "word": "storage",
+        "phonetic": "/ˈstɔrɪdʒ/",
         "definition": "space used to keep digital information",
+        "translations": {
+          "uz": "xotira hajmi",
+          "ru": "хранилище",
+          "kk": "saqlaw orını"
+        },
         "example": "The lesson uses “storage” in the context of choosing a computer for university work."
       },
       {
         "word": "memory",
+        "phonetic": "/ˈmɛməri/",
         "definition": "computer capacity used to hold information while working",
+        "translations": {
+          "uz": "xotira",
+          "ru": "память",
+          "kk": "yad"
+        },
         "example": "The lesson uses “memory” in the context of choosing a computer for university work."
       },
       {
         "word": "battery",
+        "phonetic": "/ˈbætəri/",
         "definition": "a device that stores electrical energy",
+        "translations": {
+          "uz": "batareya",
+          "ru": "аккумулятор, батарея",
+          "kk": "batareya"
+        },
         "example": "The lesson uses “battery” in the context of choosing a computer for university work."
       },
       {
         "word": "accessory",
+        "phonetic": "/əkˈsɛsəri/",
         "definition": "an extra item used with a main device",
+        "translations": {
+          "uz": "aksessuar",
+          "ru": "аксессуар",
+          "kk": "aksessuar"
+        },
         "example": "The lesson uses “accessory” in the context of choosing a computer for university work."
       },
       {
         "word": "gigabyte",
+        "phonetic": "/ˈɡɪɡəbaɪt/",
         "definition": "a unit used to measure digital data",
+        "translations": {
+          "uz": "gigabayt",
+          "ru": "гигабайт",
+          "kk": "gigabayt"
+        },
         "example": "The lesson uses “gigabyte” in the context of choosing a computer for university work."
       },
       {
         "word": "lightweight",
+        "phonetic": "/ˈlaɪtweɪt/",
         "definition": "not heavy",
+        "translations": {
+          "uz": "yengil",
+          "ru": "лёгкий",
+          "kk": "jeńil"
+        },
         "example": "The lesson uses “lightweight” in the context of choosing a computer for university work."
       }
     ],
@@ -1734,32 +1950,68 @@
     "reading_vocabulary": [
       {
         "word": "durable",
+        "phonetic": "/ˈdʊrəbəl/",
         "definition": "able to remain in good condition for a long time",
+        "translations": {
+          "uz": "chidamli",
+          "ru": "прочный",
+          "kk": "shıdamlı"
+        },
         "example": "The lesson uses “durable” in the context of describing products made in the United States."
       },
       {
         "word": "recycled",
+        "phonetic": "/riˈsaɪkəld/",
         "definition": "made from material that has been used before",
+        "translations": {
+          "uz": "qayta ishlangan",
+          "ru": "переработанный",
+          "kk": "qayta islengen"
+        },
         "example": "The lesson uses “recycled” in the context of describing products made in the United States."
       },
       {
         "word": "smooth",
+        "phonetic": "/smuð/",
         "definition": "even and not rough",
+        "translations": {
+          "uz": "silliq",
+          "ru": "гладкий",
+          "kk": "tegis"
+        },
         "example": "The lesson uses “smooth” in the context of describing products made in the United States."
       },
       {
         "word": "practical",
+        "phonetic": "/ˈpræktɪkəl/",
         "definition": "useful and suitable for real situations",
+        "translations": {
+          "uz": "amaliy",
+          "ru": "практичный",
+          "kk": "ámeliy"
+        },
         "example": "The lesson uses “practical” in the context of describing products made in the United States."
       },
       {
         "word": "modern",
+        "phonetic": "/ˈmɑdɚn/",
         "definition": "using current ideas or design",
+        "translations": {
+          "uz": "zamonaviy",
+          "ru": "современный",
+          "kk": "zamanagóy"
+        },
         "example": "The lesson uses “modern” in the context of describing products made in the United States."
       },
       {
         "word": "display",
+        "phonetic": "/dɪˈspleɪ/",
         "definition": "a public arrangement of objects for people to see",
+        "translations": {
+          "uz": "ko‘rgazma",
+          "ru": "выставка, экспозиция",
+          "kk": "kórgizbe"
+        },
         "example": "The lesson uses “display” in the context of describing products made in the United States."
       }
     ],
@@ -2019,32 +2271,68 @@
     "reading_vocabulary": [
       {
         "word": "nervous",
+        "phonetic": "/ˈnɝvəs/",
         "definition": "worried or slightly afraid",
+        "translations": {
+          "uz": "hayajonlangan, asabiy",
+          "ru": "взволнованный, нервный",
+          "kk": "qobaljıǵan"
+        },
         "example": "The lesson uses “nervous” in the context of managing feelings before an exam."
       },
       {
         "word": "confident",
+        "phonetic": "/ˈkɑnfədənt/",
         "definition": "sure of yourself",
+        "translations": {
+          "uz": "o‘ziga ishongan",
+          "ru": "уверенный",
+          "kk": "ózine isengen"
+        },
         "example": "The lesson uses “confident” in the context of managing feelings before an exam."
       },
       {
         "word": "breathe",
+        "phonetic": "/brið/",
         "definition": "to take air into and out of the lungs",
+        "translations": {
+          "uz": "nafas olmoq",
+          "ru": "дышать",
+          "kk": "dem alıw"
+        },
         "example": "The lesson uses “breathe” in the context of managing feelings before an exam."
       },
       {
         "word": "supportive",
+        "phonetic": "/səˈpɔrtɪv/",
         "definition": "giving help and encouragement",
+        "translations": {
+          "uz": "qo‘llab-quvvatlovchi",
+          "ru": "поддерживающий",
+          "kk": "qollap-quwatlawshı"
+        },
         "example": "The lesson uses “supportive” in the context of managing feelings before an exam."
       },
       {
         "word": "stress",
+        "phonetic": "/strɛs/",
         "definition": "a feeling of pressure or worry",
+        "translations": {
+          "uz": "stress, zo‘riqish",
+          "ru": "стресс",
+          "kk": "stress"
+        },
         "example": "The lesson uses “stress” in the context of managing feelings before an exam."
       },
       {
         "word": "realistic",
+        "phonetic": "/ˌriəˈlɪstɪk/",
         "definition": "reasonable and practical",
+        "translations": {
+          "uz": "real, amalga oshadigan",
+          "ru": "реалистичный",
+          "kk": "real"
+        },
         "example": "The lesson uses “realistic” in the context of managing feelings before an exam."
       }
     ],
@@ -2304,32 +2592,68 @@
     "reading_vocabulary": [
       {
         "word": "peripheral",
+        "phonetic": "/pəˈrɪfɚəl/",
         "definition": "a device connected to a computer, such as a keyboard or printer",
+        "translations": {
+          "uz": "tashqi qurilma",
+          "ru": "периферийное устройство",
+          "kk": "sırtqı úskene"
+        },
         "example": "The lesson uses “peripheral” in the context of setting up computer peripherals."
       },
       {
         "word": "port",
+        "phonetic": "/pɔrt/",
         "definition": "a connection point on a computer",
+        "translations": {
+          "uz": "port, ulash joyi",
+          "ru": "порт, разъём",
+          "kk": "port"
+        },
         "example": "The lesson uses “port” in the context of setting up computer peripherals."
       },
       {
         "word": "driver",
+        "phonetic": "/ˈdraɪvɚ/",
         "definition": "software that lets a computer communicate with hardware",
+        "translations": {
+          "uz": "drayver",
+          "ru": "драйвер",
+          "kk": "drayver"
+        },
         "example": "The lesson uses “driver” in the context of setting up computer peripherals."
       },
       {
         "word": "connect",
+        "phonetic": "/kəˈnɛkt/",
         "definition": "to join two things together",
+        "translations": {
+          "uz": "ulamoq",
+          "ru": "подключать, соединять",
+          "kk": "jalǵaw"
+        },
         "example": "The lesson uses “connect” in the context of setting up computer peripherals."
       },
       {
         "word": "external",
+        "phonetic": "/ɪkˈstɝnəl/",
         "definition": "outside the main device",
+        "translations": {
+          "uz": "tashqi",
+          "ru": "внешний",
+          "kk": "sırtqı"
+        },
         "example": "The lesson uses “external” in the context of setting up computer peripherals."
       },
       {
         "word": "sequence",
+        "phonetic": "/ˈsikwəns/",
         "definition": "the order in which things happen",
+        "translations": {
+          "uz": "ketma-ketlik",
+          "ru": "последовательность",
+          "kk": "izbe-izlik"
+        },
         "example": "The lesson uses “sequence” in the context of setting up computer peripherals."
       }
     ],
@@ -2589,32 +2913,68 @@
     "reading_vocabulary": [
       {
         "word": "host family",
+        "phonetic": "/ˈhoʊst ˌfæməli/",
         "definition": "a family that provides a home for a visiting student",
+        "translations": {
+          "uz": "mezbon oila",
+          "ru": "принимающая семья",
+          "kk": "qabıllawshı shańaraq"
+        },
         "example": "The lesson uses “host family” in the context of daily life in Great Britain."
       },
       {
         "word": "tram",
+        "phonetic": "/træm/",
         "definition": "a vehicle that runs on rails in a city",
+        "translations": {
+          "uz": "tramvay",
+          "ru": "трамвай",
+          "kk": "tramvay"
+        },
         "example": "The lesson uses “tram” in the context of daily life in Great Britain."
       },
       {
         "word": "neighbourhood",
+        "phonetic": "/ˈneɪbɚhʊd/",
         "definition": "an area around where people live",
+        "translations": {
+          "uz": "mahalla",
+          "ru": "район, окрестности",
+          "kk": "máhálle"
+        },
         "example": "The lesson uses “neighbourhood” in the context of daily life in Great Britain."
       },
       {
         "word": "weekday",
+        "phonetic": "/ˈwikdeɪ/",
         "definition": "a day from Monday to Friday",
+        "translations": {
+          "uz": "ish kuni",
+          "ru": "будний день",
+          "kk": "jumıs kúni"
+        },
         "example": "The lesson uses “weekday” in the context of daily life in Great Britain."
       },
       {
         "word": "routine",
+        "phonetic": "/ruˈtin/",
         "definition": "a regular way of doing things",
+        "translations": {
+          "uz": "kun tartibi",
+          "ru": "распорядок",
+          "kk": "kún tártibi"
+        },
         "example": "The lesson uses “routine” in the context of daily life in Great Britain."
       },
       {
         "word": "nearby",
+        "phonetic": "/ˌnɪrˈbaɪ/",
         "definition": "not far away",
+        "translations": {
+          "uz": "yaqin atrofda",
+          "ru": "поблизости",
+          "kk": "jaqın átirapta"
+        },
         "example": "The lesson uses “nearby” in the context of daily life in Great Britain."
       }
     ],
@@ -2874,32 +3234,68 @@
     "reading_vocabulary": [
       {
         "word": "remote",
+        "phonetic": "/rɪˈmoʊt/",
         "definition": "done from a distance, often from home",
+        "translations": {
+          "uz": "masofaviy",
+          "ru": "удалённый",
+          "kk": "qashıqtan"
+        },
         "example": "The lesson uses “remote” in the context of the growth of remote work."
       },
       {
         "word": "hybrid",
+        "phonetic": "/ˈhaɪbrɪd/",
         "definition": "combining two different ways of working",
+        "translations": {
+          "uz": "gibrid",
+          "ru": "гибридный",
+          "kk": "gibrid"
+        },
         "example": "The lesson uses “hybrid” in the context of the growth of remote work."
       },
       {
         "word": "commute",
+        "phonetic": "/kəˈmjut/",
         "definition": "to travel regularly between home and work or study",
+        "translations": {
+          "uz": "qatnamoq",
+          "ru": "ездить (на работу или учёбу)",
+          "kk": "qatnaw"
+        },
         "example": "The lesson uses “commute” in the context of the growth of remote work."
       },
       {
         "word": "isolated",
+        "phonetic": "/ˈaɪsəleɪtɪd/",
         "definition": "separated from other people",
+        "translations": {
+          "uz": "yakkalangan",
+          "ru": "изолированный",
+          "kk": "ajıralıp qalǵan"
+        },
         "example": "The lesson uses “isolated” in the context of the growth of remote work."
       },
       {
         "word": "flexibility",
+        "phonetic": "/ˌflɛksəˈbɪləti/",
         "definition": "the ability to change easily",
+        "translations": {
+          "uz": "moslashuvchanlik",
+          "ru": "гибкость",
+          "kk": "iykemlilik"
+        },
         "example": "The lesson uses “flexibility” in the context of the growth of remote work."
       },
       {
         "word": "productive",
+        "phonetic": "/prəˈdʌktɪv/",
         "definition": "producing useful results",
+        "translations": {
+          "uz": "samarali",
+          "ru": "продуктивный",
+          "kk": "nátiyjeli"
+        },
         "example": "The lesson uses “productive” in the context of the growth of remote work."
       }
     ],
@@ -3159,32 +3555,68 @@
     "reading_vocabulary": [
       {
         "word": "scanner",
+        "phonetic": "/ˈskænɚ/",
         "definition": "a device that copies images or documents into a computer",
+        "translations": {
+          "uz": "skaner",
+          "ru": "сканер",
+          "kk": "skaner"
+        },
         "example": "The lesson uses “scanner” in the context of comparing computer peripherals."
       },
       {
         "word": "webcam",
+        "phonetic": "/ˈwɛbkæm/",
         "definition": "a small camera connected to a computer",
+        "translations": {
+          "uz": "veb-kamera",
+          "ru": "веб-камера",
+          "kk": "veb-kamera"
+        },
         "example": "The lesson uses “webcam” in the context of comparing computer peripherals."
       },
       {
         "word": "microphone",
+        "phonetic": "/ˈmaɪkrəfoʊn/",
         "definition": "a device used to record sound",
+        "translations": {
+          "uz": "mikrofon",
+          "ru": "микрофон",
+          "kk": "mikrofon"
+        },
         "example": "The lesson uses “microphone” in the context of comparing computer peripherals."
       },
       {
         "word": "background noise",
+        "phonetic": "/ˈbækɡraʊnd ˌnɔɪz/",
         "definition": "unwanted sound behind the main sound",
+        "translations": {
+          "uz": "fon shovqini",
+          "ru": "фоновый шум",
+          "kk": "fon shawqımı"
+        },
         "example": "The lesson uses “background noise” in the context of comparing computer peripherals."
       },
       {
         "word": "category",
+        "phonetic": "/ˈkætəˌɡɔri/",
         "definition": "a group of similar things",
+        "translations": {
+          "uz": "toifa",
+          "ru": "категория",
+          "kk": "kategoriya"
+        },
         "example": "The lesson uses “category” in the context of comparing computer peripherals."
       },
       {
         "word": "value",
+        "phonetic": "/ˈvælju/",
         "definition": "the quality something gives compared with its cost",
+        "translations": {
+          "uz": "qiymat, foyda",
+          "ru": "ценность, выгода",
+          "kk": "bahası"
+        },
         "example": "The lesson uses “value” in the context of comparing computer peripherals."
       }
     ],
@@ -3444,32 +3876,68 @@
     "reading_vocabulary": [
       {
         "word": "shelter",
+        "phonetic": "/ˈʃɛltɚ/",
         "definition": "a place that cares for animals without homes",
+        "translations": {
+          "uz": "hayvonlar boshpanasi",
+          "ru": "приют для животных",
+          "kk": "haywanlar baspanası"
+        },
         "example": "The lesson uses “shelter” in the context of deciding whether to adopt a dog."
       },
       {
         "word": "adoption",
+        "phonetic": "/əˈdɑpʃən/",
         "definition": "the process of taking an animal into your home permanently",
+        "translations": {
+          "uz": "asrab olish",
+          "ru": "взятие из приюта",
+          "kk": "asırap alıw"
+        },
         "example": "The lesson uses “adoption” in the context of deciding whether to adopt a dog."
       },
       {
         "word": "application",
+        "phonetic": "/ˌæpləˈkeɪʃən/",
         "definition": "a program designed for a specific task",
+        "translations": {
+          "uz": "ilova",
+          "ru": "приложение",
+          "kk": "qosımsha"
+        },
         "example": "The lesson uses “application” in the context of deciding whether to adopt a dog."
       },
       {
         "word": "exercise",
+        "phonetic": "/ˈɛksɚsaɪz/",
         "definition": "physical activity for health",
+        "translations": {
+          "uz": "jismoniy mashq",
+          "ru": "физические упражнения",
+          "kk": "dene shınıǵıwı"
+        },
         "example": "The lesson uses “exercise” in the context of deciding whether to adopt a dog."
       },
       {
         "word": "friendly",
+        "phonetic": "/ˈfrɛndli/",
         "definition": "kind and pleasant",
+        "translations": {
+          "uz": "do‘stona",
+          "ru": "дружелюбный",
+          "kk": "dostana"
+        },
         "example": "The lesson uses “friendly” in the context of deciding whether to adopt a dog."
       },
       {
         "word": "appointment",
+        "phonetic": "/əˈpɔɪntmənt/",
         "definition": "an arranged time to meet someone",
+        "translations": {
+          "uz": "oldindan belgilangan uchrashuv",
+          "ru": "запись, назначенная встреча",
+          "kk": "belgilengen ushırasıw"
+        },
         "example": "The lesson uses “appointment” in the context of deciding whether to adopt a dog."
       }
     ],
@@ -3729,32 +4197,68 @@
     "reading_vocabulary": [
       {
         "word": "album",
+        "phonetic": "/ˈælbəm/",
         "definition": "a book used to keep photographs",
+        "translations": {
+          "uz": "albom",
+          "ru": "альбом",
+          "kk": "albom"
+        },
         "example": "The lesson uses “album” in the context of identifying people in an old family photograph."
       },
       {
         "word": "background",
+        "phonetic": "/ˈbækɡraʊnd/",
         "definition": "the part of a scene behind the main subject",
+        "translations": {
+          "uz": "orqa fon",
+          "ru": "задний план",
+          "kk": "artqı fon"
+        },
         "example": "The lesson uses “background” in the context of identifying people in an old family photograph."
       },
       {
         "word": "belong",
+        "phonetic": "/bɪˈlɔŋ/",
         "definition": "to be owned by someone",
+        "translations": {
+          "uz": "tegishli bo‘lmoq",
+          "ru": "принадлежать",
+          "kk": "tiyisli bolıw"
+        },
         "example": "The lesson uses “belong” in the context of identifying people in an old family photograph."
       },
       {
         "word": "relative",
+        "phonetic": "/ˈrɛlətɪv/",
         "definition": "a member of your family",
+        "translations": {
+          "uz": "qarindosh",
+          "ru": "родственник",
+          "kk": "tuwısqan"
+        },
         "example": "The lesson uses “relative” in the context of identifying people in an old family photograph."
       },
       {
         "word": "label",
+        "phonetic": "/ˈleɪbəl/",
         "definition": "a small piece of information attached to an object",
+        "translations": {
+          "uz": "yorliq",
+          "ru": "ярлык, этикетка",
+          "kk": "jarlıq"
+        },
         "example": "The lesson uses “label” in the context of identifying people in an old family photograph."
       },
       {
         "word": "generation",
+        "phonetic": "/ˌdʒɛnəˈreɪʃən/",
         "definition": "people in a family of a similar age level",
+        "translations": {
+          "uz": "avlod",
+          "ru": "поколение",
+          "kk": "áwlad"
+        },
         "example": "The lesson uses “generation” in the context of identifying people in an old family photograph."
       }
     ],
@@ -4014,32 +4518,68 @@
     "reading_vocabulary": [
       {
         "word": "backup",
+        "phonetic": "/ˈbækʌp/",
         "definition": "an extra copy kept in case the original is lost",
+        "translations": {
+          "uz": "zaxira nusxa",
+          "ru": "резервная копия",
+          "kk": "rezerv nusqa"
+        },
         "example": "The lesson uses “backup” in the context of how students store and back up data."
       },
       {
         "word": "recover",
+        "phonetic": "/rɪˈkʌvɚ/",
         "definition": "to get lost data back",
+        "translations": {
+          "uz": "tiklamoq",
+          "ru": "восстанавливать",
+          "kk": "qayta tiklew"
+        },
         "example": "The lesson uses “recover” in the context of how students store and back up data."
       },
       {
         "word": "cloud service",
+        "phonetic": "/ˈklaʊd ˌsɝvəs/",
         "definition": "an online system for storing or processing information",
+        "translations": {
+          "uz": "bulut xizmati",
+          "ru": "облачный сервис",
+          "kk": "bult xızmeti"
+        },
         "example": "The lesson uses “cloud service” in the context of how students store and back up data."
       },
       {
         "word": "location",
+        "phonetic": "/loʊˈkeɪʃən/",
         "definition": "a place",
+        "translations": {
+          "uz": "joylashuv",
+          "ru": "местоположение",
+          "kk": "orın"
+        },
         "example": "The lesson uses “location” in the context of how students store and back up data."
       },
       {
         "word": "version",
+        "phonetic": "/ˈvɝʒən/",
         "definition": "a particular form of a product",
+        "translations": {
+          "uz": "versiya",
+          "ru": "версия",
+          "kk": "versiya"
+        },
         "example": "The lesson uses “version” in the context of how students store and back up data."
       },
       {
         "word": "storage",
+        "phonetic": "/ˈstɔrɪdʒ/",
         "definition": "space used to keep digital information",
+        "translations": {
+          "uz": "xotira hajmi",
+          "ru": "хранилище",
+          "kk": "saqlaw orını"
+        },
         "example": "The lesson uses “storage” in the context of how students store and back up data."
       }
     ],
@@ -4299,32 +4839,68 @@
     "reading_vocabulary": [
       {
         "word": "concentration",
+        "phonetic": "/ˌkɑnsənˈtreɪʃən/",
         "definition": "the ability to focus attention",
+        "translations": {
+          "uz": "diqqatni jamlash",
+          "ru": "концентрация",
+          "kk": "dıqqattı jıynaw"
+        },
         "example": "The lesson uses “concentration” in the context of building a healthy daily routine."
       },
       {
         "word": "routine",
+        "phonetic": "/ruˈtin/",
         "definition": "a regular way of doing things",
+        "translations": {
+          "uz": "kun tartibi",
+          "ru": "распорядок",
+          "kk": "kún tártibi"
+        },
         "example": "The lesson uses “routine” in the context of building a healthy daily routine."
       },
       {
         "word": "specialist",
+        "phonetic": "/ˈspɛʃəlɪst/",
         "definition": "a person with detailed knowledge in one area",
+        "translations": {
+          "uz": "mutaxassis",
+          "ru": "специалист",
+          "kk": "qánige"
+        },
         "example": "The lesson uses “specialist” in the context of building a healthy daily routine."
       },
       {
         "word": "reduce",
+        "phonetic": "/rɪˈdus/",
         "definition": "to make something smaller or less",
+        "translations": {
+          "uz": "kamaytirmoq",
+          "ru": "уменьшать, сокращать",
+          "kk": "azaytıw"
+        },
         "example": "The lesson uses “reduce” in the context of building a healthy daily routine."
       },
       {
         "word": "schedule",
+        "phonetic": "/ˈskɛdʒul/",
         "definition": "a plan showing times and activities",
+        "translations": {
+          "uz": "jadval",
+          "ru": "расписание",
+          "kk": "keste"
+        },
         "example": "The lesson uses “schedule” in the context of building a healthy daily routine."
       },
       {
         "word": "breakfast",
+        "phonetic": "/ˈbrɛkfəst/",
         "definition": "a useful word connected with building a healthy daily routine",
+        "translations": {
+          "uz": "nonushta",
+          "ru": "завтрак",
+          "kk": "azanǵı awqat"
+        },
         "example": "The lesson uses “breakfast” in the context of building a healthy daily routine."
       }
     ],
@@ -4584,32 +5160,68 @@
     "reading_vocabulary": [
       {
         "word": "longevity",
+        "phonetic": "/lɔnˈdʒɛvəti/",
         "definition": "a long life",
+        "translations": {
+          "uz": "uzoq umr",
+          "ru": "долголетие",
+          "kk": "uzaq ómir"
+        },
         "example": "The lesson uses “longevity” in the context of why people in Blue Zones often live longer."
       },
       {
         "word": "resident",
+        "phonetic": "/ˈrɛzədənt/",
         "definition": "a person who lives in a place",
+        "translations": {
+          "uz": "yashovchi, aholi",
+          "ru": "житель",
+          "kk": "turǵın"
+        },
         "example": "The lesson uses “resident” in the context of why people in Blue Zones often live longer."
       },
       {
         "word": "community",
+        "phonetic": "/kəˈmjunəti/",
         "definition": "people living or working in the same area",
+        "translations": {
+          "uz": "jamoa",
+          "ru": "сообщество",
+          "kk": "jámiyet"
+        },
         "example": "The lesson uses “community” in the context of why people in Blue Zones often live longer."
       },
       {
         "word": "habit",
+        "phonetic": "/ˈhæbɪt/",
         "definition": "something done regularly",
+        "translations": {
+          "uz": "odat",
+          "ru": "привычка",
+          "kk": "ádet"
+        },
         "example": "The lesson uses “habit” in the context of why people in Blue Zones often live longer."
       },
       {
         "word": "regularly",
+        "phonetic": "/ˈrɛɡjəlɚli/",
         "definition": "often and according to a pattern",
+        "translations": {
+          "uz": "muntazam",
+          "ru": "регулярно",
+          "kk": "turaqlı túrde"
+        },
         "example": "The lesson uses “regularly” in the context of why people in Blue Zones often live longer."
       },
       {
         "word": "occasionally",
+        "phonetic": "/əˈkeɪʒənəli/",
         "definition": "sometimes but not often",
+        "translations": {
+          "uz": "ba’zan",
+          "ru": "изредка",
+          "kk": "geyde"
+        },
         "example": "The lesson uses “occasionally” in the context of why people in Blue Zones often live longer."
       }
     ],
@@ -4869,32 +5481,68 @@
     "reading_vocabulary": [
       {
         "word": "software",
+        "phonetic": "/ˈsɔftwɛr/",
         "definition": "programs used by a computer",
+        "translations": {
+          "uz": "dasturiy ta’minot",
+          "ru": "программное обеспечение",
+          "kk": "baǵdarlamalıq támiynat"
+        },
         "example": "The lesson uses “software” in the context of different types of computer software."
       },
       {
         "word": "application",
+        "phonetic": "/ˌæpləˈkeɪʃən/",
         "definition": "a program designed for a specific task",
+        "translations": {
+          "uz": "ilova",
+          "ru": "приложение",
+          "kk": "qosımsha"
+        },
         "example": "The lesson uses “application” in the context of different types of computer software."
       },
       {
         "word": "license",
+        "phonetic": "/ˈlaɪsəns/",
         "definition": "official permission to use software",
+        "translations": {
+          "uz": "litsenziya",
+          "ru": "лицензия",
+          "kk": "licenziya"
+        },
         "example": "The lesson uses “license” in the context of different types of computer software."
       },
       {
         "word": "system",
+        "phonetic": "/ˈsɪstəm/",
         "definition": "a set of connected parts that work together",
+        "translations": {
+          "uz": "tizim",
+          "ru": "система",
+          "kk": "sistema"
+        },
         "example": "The lesson uses “system” in the context of different types of computer software."
       },
       {
         "word": "install",
+        "phonetic": "/ɪnˈstɔl/",
         "definition": "to put software onto a device",
+        "translations": {
+          "uz": "o‘rnatmoq",
+          "ru": "устанавливать",
+          "kk": "ornatıw"
+        },
         "example": "The lesson uses “install” in the context of different types of computer software."
       },
       {
         "word": "classify",
+        "phonetic": "/ˈklæsəfaɪ/",
         "definition": "to put things into groups",
+        "translations": {
+          "uz": "tasniflamoq",
+          "ru": "классифицировать",
+          "kk": "toparlarǵa bóliw"
+        },
         "example": "The lesson uses “classify” in the context of different types of computer software."
       }
     ],
@@ -5154,32 +5802,68 @@
     "reading_vocabulary": [
       {
         "word": "rhythm",
+        "phonetic": "/ˈrɪðəm/",
         "definition": "a regular pattern of beats",
+        "translations": {
+          "uz": "ritm",
+          "ru": "ритм",
+          "kk": "ritm"
+        },
         "example": "The lesson uses “rhythm” in the context of musical abilities in a student band."
       },
       {
         "word": "verse",
+        "phonetic": "/vɝs/",
         "definition": "a section of a song",
+        "translations": {
+          "uz": "kuplet",
+          "ru": "куплет",
+          "kk": "kuplet"
+        },
         "example": "The lesson uses “verse” in the context of musical abilities in a student band."
       },
       {
         "word": "rehearsal",
+        "phonetic": "/rɪˈhɝsəl/",
         "definition": "practice before a performance",
+        "translations": {
+          "uz": "repetitsiya",
+          "ru": "репетиция",
+          "kk": "repeticiya"
+        },
         "example": "The lesson uses “rehearsal” in the context of musical abilities in a student band."
       },
       {
         "word": "instrument",
+        "phonetic": "/ˈɪnstrəmənt/",
         "definition": "an object used to make music",
+        "translations": {
+          "uz": "cholg‘u asbobi",
+          "ru": "музыкальный инструмент",
+          "kk": "saz ásbabı"
+        },
         "example": "The lesson uses “instrument” in the context of musical abilities in a student band."
       },
       {
         "word": "arrangement",
+        "phonetic": "/əˈreɪndʒmənt/",
         "definition": "the way a piece of music is organized",
+        "translations": {
+          "uz": "aranjirovka",
+          "ru": "аранжировка",
+          "kk": "aranjirovka"
+        },
         "example": "The lesson uses “arrangement” in the context of musical abilities in a student band."
       },
       {
         "word": "perform",
+        "phonetic": "/pɚˈfɔrm/",
         "definition": "to play, sing or act for an audience",
+        "translations": {
+          "uz": "ijro etmoq",
+          "ru": "выступать, исполнять",
+          "kk": "atqarıw"
+        },
         "example": "The lesson uses “perform” in the context of musical abilities in a student band."
       }
     ],
@@ -5439,32 +6123,68 @@
     "reading_vocabulary": [
       {
         "word": "corridor",
+        "phonetic": "/ˈkɔrədɚ/",
         "definition": "a long passage inside a building",
+        "translations": {
+          "uz": "yo‘lak",
+          "ru": "коридор",
+          "kk": "koridor"
+        },
         "example": "The lesson uses “corridor” in the context of a noisy afternoon in a student residence."
       },
       {
         "word": "residence",
+        "phonetic": "/ˈrɛzədəns/",
         "definition": "a place where people live",
+        "translations": {
+          "uz": "turar joy",
+          "ru": "жилище, общежитие",
+          "kk": "turaq jay"
+        },
         "example": "The lesson uses “residence” in the context of a noisy afternoon in a student residence."
       },
       {
         "word": "vacuum cleaner",
+        "phonetic": "/ˈvækjum ˌklinɚ/",
         "definition": "a machine used to clean floors",
+        "translations": {
+          "uz": "changyutgich",
+          "ru": "пылесос",
+          "kk": "shań sorǵısh"
+        },
         "example": "The lesson uses “vacuum cleaner” in the context of a noisy afternoon in a student residence."
       },
       {
         "word": "rehearsal",
+        "phonetic": "/rɪˈhɝsəl/",
         "definition": "practice before a performance",
+        "translations": {
+          "uz": "repetitsiya",
+          "ru": "репетиция",
+          "kk": "repeticiya"
+        },
         "example": "The lesson uses “rehearsal” in the context of a noisy afternoon in a student residence."
       },
       {
         "word": "manager",
+        "phonetic": "/ˈmænɪdʒɚ/",
         "definition": "a person responsible for a place or team",
+        "translations": {
+          "uz": "menejer, rahbar",
+          "ru": "менеджер, руководитель",
+          "kk": "menejer"
+        },
         "example": "The lesson uses “manager” in the context of a noisy afternoon in a student residence."
       },
       {
         "word": "decrease",
+        "phonetic": "/dɪˈkris/",
         "definition": "to become less",
+        "translations": {
+          "uz": "kamaymoq",
+          "ru": "уменьшаться",
+          "kk": "azayıw"
+        },
         "example": "The lesson uses “decrease” in the context of a noisy afternoon in a student residence."
       }
     ],
@@ -5724,32 +6444,68 @@
     "reading_vocabulary": [
       {
         "word": "browser",
+        "phonetic": "/ˈbraʊzɚ/",
         "definition": "software used to view websites",
+        "translations": {
+          "uz": "brauzer",
+          "ru": "браузер",
+          "kk": "brauzer"
+        },
         "example": "The lesson uses “browser” in the context of what happens during an online meeting."
       },
       {
         "word": "website",
+        "phonetic": "/ˈwɛbsaɪt/",
         "definition": "a group of pages on the internet",
+        "translations": {
+          "uz": "veb-sayt",
+          "ru": "веб-сайт",
+          "kk": "veb-sayt"
+        },
         "example": "The lesson uses “website” in the context of what happens during an online meeting."
       },
       {
         "word": "connection",
+        "phonetic": "/kəˈnɛkʃən/",
         "definition": "a link between devices or networks",
+        "translations": {
+          "uz": "ulanish",
+          "ru": "подключение",
+          "kk": "baylanıs"
+        },
         "example": "The lesson uses “connection” in the context of what happens during an online meeting."
       },
       {
         "word": "download",
+        "phonetic": "/ˈdaʊnloʊd/",
         "definition": "to copy data from the internet to a device",
+        "translations": {
+          "uz": "yuklab olmoq",
+          "ru": "скачивать",
+          "kk": "júklep alıw"
+        },
         "example": "The lesson uses “download” in the context of what happens during an online meeting."
       },
       {
         "word": "freeze",
+        "phonetic": "/friz/",
         "definition": "to stop responding temporarily",
+        "translations": {
+          "uz": "qotib qolmoq",
+          "ru": "зависать",
+          "kk": "qatıp qalıw"
+        },
         "example": "The lesson uses “freeze” in the context of what happens during an online meeting."
       },
       {
         "word": "conference",
+        "phonetic": "/ˈkɑnfɚəns/",
         "definition": "a meeting, often online or in person",
+        "translations": {
+          "uz": "konferensiya",
+          "ru": "конференция",
+          "kk": "konferenciya"
+        },
         "example": "The lesson uses “conference” in the context of what happens during an online meeting."
       }
     ],
@@ -6009,32 +6765,68 @@
     "reading_vocabulary": [
       {
         "word": "Underground",
+        "phonetic": "/ˈʌndɚɡraʊnd/",
         "definition": "the subway system in London",
+        "translations": {
+          "uz": "London metrosi",
+          "ru": "лондонское метро",
+          "kk": "London metrosı"
+        },
         "example": "The lesson uses “Underground” in the context of a student’s changing routine in London."
       },
       {
         "word": "temporary",
+        "phonetic": "/ˈtɛmpəˌrɛri/",
         "definition": "lasting for a limited time",
+        "translations": {
+          "uz": "vaqtinchalik",
+          "ru": "временный",
+          "kk": "waqıtsha"
+        },
         "example": "The lesson uses “temporary” in the context of a student’s changing routine in London."
       },
       {
         "word": "repair",
+        "phonetic": "/rɪˈpɛr/",
         "definition": "work done to fix something",
+        "translations": {
+          "uz": "ta’mirlash",
+          "ru": "ремонт",
+          "kk": "remont"
+        },
         "example": "The lesson uses “repair” in the context of a student’s changing routine in London."
       },
       {
         "word": "delay",
+        "phonetic": "/dɪˈleɪ/",
         "definition": "a situation in which something happens later than planned",
+        "translations": {
+          "uz": "kechikish",
+          "ru": "задержка",
+          "kk": "keshigiw"
+        },
         "example": "The lesson uses “delay” in the context of a student’s changing routine in London."
       },
       {
         "word": "weekday",
+        "phonetic": "/ˈwikdeɪ/",
         "definition": "a day from Monday to Friday",
+        "translations": {
+          "uz": "ish kuni",
+          "ru": "будний день",
+          "kk": "jumıs kúni"
+        },
         "example": "The lesson uses “weekday” in the context of a student’s changing routine in London."
       },
       {
         "word": "routine",
+        "phonetic": "/ruˈtin/",
         "definition": "a regular way of doing things",
+        "translations": {
+          "uz": "kun tartibi",
+          "ru": "распорядок",
+          "kk": "kún tártibi"
+        },
         "example": "The lesson uses “routine” in the context of a student’s changing routine in London."
       }
     ],
@@ -6294,32 +7086,68 @@
     "reading_vocabulary": [
       {
         "word": "traveller",
+        "phonetic": "/ˈtrævəlɚ/",
         "definition": "a person who travels",
+        "translations": {
+          "uz": "sayohatchi",
+          "ru": "путешественник",
+          "kk": "sayaxatshı"
+        },
         "example": "The lesson uses “traveller” in the context of a traditional story about a clever traveller."
       },
       {
         "word": "villager",
+        "phonetic": "/ˈvɪlɪdʒɚ/",
         "definition": "a person who lives in a village",
+        "translations": {
+          "uz": "qishloq aholisi",
+          "ru": "сельский житель",
+          "kk": "awıl turǵını"
+        },
         "example": "The lesson uses “villager” in the context of a traditional story about a clever traveller."
       },
       {
         "word": "curious",
+        "phonetic": "/ˈkjʊriəs/",
         "definition": "wanting to know more",
+        "translations": {
+          "uz": "qiziquvchan",
+          "ru": "любопытный",
+          "kk": "qızıǵıwshań"
+        },
         "example": "The lesson uses “curious” in the context of a traditional story about a clever traveller."
       },
       {
         "word": "cooperation",
+        "phonetic": "/koʊˌɑpəˈreɪʃən/",
         "definition": "working together",
+        "translations": {
+          "uz": "hamkorlik",
+          "ru": "сотрудничество",
+          "kk": "birge islesiw"
+        },
         "example": "The lesson uses “cooperation” in the context of a traditional story about a clever traveller."
       },
       {
         "word": "pot",
+        "phonetic": "/pɑt/",
         "definition": "a deep container used for cooking",
+        "translations": {
+          "uz": "qozon",
+          "ru": "кастрюля, котёл",
+          "kk": "qazan"
+        },
         "example": "The lesson uses “pot” in the context of a traditional story about a clever traveller."
       },
       {
         "word": "share",
+        "phonetic": "/ʃɛr/",
         "definition": "to use or give something together with others",
+        "translations": {
+          "uz": "baham ko‘rmoq",
+          "ru": "делиться",
+          "kk": "bólisiw"
+        },
         "example": "The lesson uses “share” in the context of a traditional story about a clever traveller."
       }
     ],
@@ -6579,32 +7407,68 @@
     "reading_vocabulary": [
       {
         "word": "phishing",
+        "phonetic": "/ˈfɪʃɪŋ/",
         "definition": "an online trick used to steal private information",
+        "translations": {
+          "uz": "fishing (onlayn firibgarlik)",
+          "ru": "фишинг",
+          "kk": "fishing (onlayn aldaw)"
+        },
         "example": "The lesson uses “phishing” in the context of a phishing message and online safety."
       },
       {
         "word": "sender",
+        "phonetic": "/ˈsɛndɚ/",
         "definition": "the person or address that sends a message",
+        "translations": {
+          "uz": "jo‘natuvchi",
+          "ru": "отправитель",
+          "kk": "jiberiwshi"
+        },
         "example": "The lesson uses “sender” in the context of a phishing message and online safety."
       },
       {
         "word": "domain",
+        "phonetic": "/doʊˈmeɪn/",
         "definition": "the main address name of a website or email system",
+        "translations": {
+          "uz": "domen",
+          "ru": "домен",
+          "kk": "domen"
+        },
         "example": "The lesson uses “domain” in the context of a phishing message and online safety."
       },
       {
         "word": "password",
+        "phonetic": "/ˈpæswɝd/",
         "definition": "a secret word used to access an account",
+        "translations": {
+          "uz": "parol",
+          "ru": "пароль",
+          "kk": "parol"
+        },
         "example": "The lesson uses “password” in the context of a phishing message and online safety."
       },
       {
         "word": "report",
+        "phonetic": "/rɪˈpɔrt/",
         "definition": "to tell an authority about a problem",
+        "translations": {
+          "uz": "xabar bermoq",
+          "ru": "сообщать",
+          "kk": "xabar beriw"
+        },
         "example": "The lesson uses “report” in the context of a phishing message and online safety."
       },
       {
         "word": "suspicious",
+        "phonetic": "/səˈspɪʃəs/",
         "definition": "making you think something may be wrong or dishonest",
+        "translations": {
+          "uz": "shubhali",
+          "ru": "подозрительный",
+          "kk": "gúmanlı"
+        },
         "example": "The lesson uses “suspicious” in the context of a phishing message and online safety."
       }
     ],
@@ -6864,32 +7728,68 @@
     "reading_vocabulary": [
       {
         "word": "complain",
+        "phonetic": "/kəmˈpleɪn/",
         "definition": "to say that you are unhappy about something",
+        "translations": {
+          "uz": "shikoyat qilmoq",
+          "ru": "жаловаться",
+          "kk": "shaǵım etiw"
+        },
         "example": "The lesson uses “complain” in the context of different feelings about Monday routines."
       },
       {
         "word": "prepare",
+        "phonetic": "/prɪˈpɛr/",
         "definition": "to get ready",
+        "translations": {
+          "uz": "tayyorlanmoq",
+          "ru": "готовиться",
+          "kk": "tayarlanıw"
+        },
         "example": "The lesson uses “prepare” in the context of different feelings about Monday routines."
       },
       {
         "word": "pleasant",
+        "phonetic": "/ˈplɛzənt/",
         "definition": "enjoyable and nice",
+        "translations": {
+          "uz": "yoqimli",
+          "ru": "приятный",
+          "kk": "jaǵımlı"
+        },
         "example": "The lesson uses “pleasant” in the context of different feelings about Monday routines."
       },
       {
         "word": "habit",
+        "phonetic": "/ˈhæbɪt/",
         "definition": "something done regularly",
+        "translations": {
+          "uz": "odat",
+          "ru": "привычка",
+          "kk": "ádet"
+        },
         "example": "The lesson uses “habit” in the context of different feelings about Monday routines."
       },
       {
         "word": "completed",
+        "phonetic": "/kəmˈplitɪd/",
         "definition": "finished",
+        "translations": {
+          "uz": "tugallangan",
+          "ru": "завершённый",
+          "kk": "tamamlanǵan"
+        },
         "example": "The lesson uses “completed” in the context of different feelings about Monday routines."
       },
       {
         "word": "weekend",
+        "phonetic": "/ˈwikɛnd/",
         "definition": "Saturday and Sunday",
+        "translations": {
+          "uz": "dam olish kunlari",
+          "ru": "выходные",
+          "kk": "dem alıs kúnleri"
+        },
         "example": "The lesson uses “weekend” in the context of different feelings about Monday routines."
       }
     ],
@@ -7149,32 +8049,68 @@
     "reading_vocabulary": [
       {
         "word": "lyrics",
+        "phonetic": "/ˈlɪrɪks/",
         "definition": "the words of a song",
+        "translations": {
+          "uz": "qo‘shiq matni",
+          "ru": "текст песни",
+          "kk": "qosıq teksti"
+        },
         "example": "The lesson uses “lyrics” in the context of how a small student band prepares music."
       },
       {
         "word": "rhythm",
+        "phonetic": "/ˈrɪðəm/",
         "definition": "a regular pattern of beats",
+        "translations": {
+          "uz": "ritm",
+          "ru": "ритм",
+          "kk": "ritm"
+        },
         "example": "The lesson uses “rhythm” in the context of how a small student band prepares music."
       },
       {
         "word": "warm-up",
+        "phonetic": "/ˈwɔrmʌp/",
         "definition": "a short activity that prepares you to perform",
+        "translations": {
+          "uz": "qizish mashqi",
+          "ru": "разминка",
+          "kk": "qızınıw shınıǵıwı"
+        },
         "example": "The lesson uses “warm-up” in the context of how a small student band prepares music."
       },
       {
         "word": "rehearsal",
+        "phonetic": "/rɪˈhɝsəl/",
         "definition": "practice before a performance",
+        "translations": {
+          "uz": "repetitsiya",
+          "ru": "репетиция",
+          "kk": "repeticiya"
+        },
         "example": "The lesson uses “rehearsal” in the context of how a small student band prepares music."
       },
       {
         "word": "recording",
+        "phonetic": "/rɪˈkɔrdɪŋ/",
         "definition": "a useful word connected with how a small student band prepares music",
+        "translations": {
+          "uz": "yozib olish",
+          "ru": "запись",
+          "kk": "jazıp alıw"
+        },
         "example": "The lesson uses “recording” in the context of how a small student band prepares music."
       },
       {
         "word": "responsibility",
+        "phonetic": "/rɪˌspɑnsəˈbɪləti/",
         "definition": "a duty",
+        "translations": {
+          "uz": "mas’uliyat",
+          "ru": "ответственность",
+          "kk": "juwapkershilik"
+        },
         "example": "The lesson uses “responsibility” in the context of how a small student band prepares music."
       }
     ],
@@ -7434,32 +8370,68 @@
     "reading_vocabulary": [
       {
         "word": "contrast",
+        "phonetic": "/ˈkɑntræst/",
         "definition": "a clear difference between two things",
+        "translations": {
+          "uz": "keskin farq, kontrast",
+          "ru": "контраст",
+          "kk": "kontrast"
+        },
         "example": "The lesson uses “contrast” in the context of designing an accessible web page."
       },
       {
         "word": "heading",
+        "phonetic": "/ˈhɛdɪŋ/",
         "definition": "a title above a section of text",
+        "translations": {
+          "uz": "sarlavha",
+          "ru": "заголовок",
+          "kk": "sarlawha"
+        },
         "example": "The lesson uses “heading” in the context of designing an accessible web page."
       },
       {
         "word": "accessible",
+        "phonetic": "/əkˈsɛsəbəl/",
         "definition": "easy for different people to use",
+        "translations": {
+          "uz": "foydalanish qulay",
+          "ru": "доступный",
+          "kk": "qolaylı"
+        },
         "example": "The lesson uses “accessible” in the context of designing an accessible web page."
       },
       {
         "word": "animation",
+        "phonetic": "/ˌænəˈmeɪʃən/",
         "definition": "moving images created by a computer",
+        "translations": {
+          "uz": "animatsiya",
+          "ru": "анимация",
+          "kk": "animaciya"
+        },
         "example": "The lesson uses “animation” in the context of designing an accessible web page."
       },
       {
         "word": "readability",
+        "phonetic": "/ˌridəˈbɪləti/",
         "definition": "how easy text is to read",
+        "translations": {
+          "uz": "o‘qishga qulaylik",
+          "ru": "удобочитаемость",
+          "kk": "oqıwǵa qolaylılıq"
+        },
         "example": "The lesson uses “readability” in the context of designing an accessible web page."
       },
       {
         "word": "navigate",
+        "phonetic": "/ˈnævəɡeɪt/",
         "definition": "to move around a website or system",
+        "translations": {
+          "uz": "(sayt bo‘ylab) harakatlanmoq",
+          "ru": "перемещаться (по сайту)",
+          "kk": "(sayt boylap) háreketleniw"
+        },
         "example": "The lesson uses “navigate” in the context of designing an accessible web page."
       }
     ],
@@ -7719,32 +8691,68 @@
     "reading_vocabulary": [
       {
         "word": "childhood",
+        "phonetic": "/ˈtʃaɪldhʊd/",
         "definition": "the period when a person is a child",
+        "translations": {
+          "uz": "bolalik",
+          "ru": "детство",
+          "kk": "balalıq"
+        },
         "example": "The lesson uses “childhood” in the context of a student’s childhood and early interests."
       },
       {
         "word": "secondary school",
+        "phonetic": "/ˈsɛkənˌdɛri ˌskul/",
         "definition": "school for older children before university",
+        "translations": {
+          "uz": "o‘rta maktab",
+          "ru": "средняя школа",
+          "kk": "orta mektep"
+        },
         "example": "The lesson uses “secondary school” in the context of a student’s childhood and early interests."
       },
       {
         "word": "influence",
+        "phonetic": "/ˈɪnfluəns/",
         "definition": "the power to affect someone or something",
+        "translations": {
+          "uz": "ta’sir",
+          "ru": "влияние",
+          "kk": "tásir"
+        },
         "example": "The lesson uses “influence” in the context of a student’s childhood and early interests."
       },
       {
         "word": "supportive",
+        "phonetic": "/səˈpɔrtɪv/",
         "definition": "giving help and encouragement",
+        "translations": {
+          "uz": "qo‘llab-quvvatlovchi",
+          "ru": "поддерживающий",
+          "kk": "qollap-quwatlawshı"
+        },
         "example": "The lesson uses “supportive” in the context of a student’s childhood and early interests."
       },
       {
         "word": "confident",
+        "phonetic": "/ˈkɑnfədənt/",
         "definition": "sure of yourself",
+        "translations": {
+          "uz": "o‘ziga ishongan",
+          "ru": "уверенный",
+          "kk": "ózine isengen"
+        },
         "example": "The lesson uses “confident” in the context of a student’s childhood and early interests."
       },
       {
         "word": "profile",
+        "phonetic": "/ˈproʊfaɪl/",
         "definition": "a short description of a person",
+        "translations": {
+          "uz": "qisqacha tavsif, profil",
+          "ru": "краткое описание, профиль",
+          "kk": "qısqasha táriyip"
+        },
         "example": "The lesson uses “profile” in the context of a student’s childhood and early interests."
       }
     ],
@@ -8004,32 +9012,68 @@
     "reading_vocabulary": [
       {
         "word": "booking",
+        "phonetic": "/ˈbʊkɪŋ/",
         "definition": "an arrangement that reserves a place or time",
+        "translations": {
+          "uz": "bron qilish",
+          "ru": "бронирование",
+          "kk": "bronlaw"
+        },
         "example": "The lesson uses “booking” in the context of how a small typing mistake caused a large problem."
       },
       {
         "word": "confirmation",
+        "phonetic": "/ˌkɑnfɚˈmeɪʃən/",
         "definition": "a message showing that an arrangement is accepted",
+        "translations": {
+          "uz": "tasdiq",
+          "ru": "подтверждение",
+          "kk": "tastıyıqlaw"
+        },
         "example": "The lesson uses “confirmation” in the context of how a small typing mistake caused a large problem."
       },
       {
         "word": "incorrect",
+        "phonetic": "/ˌɪnkəˈrɛkt/",
         "definition": "not correct",
+        "translations": {
+          "uz": "noto‘g‘ri",
+          "ru": "неправильный",
+          "kk": "nadurıs"
+        },
         "example": "The lesson uses “incorrect” in the context of how a small typing mistake caused a large problem."
       },
       {
         "word": "contact",
+        "phonetic": "/ˈkɑntækt/",
         "definition": "to communicate with someone",
+        "translations": {
+          "uz": "bog‘lanmoq",
+          "ru": "связаться",
+          "kk": "baylanısıw"
+        },
         "example": "The lesson uses “contact” in the context of how a small typing mistake caused a large problem."
       },
       {
         "word": "checklist",
+        "phonetic": "/ˈtʃɛklɪst/",
         "definition": "a list of things to check",
+        "translations": {
+          "uz": "tekshiruv ro‘yxati",
+          "ru": "контрольный список",
+          "kk": "tekseriw dizimi"
+        },
         "example": "The lesson uses “checklist” in the context of how a small typing mistake caused a large problem."
       },
       {
         "word": "timetable",
+        "phonetic": "/ˈtaɪmˌteɪbəl/",
         "definition": "a plan showing when activities happen",
+        "translations": {
+          "uz": "dars jadvali",
+          "ru": "расписание",
+          "kk": "sabaq kestesi"
+        },
         "example": "The lesson uses “timetable” in the context of how a small typing mistake caused a large problem."
       }
     ],
@@ -8289,32 +9333,68 @@
     "reading_vocabulary": [
       {
         "word": "multimedia",
+        "phonetic": "/ˌmʌltiˈmidiə/",
         "definition": "content that combines text, images, audio or video",
+        "translations": {
+          "uz": "multimedia",
+          "ru": "мультимедиа",
+          "kk": "multimedia"
+        },
         "example": "The lesson uses “multimedia” in the context of producing a multimedia student magazine."
       },
       {
         "word": "layout",
+        "phonetic": "/ˈleɪaʊt/",
         "definition": "the arrangement of text and images on a page",
+        "translations": {
+          "uz": "sahifa joylashuvi, maket",
+          "ru": "макет, вёрстка",
+          "kk": "maket"
+        },
         "example": "The lesson uses “layout” in the context of producing a multimedia student magazine."
       },
       {
         "word": "editor",
+        "phonetic": "/ˈɛdətɚ/",
         "definition": "a person who prepares content for publication",
+        "translations": {
+          "uz": "muharrir",
+          "ru": "редактор",
+          "kk": "redaktor"
+        },
         "example": "The lesson uses “editor” in the context of producing a multimedia student magazine."
       },
       {
         "word": "publish",
+        "phonetic": "/ˈpʌblɪʃ/",
         "definition": "to make content available to the public",
+        "translations": {
+          "uz": "nashr etmoq",
+          "ru": "публиковать",
+          "kk": "baspadan shıǵarıw"
+        },
         "example": "The lesson uses “publish” in the context of producing a multimedia student magazine."
       },
       {
         "word": "record",
+        "phonetic": "/rɪˈkɔrd/",
         "definition": "to capture sound or video",
+        "translations": {
+          "uz": "yozib olmoq",
+          "ru": "записывать",
+          "kk": "jazıp alıw"
+        },
         "example": "The lesson uses “record” in the context of producing a multimedia student magazine."
       },
       {
         "word": "issue",
+        "phonetic": "/ˈɪʃu/",
         "definition": "one edition of a magazine",
+        "translations": {
+          "uz": "son (jurnal soni)",
+          "ru": "номер, выпуск (журнала)",
+          "kk": "san (jurnal sanı)"
+        },
         "example": "The lesson uses “issue” in the context of producing a multimedia student magazine."
       }
     ],
@@ -8574,32 +9654,68 @@
     "reading_vocabulary": [
       {
         "word": "midnight",
+        "phonetic": "/ˈmɪdnaɪt/",
         "definition": "twelve o’clock at night",
+        "translations": {
+          "uz": "yarim tun",
+          "ru": "полночь",
+          "kk": "yarım tún"
+        },
         "example": "The lesson uses “midnight” in the context of a New Year celebration with friends."
       },
       {
         "word": "playlist",
+        "phonetic": "/ˈpleɪlɪst/",
         "definition": "a list of selected songs",
+        "translations": {
+          "uz": "pleylist",
+          "ru": "плейлист",
+          "kk": "pleylist"
+        },
         "example": "The lesson uses “playlist” in the context of a New Year celebration with friends."
       },
       {
         "word": "traditional",
+        "phonetic": "/trəˈdɪʃənəl/",
         "definition": "connected with customs followed for a long time",
+        "translations": {
+          "uz": "an’anaviy",
+          "ru": "традиционный",
+          "kk": "dástúriy"
+        },
         "example": "The lesson uses “traditional” in the context of a New Year celebration with friends."
       },
       {
         "word": "gift",
+        "phonetic": "/ɡɪft/",
         "definition": "something given to another person",
+        "translations": {
+          "uz": "sovg‘a",
+          "ru": "подарок",
+          "kk": "sawǵa"
+        },
         "example": "The lesson uses “gift” in the context of a New Year celebration with friends."
       },
       {
         "word": "celebration",
+        "phonetic": "/ˌsɛləˈbreɪʃən/",
         "definition": "a social event for a special occasion",
+        "translations": {
+          "uz": "bayram",
+          "ru": "праздник, торжество",
+          "kk": "bayram"
+        },
         "example": "The lesson uses “celebration” in the context of a New Year celebration with friends."
       },
       {
         "word": "memorable",
+        "phonetic": "/ˈmɛmɚəbəl/",
         "definition": "easy to remember because it was special",
+        "translations": {
+          "uz": "esda qolarli",
+          "ru": "запоминающийся",
+          "kk": "este qalarlıq"
+        },
         "example": "The lesson uses “memorable” in the context of a New Year celebration with friends."
       }
     ],
@@ -8859,32 +9975,68 @@
     "reading_vocabulary": [
       {
         "word": "alibi",
+        "phonetic": "/ˈæləbaɪ/",
         "definition": "evidence that someone was somewhere else when something happened",
+        "translations": {
+          "uz": "alibi",
+          "ru": "алиби",
+          "kk": "alibi"
+        },
         "example": "The lesson uses “alibi” in the context of a family mystery and possible alibis."
       },
       {
         "word": "detective",
+        "phonetic": "/dɪˈtɛktɪv/",
         "definition": "a person who investigates crimes or mysteries",
+        "translations": {
+          "uz": "detektiv, izquvar",
+          "ru": "детектив, сыщик",
+          "kk": "detektiv"
+        },
         "example": "The lesson uses “detective” in the context of a family mystery and possible alibis."
       },
       {
         "word": "disappear",
+        "phonetic": "/ˌdɪsəˈpɪr/",
         "definition": "to become impossible to see or find",
+        "translations": {
+          "uz": "g‘oyib bo‘lmoq",
+          "ru": "исчезать",
+          "kk": "joq bolıw"
+        },
         "example": "The lesson uses “disappear” in the context of a family mystery and possible alibis."
       },
       {
         "word": "valuable",
+        "phonetic": "/ˈvæljəbəl/",
         "definition": "worth a lot of money or importance",
+        "translations": {
+          "uz": "qimmatbaho",
+          "ru": "ценный",
+          "kk": "qımbatlı"
+        },
         "example": "The lesson uses “valuable” in the context of a family mystery and possible alibis."
       },
       {
         "word": "timeline",
+        "phonetic": "/ˈtaɪmlaɪn/",
         "definition": "a sequence of events arranged by time",
+        "translations": {
+          "uz": "voqealar xronologiyasi",
+          "ru": "хронология",
+          "kk": "xronologiya"
+        },
         "example": "The lesson uses “timeline” in the context of a family mystery and possible alibis."
       },
       {
         "word": "hallway",
+        "phonetic": "/ˈhɔlweɪ/",
         "definition": "a passage inside a building",
+        "translations": {
+          "uz": "dahliz",
+          "ru": "прихожая, коридор",
+          "kk": "dálız"
+        },
         "example": "The lesson uses “hallway” in the context of a family mystery and possible alibis."
       }
     ],
@@ -9144,32 +10296,68 @@
     "reading_vocabulary": [
       {
         "word": "graduate",
+        "phonetic": "/ˈɡrædʒuət/",
         "definition": "a person who has completed a university degree",
+        "translations": {
+          "uz": "bitiruvchi",
+          "ru": "выпускник",
+          "kk": "pitkeriwshi"
+        },
         "example": "The lesson uses “graduate” in the context of careers and experience in ICT."
       },
       {
         "word": "recruiter",
+        "phonetic": "/rɪˈkrutɚ/",
         "definition": "a person who finds people for jobs",
+        "translations": {
+          "uz": "xodim tanlovchi, rekruter",
+          "ru": "рекрутер",
+          "kk": "rekruter"
+        },
         "example": "The lesson uses “recruiter” in the context of careers and experience in ICT."
       },
       {
         "word": "internship",
+        "phonetic": "/ˈɪntɝnʃɪp/",
         "definition": "a period of practical work experience",
+        "translations": {
+          "uz": "amaliyot, stajirovka",
+          "ru": "стажировка",
+          "kk": "ámeliyat"
+        },
         "example": "The lesson uses “internship” in the context of careers and experience in ICT."
       },
       {
         "word": "portfolio",
+        "phonetic": "/pɔrtˈfoʊlioʊ/",
         "definition": "a collection of work that shows skills",
+        "translations": {
+          "uz": "portfolio",
+          "ru": "портфолио",
+          "kk": "portfolio"
+        },
         "example": "The lesson uses “portfolio” in the context of careers and experience in ICT."
       },
       {
         "word": "collaborate",
+        "phonetic": "/kəˈlæbəreɪt/",
         "definition": "to work with other people",
+        "translations": {
+          "uz": "hamkorlik qilmoq",
+          "ru": "сотрудничать",
+          "kk": "birge islesiw"
+        },
         "example": "The lesson uses “collaborate” in the context of careers and experience in ICT."
       },
       {
         "word": "experience",
+        "phonetic": "/ɪkˈspɪriəns/",
         "definition": "knowledge or skill gained by doing something",
+        "translations": {
+          "uz": "tajriba",
+          "ru": "опыт",
+          "kk": "tájiriybe"
+        },
         "example": "The lesson uses “experience” in the context of careers and experience in ICT."
       }
     ],
@@ -9429,32 +10617,68 @@
     "reading_vocabulary": [
       {
         "word": "heritage",
+        "phonetic": "/ˈhɛrətɪdʒ/",
         "definition": "history, traditions and important places passed down through generations",
+        "translations": {
+          "uz": "meros",
+          "ru": "наследие",
+          "kk": "miyras"
+        },
         "example": "The lesson uses “heritage” in the context of the history of an old riverside house."
       },
       {
         "word": "restore",
+        "phonetic": "/rɪˈstɔr/",
         "definition": "to repair something old to a good condition",
+        "translations": {
+          "uz": "qayta tiklamoq",
+          "ru": "реставрировать",
+          "kk": "qayta tiklew"
+        },
         "example": "The lesson uses “restore” in the context of the history of an old riverside house."
       },
       {
         "word": "resident",
+        "phonetic": "/ˈrɛzədənt/",
         "definition": "a person who lives in a place",
+        "translations": {
+          "uz": "yashovchi, aholi",
+          "ru": "житель",
+          "kk": "turǵın"
+        },
         "example": "The lesson uses “resident” in the context of the history of an old riverside house."
       },
       {
         "word": "preserve",
+        "phonetic": "/prɪˈzɝv/",
         "definition": "to protect something from damage or change",
+        "translations": {
+          "uz": "asrab qolmoq",
+          "ru": "сохранять",
+          "kk": "saqlap qalıw"
+        },
         "example": "The lesson uses “preserve” in the context of the history of an old riverside house."
       },
       {
         "word": "textile",
+        "phonetic": "/ˈtɛkstaɪl/",
         "definition": "cloth or material made by weaving",
+        "translations": {
+          "uz": "to‘qimachilik mahsuloti",
+          "ru": "ткань, текстиль",
+          "kk": "toqıma ónim"
+        },
         "example": "The lesson uses “textile” in the context of the history of an old riverside house."
       },
       {
         "word": "staircase",
+        "phonetic": "/ˈstɛrkeɪs/",
         "definition": "a set of stairs inside a building",
+        "translations": {
+          "uz": "zinapoya",
+          "ru": "лестница",
+          "kk": "basqısh"
+        },
         "example": "The lesson uses “staircase” in the context of the history of an old riverside house."
       }
     ],
@@ -9714,32 +10938,68 @@
     "reading_vocabulary": [
       {
         "word": "haunted",
+        "phonetic": "/ˈhɔntɪd/",
         "definition": "said to contain ghosts",
+        "translations": {
+          "uz": "arvohlar bor deyilgan",
+          "ru": "с привидениями",
+          "kk": "arwaq bar delinetuǵın"
+        },
         "example": "The lesson uses “haunted” in the context of beliefs about ghosts and unexplained sounds."
       },
       {
         "word": "footstep",
+        "phonetic": "/ˈfʊtstɛp/",
         "definition": "the sound of someone walking",
+        "translations": {
+          "uz": "qadam tovushi",
+          "ru": "звук шагов",
+          "kk": "ayaq dawısı"
+        },
         "example": "The lesson uses “footstep” in the context of beliefs about ghosts and unexplained sounds."
       },
       {
         "word": "corridor",
+        "phonetic": "/ˈkɔrədɚ/",
         "definition": "a long passage inside a building",
+        "translations": {
+          "uz": "yo‘lak",
+          "ru": "коридор",
+          "kk": "koridor"
+        },
         "example": "The lesson uses “corridor” in the context of beliefs about ghosts and unexplained sounds."
       },
       {
         "word": "investigate",
+        "phonetic": "/ɪnˈvɛstəɡeɪt/",
         "definition": "to examine something carefully to discover the truth",
+        "translations": {
+          "uz": "tekshirmoq, tergov qilmoq",
+          "ru": "расследовать",
+          "kk": "tergew"
+        },
         "example": "The lesson uses “investigate” in the context of beliefs about ghosts and unexplained sounds."
       },
       {
         "word": "unexplained",
+        "phonetic": "/ˌʌnɪkˈspleɪnd/",
         "definition": "not yet understood",
+        "translations": {
+          "uz": "tushuntirib bo‘lmagan",
+          "ru": "необъяснённый",
+          "kk": "túsindirilmegen"
+        },
         "example": "The lesson uses “unexplained” in the context of beliefs about ghosts and unexplained sounds."
       },
       {
         "word": "heating",
+        "phonetic": "/ˈhitɪŋ/",
         "definition": "a system that warms a building",
+        "translations": {
+          "uz": "isitish tizimi",
+          "ru": "отопление",
+          "kk": "jıllıtıw sisteması"
+        },
         "example": "The lesson uses “heating” in the context of beliefs about ghosts and unexplained sounds."
       }
     ],
@@ -9999,32 +11259,68 @@
     "reading_vocabulary": [
       {
         "word": "privacy",
+        "phonetic": "/ˈpraɪvəsi/",
         "definition": "the right to keep personal information protected",
+        "translations": {
+          "uz": "shaxsiy daxlsizlik",
+          "ru": "конфиденциальность",
+          "kk": "jeke maǵlıwmattıń qorǵawı"
+        },
         "example": "The lesson uses “privacy” in the context of opinions about social networks and communication."
       },
       {
         "word": "notification",
+        "phonetic": "/ˌnoʊtəfəˈkeɪʃən/",
         "definition": "a message that tells you about new activity",
+        "translations": {
+          "uz": "bildirishnoma",
+          "ru": "уведомление",
+          "kk": "xabarlama"
+        },
         "example": "The lesson uses “notification” in the context of opinions about social networks and communication."
       },
       {
         "word": "public",
+        "phonetic": "/ˈpʌblɪk/",
         "definition": "open or visible to many people",
+        "translations": {
+          "uz": "ommaviy",
+          "ru": "публичный, общедоступный",
+          "kk": "kópshilikke ashıq"
+        },
         "example": "The lesson uses “public” in the context of opinions about social networks and communication."
       },
       {
         "word": "maintain",
+        "phonetic": "/meɪnˈteɪn/",
         "definition": "to keep something in good condition or continue it",
+        "translations": {
+          "uz": "saqlab turmoq",
+          "ru": "поддерживать, сохранять",
+          "kk": "saqlap turıw"
+        },
         "example": "The lesson uses “maintain” in the context of opinions about social networks and communication."
       },
       {
         "word": "debate",
+        "phonetic": "/dɪˈbeɪt/",
         "definition": "a formal discussion of different opinions",
+        "translations": {
+          "uz": "munozara",
+          "ru": "дебаты",
+          "kk": "pikirtalas"
+        },
         "example": "The lesson uses “debate” in the context of opinions about social networks and communication."
       },
       {
         "word": "urgent",
+        "phonetic": "/ˈɝdʒənt/",
         "definition": "needing immediate attention",
+        "translations": {
+          "uz": "shoshilinch",
+          "ru": "срочный",
+          "kk": "shuǵıl"
+        },
         "example": "The lesson uses “urgent” in the context of opinions about social networks and communication."
       }
     ],
@@ -10284,32 +11580,68 @@
     "reading_vocabulary": [
       {
         "word": "vegetarian",
+        "phonetic": "/ˌvɛdʒəˈtɛriən/",
         "definition": "a person who does not eat meat",
+        "translations": {
+          "uz": "vegetarian",
+          "ru": "вегетарианец",
+          "kk": "vegetarian"
+        },
         "example": "The lesson uses “vegetarian” in the context of a dinner that went wrong."
       },
       {
         "word": "preference",
+        "phonetic": "/ˈprɛfɚəns/",
         "definition": "something you like more than another option",
+        "translations": {
+          "uz": "afzal ko‘rgan narsa",
+          "ru": "предпочтение",
+          "kk": "artıq kóretuǵın nárse"
+        },
         "example": "The lesson uses “preference” in the context of a dinner that went wrong."
       },
       {
         "word": "delivery",
+        "phonetic": "/dɪˈlɪvɚi/",
         "definition": "the act of bringing food or goods to someone",
+        "translations": {
+          "uz": "yetkazib berish",
+          "ru": "доставка",
+          "kk": "jetkerip beriw"
+        },
         "example": "The lesson uses “delivery” in the context of a dinner that went wrong."
       },
       {
         "word": "dessert",
+        "phonetic": "/dɪˈzɝt/",
         "definition": "sweet food eaten at the end of a meal",
+        "translations": {
+          "uz": "shirinlik",
+          "ru": "десерт",
+          "kk": "shiyrinlik"
+        },
         "example": "The lesson uses “dessert” in the context of a dinner that went wrong."
       },
       {
         "word": "ingredient",
+        "phonetic": "/ɪnˈɡridiənt/",
         "definition": "one item used to prepare food",
+        "translations": {
+          "uz": "masalliq",
+          "ru": "ингредиент",
+          "kk": "ingredient"
+        },
         "example": "The lesson uses “ingredient” in the context of a dinner that went wrong."
       },
       {
         "word": "menu",
+        "phonetic": "/ˈmɛnju/",
         "definition": "a list of food available to order",
+        "translations": {
+          "uz": "menyu",
+          "ru": "меню",
+          "kk": "menyu"
+        },
         "example": "The lesson uses “menu” in the context of a dinner that went wrong."
       }
     ],
@@ -10569,32 +11901,68 @@
     "reading_vocabulary": [
       {
         "word": "cotton",
+        "phonetic": "/ˈkɑtən/",
         "definition": "a soft plant fibre used to make fabric",
+        "translations": {
+          "uz": "paxta",
+          "ru": "хлопок",
+          "kk": "paxta"
+        },
         "example": "The lesson uses “cotton” in the context of future plans for a cotton research project."
       },
       {
         "word": "grower",
+        "phonetic": "/ˈɡroʊɚ/",
         "definition": "a person who produces crops",
+        "translations": {
+          "uz": "yetishtiruvchi",
+          "ru": "производитель, фермер",
+          "kk": "jetistiriwshi"
+        },
         "example": "The lesson uses “grower” in the context of future plans for a cotton research project."
       },
       {
         "word": "agricultural",
+        "phonetic": "/ˌæɡrəˈkʌltʃɚəl/",
         "definition": "connected with farming",
+        "translations": {
+          "uz": "qishloq xo‘jaligiga oid",
+          "ru": "сельскохозяйственный",
+          "kk": "awıl xojalıǵına baylanıslı"
+        },
         "example": "The lesson uses “agricultural” in the context of future plans for a cotton research project."
       },
       {
         "word": "measure",
+        "phonetic": "/ˈmɛʒɚ/",
         "definition": "to find the size or amount of something",
+        "translations": {
+          "uz": "o‘lchamoq",
+          "ru": "измерять",
+          "kk": "ólshew"
+        },
         "example": "The lesson uses “measure” in the context of future plans for a cotton research project."
       },
       {
         "word": "reduce",
+        "phonetic": "/rɪˈdus/",
         "definition": "to make something smaller or less",
+        "translations": {
+          "uz": "kamaytirmoq",
+          "ru": "уменьшать, сокращать",
+          "kk": "azaytıw"
+        },
         "example": "The lesson uses “reduce” in the context of future plans for a cotton research project."
       },
       {
         "word": "responsibility",
+        "phonetic": "/rɪˌspɑnsəˈbɪləti/",
         "definition": "a duty",
+        "translations": {
+          "uz": "mas’uliyat",
+          "ru": "ответственность",
+          "kk": "juwapkershilik"
+        },
         "example": "The lesson uses “responsibility” in the context of future plans for a cotton research project."
       }
     ],
@@ -10854,32 +12222,68 @@
     "reading_vocabulary": [
       {
         "word": "sensor",
+        "phonetic": "/ˈsɛnsɚ/",
         "definition": "a device that detects or measures change",
+        "translations": {
+          "uz": "datchik, sensor",
+          "ru": "датчик",
+          "kk": "datchik"
+        },
         "example": "The lesson uses “sensor” in the context of predictions about life beyond the digital era."
       },
       {
         "word": "ethical",
+        "phonetic": "/ˈɛθɪkəl/",
         "definition": "connected with ideas of right and wrong",
+        "translations": {
+          "uz": "axloqiy",
+          "ru": "этический",
+          "kk": "etikalıq"
+        },
         "example": "The lesson uses “ethical” in the context of predictions about life beyond the digital era."
       },
       {
         "word": "predict",
+        "phonetic": "/prɪˈdɪkt/",
         "definition": "to say what you think will happen",
+        "translations": {
+          "uz": "bashorat qilmoq",
+          "ru": "предсказывать",
+          "kk": "boljaw"
+        },
         "example": "The lesson uses “predict” in the context of predictions about life beyond the digital era."
       },
       {
         "word": "capable",
+        "phonetic": "/ˈkeɪpəbəl/",
         "definition": "able to do something",
+        "translations": {
+          "uz": "qodir, qobiliyatli",
+          "ru": "способный",
+          "kk": "uqıplı"
+        },
         "example": "The lesson uses “capable” in the context of predictions about life beyond the digital era."
       },
       {
         "word": "privacy",
+        "phonetic": "/ˈpraɪvəsi/",
         "definition": "the right to keep personal information protected",
+        "translations": {
+          "uz": "shaxsiy daxlsizlik",
+          "ru": "конфиденциальность",
+          "kk": "jeke maǵlıwmattıń qorǵawı"
+        },
         "example": "The lesson uses “privacy” in the context of predictions about life beyond the digital era."
       },
       {
         "word": "automatically",
+        "phonetic": "/ˌɔtəˈmætɪkli/",
         "definition": "without needing a person to control every step",
+        "translations": {
+          "uz": "avtomatik tarzda",
+          "ru": "автоматически",
+          "kk": "avtomatik túrde"
+        },
         "example": "The lesson uses “automatically” in the context of predictions about life beyond the digital era."
       }
     ],
@@ -11139,32 +12543,68 @@
     "reading_vocabulary": [
       {
         "word": "competition",
+        "phonetic": "/ˌkɑmpəˈtɪʃən/",
         "definition": "an event where people try to win",
+        "translations": {
+          "uz": "musobaqa",
+          "ru": "соревнование",
+          "kk": "jarıs"
+        },
         "example": "The lesson uses “competition” in the context of a university quiz competition."
       },
       {
         "word": "buzzer",
+        "phonetic": "/ˈbʌzɚ/",
         "definition": "a device that makes a sound when pressed",
+        "translations": {
+          "uz": "signal tugmasi",
+          "ru": "кнопка-зуммер",
+          "kk": "signal túymesi"
+        },
         "example": "The lesson uses “buzzer” in the context of a university quiz competition."
       },
       {
         "word": "round",
+        "phonetic": "/raʊnd/",
         "definition": "one stage of a competition",
+        "translations": {
+          "uz": "bosqich, raund",
+          "ru": "раунд, тур",
+          "kk": "tur"
+        },
         "example": "The lesson uses “round” in the context of a university quiz competition."
       },
       {
         "word": "organiser",
+        "phonetic": "/ˈɔrɡənaɪzɚ/",
         "definition": "a person who plans an event",
+        "translations": {
+          "uz": "tashkilotchi",
+          "ru": "организатор",
+          "kk": "shólkemlestiriwshi"
+        },
         "example": "The lesson uses “organiser” in the context of a university quiz competition."
       },
       {
         "word": "prepare",
+        "phonetic": "/prɪˈpɛr/",
         "definition": "to get ready",
+        "translations": {
+          "uz": "tayyorlanmoq",
+          "ru": "готовиться",
+          "kk": "tayarlanıw"
+        },
         "example": "The lesson uses “prepare” in the context of a university quiz competition."
       },
       {
         "word": "final",
+        "phonetic": "/ˈfaɪnəl/",
         "definition": "the last stage of an event",
+        "translations": {
+          "uz": "final",
+          "ru": "финал",
+          "kk": "final"
+        },
         "example": "The lesson uses “final” in the context of a university quiz competition."
       }
     ],
@@ -11424,32 +12864,68 @@
     "reading_vocabulary": [
       {
         "word": "portfolio",
+        "phonetic": "/pɔrtˈfoʊlioʊ/",
         "definition": "a collection of work that shows skills",
+        "translations": {
+          "uz": "portfolio",
+          "ru": "портфолио",
+          "kk": "portfolio"
+        },
         "example": "The lesson uses “portfolio” in the context of goals students hope to complete before graduation."
       },
       {
         "word": "achievement",
+        "phonetic": "/əˈtʃivmənt/",
         "definition": "something successfully completed",
+        "translations": {
+          "uz": "yutuq",
+          "ru": "достижение",
+          "kk": "jetiskenlik"
+        },
         "example": "The lesson uses “achievement” in the context of goals students hope to complete before graduation."
       },
       {
         "word": "deadline",
+        "phonetic": "/ˈdɛdlaɪn/",
         "definition": "the time by which work must be finished",
+        "translations": {
+          "uz": "oxirgi muddat",
+          "ru": "крайний срок",
+          "kk": "aqırǵı múddet"
+        },
         "example": "The lesson uses “deadline” in the context of goals students hope to complete before graduation."
       },
       {
         "word": "measurable",
+        "phonetic": "/ˈmɛʒɚəbəl/",
         "definition": "able to be measured",
+        "translations": {
+          "uz": "o‘lchasa bo‘ladigan",
+          "ru": "измеримый",
+          "kk": "ólshewge bolatuǵın"
+        },
         "example": "The lesson uses “measurable” in the context of goals students hope to complete before graduation."
       },
       {
         "word": "graduation",
+        "phonetic": "/ˌɡrædʒuˈeɪʃən/",
         "definition": "the completion of a course of study",
+        "translations": {
+          "uz": "o‘qishni bitirish",
+          "ru": "окончание учёбы, выпуск",
+          "kk": "oqıwdı pitkeriw"
+        },
         "example": "The lesson uses “graduation” in the context of goals students hope to complete before graduation."
       },
       {
         "word": "adviser",
+        "phonetic": "/ədˈvaɪzɚ/",
         "definition": "a person who gives guidance",
+        "translations": {
+          "uz": "maslahatchi",
+          "ru": "консультант, советник",
+          "kk": "másláhátshı"
+        },
         "example": "The lesson uses “adviser” in the context of goals students hope to complete before graduation."
       }
     ],
@@ -11709,32 +13185,68 @@
     "reading_vocabulary": [
       {
         "word": "engineer",
+        "phonetic": "/ˌɛndʒəˈnɪr/",
         "definition": "a professional who designs or builds technical systems",
+        "translations": {
+          "uz": "muhandis",
+          "ru": "инженер",
+          "kk": "injener"
+        },
         "example": "The lesson uses “engineer” in the context of what motivates a software engineer."
       },
       {
         "word": "logical",
+        "phonetic": "/ˈlɑdʒɪkəl/",
         "definition": "based on clear reasoning",
+        "translations": {
+          "uz": "mantiqiy",
+          "ru": "логичный",
+          "kk": "logikalıq"
+        },
         "example": "The lesson uses “logical” in the context of what motivates a software engineer."
       },
       {
         "word": "feedback",
+        "phonetic": "/ˈfidbæk/",
         "definition": "information that helps improve work",
+        "translations": {
+          "uz": "fikr-mulohaza",
+          "ru": "обратная связь",
+          "kk": "keri baylanıs"
+        },
         "example": "The lesson uses “feedback” in the context of what motivates a software engineer."
       },
       {
         "word": "programming",
+        "phonetic": "/ˈproʊɡræmɪŋ/",
         "definition": "writing instructions for computers",
+        "translations": {
+          "uz": "dasturlash",
+          "ru": "программирование",
+          "kk": "baǵdarlamalaw"
+        },
         "example": "The lesson uses “programming” in the context of what motivates a software engineer."
       },
       {
         "word": "technical",
+        "phonetic": "/ˈtɛknɪkəl/",
         "definition": "connected with specialized practical knowledge",
+        "translations": {
+          "uz": "texnik",
+          "ru": "технический",
+          "kk": "texnikalıq"
+        },
         "example": "The lesson uses “technical” in the context of what motivates a software engineer."
       },
       {
         "word": "career",
+        "phonetic": "/kəˈrɪr/",
         "definition": "a long-term area of work",
+        "translations": {
+          "uz": "martaba",
+          "ru": "карьера",
+          "kk": "karyera"
+        },
         "example": "The lesson uses “career” in the context of what motivates a software engineer."
       }
     ],
@@ -11994,32 +13506,68 @@
     "reading_vocabulary": [
       {
         "word": "route",
+        "phonetic": "/rut/",
         "definition": "a path or planned way",
+        "translations": {
+          "uz": "yo‘nalish",
+          "ru": "маршрут",
+          "kk": "marshrut"
+        },
         "example": "The lesson uses “route” in the context of planning a journey inspired by Marco Polo."
       },
       {
         "word": "historian",
+        "phonetic": "/hɪˈstɔriən/",
         "definition": "a person who studies history",
+        "translations": {
+          "uz": "tarixchi",
+          "ru": "историк",
+          "kk": "tariyxshı"
+        },
         "example": "The lesson uses “historian” in the context of planning a journey inspired by Marco Polo."
       },
       {
         "word": "region",
+        "phonetic": "/ˈridʒən/",
         "definition": "a particular area of a country or world",
+        "translations": {
+          "uz": "mintaqa",
+          "ru": "регион",
+          "kk": "aymaq"
+        },
         "example": "The lesson uses “region” in the context of planning a journey inspired by Marco Polo."
       },
       {
         "word": "guesthouse",
+        "phonetic": "/ˈɡɛsthaʊs/",
         "definition": "a small place that provides rooms for travellers",
+        "translations": {
+          "uz": "mehmon uyi",
+          "ru": "гостевой дом",
+          "kk": "qonaq úy"
+        },
         "example": "The lesson uses “guesthouse” in the context of planning a journey inspired by Marco Polo."
       },
       {
         "word": "journey",
+        "phonetic": "/ˈdʒɝni/",
         "definition": "travel from one place to another",
+        "translations": {
+          "uz": "safar",
+          "ru": "поездка, путешествие",
+          "kk": "sapar"
+        },
         "example": "The lesson uses “journey” in the context of planning a journey inspired by Marco Polo."
       },
       {
         "word": "diary",
+        "phonetic": "/ˈdaɪəri/",
         "definition": "a regular personal record",
+        "translations": {
+          "uz": "kundalik",
+          "ru": "дневник",
+          "kk": "kúndelik"
+        },
         "example": "The lesson uses “diary” in the context of planning a journey inspired by Marco Polo."
       }
     ],
@@ -12279,32 +13827,68 @@
     "reading_vocabulary": [
       {
         "word": "prediction",
+        "phonetic": "/prɪˈdɪkʃən/",
         "definition": "a statement about what may happen in the future",
+        "translations": {
+          "uz": "bashorat",
+          "ru": "прогноз, предсказание",
+          "kk": "boljaw"
+        },
         "example": "The lesson uses “prediction” in the context of a playful prediction about the future."
       },
       {
         "word": "entertainment",
+        "phonetic": "/ˌɛntɚˈteɪnmənt/",
         "definition": "activity designed to amuse people",
+        "translations": {
+          "uz": "ko‘ngilochar mashg‘ulot",
+          "ru": "развлечение",
+          "kk": "kewil ashar is"
+        },
         "example": "The lesson uses “entertainment” in the context of a playful prediction about the future."
       },
       {
         "word": "realistic",
+        "phonetic": "/ˌriəˈlɪstɪk/",
         "definition": "reasonable and practical",
+        "translations": {
+          "uz": "real, amalga oshadigan",
+          "ru": "реалистичный",
+          "kk": "real"
+        },
         "example": "The lesson uses “realistic” in the context of a playful prediction about the future."
       },
       {
         "word": "supposedly",
+        "phonetic": "/səˈpoʊzɪdli/",
         "definition": "according to what is claimed",
+        "translations": {
+          "uz": "go‘yoki",
+          "ru": "якобы",
+          "kk": "guya"
+        },
         "example": "The lesson uses “supposedly” in the context of a playful prediction about the future."
       },
       {
         "word": "long-term",
+        "phonetic": "/ˌlɔŋˈtɝm/",
         "definition": "continuing for a long period",
+        "translations": {
+          "uz": "uzoq muddatli",
+          "ru": "долгосрочный",
+          "kk": "uzaq múddetli"
+        },
         "example": "The lesson uses “long-term” in the context of a playful prediction about the future."
       },
       {
         "word": "depend",
+        "phonetic": "/dɪˈpɛnd/",
         "definition": "to be decided or affected by something",
+        "translations": {
+          "uz": "bog‘liq bo‘lmoq",
+          "ru": "зависеть",
+          "kk": "baylanıslı bolıw"
+        },
         "example": "The lesson uses “depend” in the context of a playful prediction about the future."
       }
     ],
@@ -12564,32 +14148,68 @@
     "reading_vocabulary": [
       {
         "word": "developer",
+        "phonetic": "/dɪˈvɛləpɚ/",
         "definition": "a person who creates software or games",
+        "translations": {
+          "uz": "dasturchi",
+          "ru": "разработчик",
+          "kk": "baǵdarlamashı"
+        },
         "example": "The lesson uses “developer” in the context of the long process of developing a computer game."
       },
       {
         "word": "tutorial",
+        "phonetic": "/tuˈtɔriəl/",
         "definition": "instructions that teach how to do something",
+        "translations": {
+          "uz": "o‘quv qo‘llanma",
+          "ru": "обучающее руководство",
+          "kk": "oqıw qollanbası"
+        },
         "example": "The lesson uses “tutorial” in the context of the long process of developing a computer game."
       },
       {
         "word": "level",
+        "phonetic": "/ˈlɛvəl/",
         "definition": "a stage in a game",
+        "translations": {
+          "uz": "daraja (o‘yinda)",
+          "ru": "уровень (в игре)",
+          "kk": "dáreje (oyında)"
+        },
         "example": "The lesson uses “level” in the context of the long process of developing a computer game."
       },
       {
         "word": "character",
+        "phonetic": "/ˈkærəktɚ/",
         "definition": "a person or creature in a story or game",
+        "translations": {
+          "uz": "qahramon, personaj",
+          "ru": "персонаж",
+          "kk": "qaharman"
+        },
         "example": "The lesson uses “character” in the context of the long process of developing a computer game."
       },
       {
         "word": "feedback",
+        "phonetic": "/ˈfidbæk/",
         "definition": "information that helps improve work",
+        "translations": {
+          "uz": "fikr-mulohaza",
+          "ru": "обратная связь",
+          "kk": "keri baylanıs"
+        },
         "example": "The lesson uses “feedback” in the context of the long process of developing a computer game."
       },
       {
         "word": "version",
+        "phonetic": "/ˈvɝʒən/",
         "definition": "a particular form of a product",
+        "translations": {
+          "uz": "versiya",
+          "ru": "версия",
+          "kk": "versiya"
+        },
         "example": "The lesson uses “version” in the context of the long process of developing a computer game."
       }
     ],
@@ -12849,32 +14469,68 @@
     "reading_vocabulary": [
       {
         "word": "culture shock",
+        "phonetic": "/ˈkʌltʃɚ ˌʃɑk/",
         "definition": "confusion caused by living in an unfamiliar culture",
+        "translations": {
+          "uz": "madaniy shok",
+          "ru": "культурный шок",
+          "kk": "mádeniy shok"
+        },
         "example": "The lesson uses “culture shock” in the context of adjusting to culture shock abroad."
       },
       {
         "word": "unfamiliar",
+        "phonetic": "/ˌʌnfəˈmɪljɚ/",
         "definition": "not known or recognized",
+        "translations": {
+          "uz": "notanish",
+          "ru": "незнакомый",
+          "kk": "tanıs emes"
+        },
         "example": "The lesson uses “unfamiliar” in the context of adjusting to culture shock abroad."
       },
       {
         "word": "adapt",
+        "phonetic": "/əˈdæpt/",
         "definition": "to change in order to fit a new situation",
+        "translations": {
+          "uz": "moslashmoq",
+          "ru": "адаптироваться",
+          "kk": "beyimlesiw"
+        },
         "example": "The lesson uses “adapt” in the context of adjusting to culture shock abroad."
       },
       {
         "word": "exchange",
+        "phonetic": "/ɪksˈtʃeɪndʒ/",
         "definition": "a program in which students study in another place",
+        "translations": {
+          "uz": "almashinuv dasturi",
+          "ru": "программа обмена",
+          "kk": "almasıw baǵdarlaması"
+        },
         "example": "The lesson uses “exchange” in the context of adjusting to culture shock abroad."
       },
       {
         "word": "gradually",
+        "phonetic": "/ˈɡrædʒuəli/",
         "definition": "slowly over time",
+        "translations": {
+          "uz": "asta-sekin",
+          "ru": "постепенно",
+          "kk": "áste-aqırın"
+        },
         "example": "The lesson uses “gradually” in the context of adjusting to culture shock abroad."
       },
       {
         "word": "reflection",
+        "phonetic": "/rɪˈflɛkʃən/",
         "definition": "careful thought about past experience",
+        "translations": {
+          "uz": "mulohaza",
+          "ru": "размышление",
+          "kk": "oylanıw"
+        },
         "example": "The lesson uses “reflection” in the context of adjusting to culture shock abroad."
       }
     ],
@@ -13134,32 +14790,68 @@
     "reading_vocabulary": [
       {
         "word": "bucket list",
+        "phonetic": "/ˈbʌkɪt ˌlɪst/",
         "definition": "a list of things someone hopes to do in life",
+        "translations": {
+          "uz": "orzular ro‘yxati",
+          "ru": "список желаний",
+          "kk": "ármanlar dizimi"
+        },
         "example": "The lesson uses “bucket list” in the context of a travel bucket list and how trips are organised."
       },
       {
         "word": "accommodation",
+        "phonetic": "/əˌkɑməˈdeɪʃən/",
         "definition": "a place to stay",
+        "translations": {
+          "uz": "turar joy",
+          "ru": "жильё",
+          "kk": "turaq jay"
+        },
         "example": "The lesson uses “accommodation” in the context of a travel bucket list and how trips are organised."
       },
       {
         "word": "participant",
+        "phonetic": "/pɑrˈtɪsəpənt/",
         "definition": "a person who takes part in an activity",
+        "translations": {
+          "uz": "ishtirokchi",
+          "ru": "участник",
+          "kk": "qatnasıwshı"
+        },
         "example": "The lesson uses “participant” in the context of a travel bucket list and how trips are organised."
       },
       {
         "word": "route",
+        "phonetic": "/rut/",
         "definition": "a path or planned way",
+        "translations": {
+          "uz": "yo‘nalish",
+          "ru": "маршрут",
+          "kk": "marshrut"
+        },
         "example": "The lesson uses “route” in the context of a travel bucket list and how trips are organised."
       },
       {
         "word": "approve",
+        "phonetic": "/əˈpruv/",
         "definition": "to officially accept",
+        "translations": {
+          "uz": "ma’qullamoq",
+          "ru": "одобрять",
+          "kk": "maqullaw"
+        },
         "example": "The lesson uses “approve” in the context of a travel bucket list and how trips are organised."
       },
       {
         "word": "document",
+        "phonetic": "/ˈdɑkjəmənt/",
         "definition": "an official or written record",
+        "translations": {
+          "uz": "hujjat",
+          "ru": "документ",
+          "kk": "hújjet"
+        },
         "example": "The lesson uses “document” in the context of a travel bucket list and how trips are organised."
       }
     ],
@@ -13419,32 +15111,68 @@
     "reading_vocabulary": [
       {
         "word": "confidential",
+        "phonetic": "/ˌkɑnfəˈdɛnʃəl/",
         "definition": "intended to be kept private",
+        "translations": {
+          "uz": "maxfiy",
+          "ru": "конфиденциальный",
+          "kk": "qupıya"
+        },
         "example": "The lesson uses “confidential” in the context of the work of a computer security specialist."
       },
       {
         "word": "monitor",
+        "phonetic": "/ˈmɑnətɚ/",
         "definition": "to watch or check continuously",
+        "translations": {
+          "uz": "kuzatib bormoq",
+          "ru": "отслеживать",
+          "kk": "baqlaw"
+        },
         "example": "The lesson uses “monitor” in the context of the work of a computer security specialist."
       },
       {
         "word": "specialist",
+        "phonetic": "/ˈspɛʃəlɪst/",
         "definition": "a person with detailed knowledge in one area",
+        "translations": {
+          "uz": "mutaxassis",
+          "ru": "специалист",
+          "kk": "qánige"
+        },
         "example": "The lesson uses “specialist” in the context of the work of a computer security specialist."
       },
       {
         "word": "incident",
+        "phonetic": "/ˈɪnsədənt/",
         "definition": "an event, especially one involving a problem",
+        "translations": {
+          "uz": "hodisa",
+          "ru": "инцидент",
+          "kk": "waqıya"
+        },
         "example": "The lesson uses “incident” in the context of the work of a computer security specialist."
       },
       {
         "word": "detect",
+        "phonetic": "/dɪˈtɛkt/",
         "definition": "to discover something that is not obvious",
+        "translations": {
+          "uz": "aniqlamoq",
+          "ru": "обнаруживать",
+          "kk": "anıqlaw"
+        },
         "example": "The lesson uses “detect” in the context of the work of a computer security specialist."
       },
       {
         "word": "risk",
+        "phonetic": "/rɪsk/",
         "definition": "the possibility of harm",
+        "translations": {
+          "uz": "xavf",
+          "ru": "риск",
+          "kk": "qáwip"
+        },
         "example": "The lesson uses “risk” in the context of the work of a computer security specialist."
       }
     ],
@@ -13704,32 +15432,68 @@
     "reading_vocabulary": [
       {
         "word": "offline",
+        "phonetic": "/ˌɔfˈlaɪn/",
         "definition": "not connected to the internet",
+        "translations": {
+          "uz": "oflayn",
+          "ru": "офлайн",
+          "kk": "oflayn"
+        },
         "example": "The lesson uses “offline” in the context of downloading and evaluating a new study app."
       },
       {
         "word": "privacy policy",
+        "phonetic": "/ˈpraɪvəsi ˌpɑləsi/",
         "definition": "a document explaining how personal data is handled",
+        "translations": {
+          "uz": "maxfiylik siyosati",
+          "ru": "политика конфиденциальности",
+          "kk": "qupıyalıq siyasatı"
+        },
         "example": "The lesson uses “privacy policy” in the context of downloading and evaluating a new study app."
       },
       {
         "word": "notification",
+        "phonetic": "/ˌnoʊtəfəˈkeɪʃən/",
         "definition": "a message that tells you about new activity",
+        "translations": {
+          "uz": "bildirishnoma",
+          "ru": "уведомление",
+          "kk": "xabarlama"
+        },
         "example": "The lesson uses “notification” in the context of downloading and evaluating a new study app."
       },
       {
         "word": "feature",
+        "phonetic": "/ˈfitʃɚ/",
         "definition": "a function or characteristic of a product",
+        "translations": {
+          "uz": "funksiya",
+          "ru": "функция",
+          "kk": "funkciya"
+        },
         "example": "The lesson uses “feature” in the context of downloading and evaluating a new study app."
       },
       {
         "word": "premium",
+        "phonetic": "/ˈprimiəm/",
         "definition": "a paid or higher-level version",
+        "translations": {
+          "uz": "premium versiya",
+          "ru": "премиум-версия",
+          "kk": "premium versiya"
+        },
         "example": "The lesson uses “premium” in the context of downloading and evaluating a new study app."
       },
       {
         "word": "register",
+        "phonetic": "/ˈrɛdʒɪstɚ/",
         "definition": "to create an official account",
+        "translations": {
+          "uz": "ro‘yxatdan o‘tmoq",
+          "ru": "регистрироваться",
+          "kk": "dizimnen ótiw"
+        },
         "example": "The lesson uses “register” in the context of downloading and evaluating a new study app."
       }
     ],
@@ -13989,32 +15753,68 @@
     "reading_vocabulary": [
       {
         "word": "influential",
+        "phonetic": "/ˌɪnfluˈɛnʃəl/",
         "definition": "having a strong effect on people or ideas",
+        "translations": {
+          "uz": "nufuzli",
+          "ru": "влиятельный",
+          "kk": "tásirli"
+        },
         "example": "The lesson uses “influential” in the context of why a classic novel remains influential."
       },
       {
         "word": "conflict",
+        "phonetic": "/ˈkɑnflɪkt/",
         "definition": "a serious disagreement or struggle",
+        "translations": {
+          "uz": "nizo",
+          "ru": "конфликт",
+          "kk": "kelispewshilik"
+        },
         "example": "The lesson uses “conflict” in the context of why a classic novel remains influential."
       },
       {
         "word": "publication",
+        "phonetic": "/ˌpʌbləˈkeɪʃən/",
         "definition": "the act of making a book or text public",
+        "translations": {
+          "uz": "nashr etilish",
+          "ru": "публикация",
+          "kk": "baspadan shıǵıw"
+        },
         "example": "The lesson uses “publication” in the context of why a classic novel remains influential."
       },
       {
         "word": "interpretation",
+        "phonetic": "/ɪnˌtɝprəˈteɪʃən/",
         "definition": "an explanation of meaning",
+        "translations": {
+          "uz": "talqin",
+          "ru": "толкование",
+          "kk": "túsindiriw"
+        },
         "example": "The lesson uses “interpretation” in the context of why a classic novel remains influential."
       },
       {
         "word": "reputation",
+        "phonetic": "/ˌrɛpjəˈteɪʃən/",
         "definition": "the general opinion people have about someone",
+        "translations": {
+          "uz": "obro‘",
+          "ru": "репутация",
+          "kk": "abıray"
+        },
         "example": "The lesson uses “reputation” in the context of why a classic novel remains influential."
       },
       {
         "word": "transformation",
+        "phonetic": "/ˌtrænsfɚˈmeɪʃən/",
         "definition": "a major change",
+        "translations": {
+          "uz": "tub o‘zgarish",
+          "ru": "преобразование",
+          "kk": "túpkilikli ózgeris"
+        },
         "example": "The lesson uses “transformation” in the context of why a classic novel remains influential."
       }
     ],
@@ -14274,32 +16074,68 @@
     "reading_vocabulary": [
       {
         "word": "seasonal",
+        "phonetic": "/ˈsizənəl/",
         "definition": "available or appropriate during a particular season",
+        "translations": {
+          "uz": "mavsumiy",
+          "ru": "сезонный",
+          "kk": "máwsimlik"
+        },
         "example": "The lesson uses “seasonal” in the context of reviewing a special dinner at a restaurant."
       },
       {
         "word": "ingredient",
+        "phonetic": "/ɪnˈɡridiənt/",
         "definition": "one item used to prepare food",
+        "translations": {
+          "uz": "masalliq",
+          "ru": "ингредиент",
+          "kk": "ingredient"
+        },
         "example": "The lesson uses “ingredient” in the context of reviewing a special dinner at a restaurant."
       },
       {
         "word": "attentive",
+        "phonetic": "/əˈtɛntɪv/",
         "definition": "carefully noticing what someone needs",
+        "translations": {
+          "uz": "e’tiborli",
+          "ru": "внимательный",
+          "kk": "itibarlı"
+        },
         "example": "The lesson uses “attentive” in the context of reviewing a special dinner at a restaurant."
       },
       {
         "word": "occasion",
+        "phonetic": "/əˈkeɪʒən/",
         "definition": "a particular event or time",
+        "translations": {
+          "uz": "voqea, munosabat",
+          "ru": "событие, повод",
+          "kk": "waqıya"
+        },
         "example": "The lesson uses “occasion” in the context of reviewing a special dinner at a restaurant."
       },
       {
         "word": "chef",
+        "phonetic": "/ʃɛf/",
         "definition": "a professional cook",
+        "translations": {
+          "uz": "oshpaz",
+          "ru": "шеф-повар",
+          "kk": "aspaz"
+        },
         "example": "The lesson uses “chef” in the context of reviewing a special dinner at a restaurant."
       },
       {
         "word": "philosophy",
+        "phonetic": "/fəˈlɑsəfi/",
         "definition": "a set of beliefs or principles",
+        "translations": {
+          "uz": "falsafa",
+          "ru": "философия",
+          "kk": "filosofiya"
+        },
         "example": "The lesson uses “philosophy” in the context of reviewing a special dinner at a restaurant."
       }
     ],
@@ -14559,32 +16395,68 @@
     "reading_vocabulary": [
       {
         "word": "heritage",
+        "phonetic": "/ˈhɛrətɪdʒ/",
         "definition": "history, traditions and important places passed down through generations",
+        "translations": {
+          "uz": "meros",
+          "ru": "наследие",
+          "kk": "miyras"
+        },
         "example": "The lesson uses “heritage” in the context of protecting a national cultural treasure."
       },
       {
         "word": "conservation",
+        "phonetic": "/ˌkɑnsɚˈveɪʃən/",
         "definition": "protection of important natural or cultural things",
+        "translations": {
+          "uz": "muhofaza",
+          "ru": "охрана",
+          "kk": "qorǵaw"
+        },
         "example": "The lesson uses “conservation” in the context of protecting a national cultural treasure."
       },
       {
         "word": "fragile",
+        "phonetic": "/ˈfrædʒəl/",
         "definition": "easily damaged",
+        "translations": {
+          "uz": "mo‘rt",
+          "ru": "хрупкий",
+          "kk": "názik"
+        },
         "example": "The lesson uses “fragile” in the context of protecting a national cultural treasure."
       },
       {
         "word": "preservation",
+        "phonetic": "/ˌprɛzɚˈveɪʃən/",
         "definition": "the act of keeping something safe and unchanged",
+        "translations": {
+          "uz": "saqlab qolish",
+          "ru": "сохранение",
+          "kk": "saqlap qalıw"
+        },
         "example": "The lesson uses “preservation” in the context of protecting a national cultural treasure."
       },
       {
         "word": "participation",
+        "phonetic": "/pɑrˌtɪsəˈpeɪʃən/",
         "definition": "taking part in an activity or decision",
+        "translations": {
+          "uz": "ishtirok",
+          "ru": "участие",
+          "kk": "qatnasıw"
+        },
         "example": "The lesson uses “participation” in the context of protecting a national cultural treasure."
       },
       {
         "word": "recommendation",
+        "phonetic": "/ˌrɛkəmɛnˈdeɪʃən/",
         "definition": "a suggestion about what should be done",
+        "translations": {
+          "uz": "tavsiya",
+          "ru": "рекомендация",
+          "kk": "usınıs"
+        },
         "example": "The lesson uses “recommendation” in the context of protecting a national cultural treasure."
       }
     ],

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:learnist/models/lesson_model.dart';
 import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/screens/lesson_detail_screen.dart';
@@ -12,9 +13,11 @@ import 'package:learnist/services/deepgram_service.dart';
 import 'package:learnist/services/lesson_service.dart';
 import 'package:learnist/services/openai_service.dart';
 import 'package:learnist/services/progress_service.dart';
+import 'package:learnist/services/pronunciation_service.dart';
 import 'package:learnist/services/speech_recorder.dart';
 import 'package:learnist/services/supabase_service.dart';
 import 'package:learnist/widgets/lesson/lesson_common.dart';
+import 'package:learnist/models/vocabulary_item.dart';
 import 'package:learnist/widgets/lesson/lesson_quiz.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
@@ -23,6 +26,7 @@ import '../support/fake_deepgram_service.dart';
 import '../support/fake_lesson_service.dart';
 import '../support/fake_openai_service.dart';
 import '../support/fake_progress_service.dart';
+import '../support/fake_pronunciation_service.dart';
 import '../support/fake_speech_recorder.dart';
 import '../support/l10n.dart';
 
@@ -40,6 +44,7 @@ Future<void> _pump(
   FakeOpenAIService? ai,
   FakeDeepgramService? deepgram,
   FakeSpeechRecorder? recorder,
+  FakePronunciationService? pronunciation,
   Locale locale = testLocale,
   bool settle = true,
 }) async {
@@ -57,6 +62,9 @@ Future<void> _pump(
         ),
         speechRecorderProvider.overrideWithValue(
           recorder ?? FakeSpeechRecorder(),
+        ),
+        pronunciationServiceProvider.overrideWithValue(
+          pronunciation ?? FakePronunciationService(),
         ),
       ],
       child: MaterialApp(
@@ -635,6 +643,85 @@ void main() {
     });
   });
 
+  group('reading vocabulary', () {
+    final words = VocabularyItem.listFrom(lesson1.readingVocabulary);
+    final classmate = words.firstWhere((item) => item.word == 'classmate');
+
+    Future<void> openVocabulary(
+      WidgetTester tester, {
+      Locale locale = testLocale,
+      FakePronunciationService? pronunciation,
+    }) async {
+      _useTallView(tester);
+      await _pump(tester, locale: locale, pronunciation: pronunciation);
+      await tester.tap(find.byType(Tab).at(1));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(LucideIcons.languages));
+      await tester.pumpAndSettle();
+    }
+
+    for (final (code, title) in [
+      ('uz', "Lug'at"),
+      ('ru', 'Словарь'),
+      ('kk', 'Sózlik'),
+    ]) {
+      testWidgets('$code: word, IPA, translation and definition', (
+        tester,
+      ) async {
+        await openVocabulary(tester, locale: Locale(code));
+
+        expect(find.text(title), findsOneWidget);
+        expect(find.text('classmate'), findsOneWidget);
+        expect(find.text('/ˈklæsmeɪt/'), findsOneWidget);
+        expect(find.text(classmate.translationFor(code)!), findsOneWidget);
+        expect(find.text(classmate.definition!), findsOneWidget);
+        expect(find.byIcon(LucideIcons.volume2), findsNWidgets(words.length));
+      });
+    }
+
+    testWidgets('en shows the definition without a translation', (
+      tester,
+    ) async {
+      await openVocabulary(tester, locale: const Locale('en'));
+
+      expect(find.text('6 key words'), findsOneWidget);
+      expect(find.text('/ˈklæsmeɪt/'), findsOneWidget);
+      expect(find.text(classmate.definition!), findsOneWidget);
+      for (final code in ['uz', 'ru', 'kk']) {
+        expect(find.text(classmate.translationFor(code)!), findsNothing);
+      }
+    });
+
+    testWidgets('the speaker reads the word aloud', (tester) async {
+      final pronunciation = FakePronunciationService();
+      await openVocabulary(tester, pronunciation: pronunciation);
+
+      await tester.tap(find.byTooltip('«classmate» talaffuzini tinglash'));
+      await tester.pump();
+      await tester.tap(find.byTooltip('«hometown» talaffuzini tinglash'));
+      await tester.pump();
+
+      expect(pronunciation.spoken, ['classmate', 'hometown']);
+    });
+
+    testWidgets('a TTS failure shows a red snackbar', (tester) async {
+      final pronunciation =
+          FakePronunciationService()..error = Exception('no voice');
+      await openVocabulary(tester, pronunciation: pronunciation);
+
+      await tester.tap(find.byTooltip('«classmate» talaffuzini tinglash'));
+      await tester.pumpAndSettle();
+
+      final snackBar = tester.widget<SnackBar>(
+        find.ancestor(
+          of: find.text("Talaffuzni ijro etib bo'lmadi."),
+          matching: find.byType(SnackBar),
+        ),
+      );
+      expect(snackBar.backgroundColor, AppColors.danger);
+    });
+  });
+
   testWidgets('reading tab: passage, live quiz with aggregate score, vocab', (
     tester,
   ) async {
@@ -651,7 +738,7 @@ void main() {
       ),
       findsNWidgets(10),
     );
-    expect(find.text('6 key words'), findsOneWidget);
+    expect(find.text("6 ta kalit so'z"), findsOneWidget);
 
     await _answerFirstOptions(tester);
     await tester.tap(find.text('Natijani tekshirish'));

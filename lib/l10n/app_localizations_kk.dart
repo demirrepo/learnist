@@ -515,4 +515,17 @@ class AppLocalizationsKk extends AppLocalizations {
   @override
   String get lessonCompleteFailed =>
       'Sabaqtı juwmaqlap bolmadı. Qaytadan urınıp kóriń.';
+
+  @override
+  String lessonKeyWords(int count) {
+    return '$count tiykarǵı sóz';
+  }
+
+  @override
+  String vocabularyListen(String word) {
+    return '«$word» aytılıwın tıńlaw';
+  }
+
+  @override
+  String get vocabularySpeakError => 'Aytılıwın oynatıp bolmadı.';
 }

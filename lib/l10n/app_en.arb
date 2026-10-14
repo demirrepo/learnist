@@ -175,5 +175,10 @@
   "@lessonCompleteLowScore": {"placeholders": {"min": {"type": "int"}}},
   "lessonCompleteLowScoreWithAverage": "Your average score is below {min}% (currently {average}%). Improve your sections to move on to the next lesson.",
   "@lessonCompleteLowScoreWithAverage": {"placeholders": {"min": {"type": "int"}, "average": {"type": "int"}}},
-  "lessonCompleteFailed": "Couldn't finish the lesson. Please try again."
+  "lessonCompleteFailed": "Couldn't finish the lesson. Please try again.",
+  "lessonKeyWords": "{count, plural, =1{1 key word} other{{count} key words}}",
+  "@lessonKeyWords": {"placeholders": {"count": {"type": "int"}}},
+  "vocabularyListen": "Listen to “{word}”",
+  "@vocabularyListen": {"placeholders": {"word": {"type": "String"}}},
+  "vocabularySpeakError": "Couldn't play the pronunciation."
 }

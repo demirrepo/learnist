@@ -151,5 +151,8 @@
   "errorGeneric": "Nimadir xato ketdi. Iltimos, qayta urinib ko'ring.",
   "lessonCompleteLowScore": "O'rtacha ballingiz {min}% dan past. Keyingi darsga o'tish uchun bo'limlarni yaxshilang.",
   "lessonCompleteLowScoreWithAverage": "O'rtacha ballingiz {min}% dan past (hozirgi: {average}%). Keyingi darsga o'tish uchun bo'limlarni yaxshilang.",
-  "lessonCompleteFailed": "Darsni yakunlab bo'lmadi. Iltimos, qayta urinib ko'ring."
+  "lessonCompleteFailed": "Darsni yakunlab bo'lmadi. Iltimos, qayta urinib ko'ring.",
+  "lessonKeyWords": "{count} ta kalit so'z",
+  "vocabularyListen": "«{word}» talaffuzini tinglash",
+  "vocabularySpeakError": "Talaffuzni ijro etib bo'lmadi."
 }

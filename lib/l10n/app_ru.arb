@@ -151,5 +151,8 @@
   "errorGeneric": "Что-то пошло не так. Пожалуйста, попробуйте снова.",
   "lessonCompleteLowScore": "Ваш средний балл ниже {min}%. Улучшите результаты по разделам, чтобы перейти к следующему уроку.",
   "lessonCompleteLowScoreWithAverage": "Ваш средний балл ниже {min}% (сейчас: {average}%). Улучшите результаты по разделам, чтобы перейти к следующему уроку.",
-  "lessonCompleteFailed": "Не удалось завершить урок. Пожалуйста, попробуйте снова."
+  "lessonCompleteFailed": "Не удалось завершить урок. Пожалуйста, попробуйте снова.",
+  "lessonKeyWords": "{count, plural, one{{count} ключевое слово} few{{count} ключевых слова} other{{count} ключевых слов}}",
+  "vocabularyListen": "Прослушать «{word}»",
+  "vocabularySpeakError": "Не удалось воспроизвести произношение."
 }

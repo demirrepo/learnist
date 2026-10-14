@@ -521,4 +521,17 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get lessonCompleteFailed =>
       'Darsni yakunlab bo\'lmadi. Iltimos, qayta urinib ko\'ring.';
+
+  @override
+  String lessonKeyWords(int count) {
+    return '$count ta kalit so\'z';
+  }
+
+  @override
+  String vocabularyListen(String word) {
+    return '«$word» talaffuzini tinglash';
+  }
+
+  @override
+  String get vocabularySpeakError => 'Talaffuzni ijro etib bo\'lmadi.';
 }

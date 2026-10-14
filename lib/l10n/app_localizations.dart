@@ -971,6 +971,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t finish the lesson. Please try again.'**
   String get lessonCompleteFailed;
+
+  /// No description provided for @lessonKeyWords.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 key word} other{{count} key words}}'**
+  String lessonKeyWords(int count);
+
+  /// No description provided for @vocabularyListen.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to “{word}”'**
+  String vocabularyListen(String word);
+
+  /// No description provided for @vocabularySpeakError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t play the pronunciation.'**
+  String get vocabularySpeakError;
 }
 
 class _AppLocalizationsDelegate

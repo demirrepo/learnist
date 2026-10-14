@@ -151,5 +151,8 @@
   "errorGeneric": "Bir nárse qáte boldı. Qaytadan urınıp kóriń.",
   "lessonCompleteLowScore": "Ortasha ballıńız {min}% dan tómen. Keyingi sabaqqa ótiw ushın bólimlerdi jaqsılań.",
   "lessonCompleteLowScoreWithAverage": "Ortasha ballıńız {min}% dan tómen (házirgi: {average}%). Keyingi sabaqqa ótiw ushın bólimlerdi jaqsılań.",
-  "lessonCompleteFailed": "Sabaqtı juwmaqlap bolmadı. Qaytadan urınıp kóriń."
+  "lessonCompleteFailed": "Sabaqtı juwmaqlap bolmadı. Qaytadan urınıp kóriń.",
+  "lessonKeyWords": "{count} tiykarǵı sóz",
+  "vocabularyListen": "«{word}» aytılıwın tıńlaw",
+  "vocabularySpeakError": "Aytılıwın oynatıp bolmadı."
 }

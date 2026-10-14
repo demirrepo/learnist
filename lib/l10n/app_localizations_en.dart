@@ -540,4 +540,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get lessonCompleteFailed =>
       'Couldn\'t finish the lesson. Please try again.';
+
+  @override
+  String lessonKeyWords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count key words',
+      one: '1 key word',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String vocabularyListen(String word) {
+    return 'Listen to “$word”';
+  }
+
+  @override
+  String get vocabularySpeakError => 'Couldn\'t play the pronunciation.';
 }
