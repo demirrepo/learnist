@@ -36,18 +36,18 @@ Matcher _failure(AskAiFailure failure, {int? statusCode}) => throwsA(
 const _context = 'Lesson 49: Download the app | Grammar | Complex clauses';
 
 void main() {
-  test('posts the question and lesson context to ask_ai', () async {
+  test('posts the question and lesson context to ask-ai', () async {
     late http.Request sent;
     final service = _service((request) async {
       sent = request;
-      return _json({'content': ' **Hint 1:** look at the verb. '});
+      return _json({'reply': ' **Hint 1:** look at the verb. '});
     });
 
     final answer = await service.ask('  Why is B wrong?  ', _context);
 
     expect(answer, '**Hint 1:** look at the verb.');
     expect(sent.method, 'POST');
-    expect(sent.url.path, '/functions/v1/ask_ai');
+    expect(sent.url.path, '/functions/v1/ask-ai');
     expect(jsonDecode(sent.body), {
       'prompt': 'Why is B wrong?',
       'lessonContext': _context,
@@ -84,21 +84,18 @@ void main() {
   });
 
   group('parseAskAiReply', () {
-    test('reads the common answer shapes', () {
-      expect(parseAskAiReply({'content': 'a'}), 'a');
-      expect(parseAskAiReply({'answer': 'b'}), 'b');
-      expect(parseAskAiReply({'reply': 'c'}), 'c');
-      expect(parseAskAiReply({'response': 'd'}), 'd');
-      expect(parseAskAiReply(' plain text '), 'plain text');
+    test('reads reply', () {
+      expect(parseAskAiReply({'reply': ' Two hints. '}), 'Two hints.');
     });
 
-    test('rejects an empty or missing answer', () {
+    test('rejects a missing, blank or differently named answer', () {
       for (final data in [
         null,
-        '  ',
-        {'content': ''},
+        'plain text',
+        {'reply': '  '},
+        {'reply': 42},
+        {'content': 'a'},
         {'error': 'x'},
-        ['a'],
       ]) {
         expect(
           () => parseAskAiReply(data),

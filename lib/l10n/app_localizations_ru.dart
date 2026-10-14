@@ -92,12 +92,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get homeTodaysFocus => 'ФОКУС ДНЯ';
 
   @override
-  String get homeHeadline =>
-      'Ваш английский растёт каждый раз, когда вы понимаете ошибку.';
+  String get homeHeadline => 'Ваш английский растёт каждый раз, когда вы понимаете ошибку.';
 
   @override
-  String get homeSubtitle =>
-      'Сохраняйте темп — переходите к следующему занятию.';
+  String get homeSubtitle => 'Сохраняйте темп — переходите к следующему занятию.';
 
   @override
   String homeContinueLesson(int number) {
@@ -167,8 +165,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get topicsTitle => 'Путь из 52 уроков';
 
   @override
-  String get topicsSemesters =>
-      'Семестр 1: уроки 1–30 • Семестр 2: уроки 31–52';
+  String get topicsSemesters => 'Семестр 1: уроки 1–30 • Семестр 2: уроки 31–52';
 
   @override
   String get topicsSearchHint => 'Поиск уроков';
@@ -183,19 +180,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get topicLocked => 'Закрыто';
 
   @override
-  String get topicLockedMessage =>
-      'Закрыто. Этот урок откроется после прохождения предыдущих.';
+  String get topicLockedMessage => 'Закрыто. Этот урок откроется после прохождения предыдущих.';
 
   @override
   String get aiLabEyebrow => 'ГРАМОТНЫЕ ПРОМПТЫ';
 
   @override
-  String get aiLabHeadline =>
-      'Задавайте вопросы лучше. Учитесь самостоятельнее.';
+  String get aiLabHeadline => 'Задавайте вопросы лучше. Учитесь самостоятельнее.';
 
   @override
-  String get aiLabIntro =>
-      'Промпт — это инструкция, которую вы даёте ИИ. Чёткий промпт даёт ответ, на котором можно учиться, а не просто скопировать его.';
+  String get aiLabIntro => 'Промпт — это инструкция, которую вы даёте ИИ. Чёткий промпт даёт ответ, на котором можно учиться, а не просто скопировать его.';
 
   @override
   String get aiLabExamplePrompt => 'ПРИМЕР ПРОМПТА';
@@ -235,26 +229,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get aiStepWhatTitle => 'Что такое промпт?';
 
   @override
-  String get aiStepWhatBody =>
-      'Промпт — это сообщение, которое вы отправляете ИИ. Чем оно яснее, тем полезнее ответ.';
+  String get aiStepWhatBody => 'Промпт — это сообщение, которое вы отправляете ИИ. Чем оно яснее, тем полезнее ответ.';
 
   @override
-  String get aiStepRoleBody =>
-      'Скажите ИИ, кем быть, — и он ответит как эксперт.';
+  String get aiStepRoleBody => 'Скажите ИИ, кем быть, — и он ответит как эксперт.';
 
   @override
   String get aiStepTaskBody => 'Скажите точно, что нужно сделать.';
 
   @override
-  String get aiStepLevelBody =>
-      'Укажите свой уровень английского, чтобы ответ вам подошёл.';
+  String get aiStepLevelBody => 'Укажите свой уровень английского, чтобы ответ вам подошёл.';
 
   @override
   String get aiStepContextBody => 'Опишите ситуацию: текст, вопрос, вашу цель.';
 
   @override
-  String get aiStepFormatBody =>
-      'Попросите нужную форму ответа: список, таблицу или короткий абзац.';
+  String get aiStepFormatBody => 'Попросите нужную форму ответа: список, таблицу или короткий абзац.';
 
   @override
   String get aiStepExamplesTitle => 'Примеры и тон';
@@ -275,8 +265,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get promptCheckerFeedback => 'Отзыв ИИ';
 
   @override
-  String get promptCheckerUnexpected =>
-      'Непредвиденная ошибка. Попробуйте ещё раз.';
+  String get promptCheckerUnexpected => 'Непредвиденная ошибка. Попробуйте ещё раз.';
 
   @override
   String get comparisonTitle => 'Плохой промпт → хороший промпт';
@@ -285,12 +274,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get comparisonSubtitle => 'Вопрос тот же, а ответы совсем разные.';
 
   @override
-  String get comparisonBadNote =>
-      'Нет роли, контекста и уровня. ИИ приходится угадывать, что вам нужно, поэтому ответ расплывчатый.';
+  String get comparisonBadNote => 'Нет роли, контекста и уровня. ИИ приходится угадывать, что вам нужно, поэтому ответ расплывчатый.';
 
   @override
-  String get comparisonGoodNote =>
-      'Роль + контекст вопроса + уровень + формат. ИИ точно знает, как вам помочь.';
+  String get comparisonGoodNote => 'Роль + контекст вопроса + уровень + формат. ИИ точно знает, как вам помочь.';
 
   @override
   String get checkupEyebrow => 'ВАШ НАСТОЯЩИЙ УРОВЕНЬ';
@@ -317,8 +304,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get checkupLevelRule =>
-      'Ваш уровень — самый высокий, пройденный по порядку начиная с A1.';
+  String get checkupLevelRule => 'Ваш уровень — самый высокий, пройденный по порядку начиная с A1.';
 
   @override
   String get checkupAnswers => 'Ответы';
@@ -388,8 +374,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get checkupCooldownNote =>
-      'Период ожидания защищает результат от эффекта краткосрочной тренировки.';
+  String get checkupCooldownNote => 'Период ожидания защищает результат от эффекта краткосрочной тренировки.';
 
   @override
   String get checkupRetakeUnavailable => 'Пересдача пока недоступна';
@@ -502,12 +487,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lessonCheckResults => 'Проверить результат';
 
   @override
-  String get lessonAudioPending =>
-      'Аудио для этого урока ещё готовится. Пока используйте текст.';
+  String get lessonAudioPending => 'Аудио для этого урока ещё готовится. Пока используйте текст.';
 
   @override
-  String get lessonAudioError =>
-      'Не удалось загрузить аудио. Проверьте подключение к интернету и попробуйте снова.';
+  String get lessonAudioError => 'Не удалось загрузить аудио. Проверьте подключение к интернету и попробуйте снова.';
 
   @override
   String get lessonFinish => 'Завершить урок';
@@ -516,49 +499,40 @@ class AppLocalizationsRu extends AppLocalizations {
   String get lessonUnlocked => 'Поздравляем! Открыт новый урок';
 
   @override
-  String get lessonSaveScoreError =>
-      'Балл не сохранён. Пожалуйста, попробуйте снова.';
+  String get lessonSaveScoreError => 'Балл не сохранён. Пожалуйста, попробуйте снова.';
 
   @override
   String get taskEmptyAnswer => 'Сначала напишите ответ.';
 
   @override
-  String get taskEvaluationError =>
-      'При оценке произошла ошибка. Пожалуйста, попробуйте снова.';
+  String get taskEvaluationError => 'При оценке произошла ошибка. Пожалуйста, попробуйте снова.';
 
   @override
-  String get taskMicDenied =>
-      'Разрешите доступ к микрофону, чтобы записать голос.';
+  String get taskMicDenied => 'Разрешите доступ к микрофону, чтобы записать голос.';
 
   @override
-  String get taskMicBlocked =>
-      'Доступ к микрофону запрещён. Включите его в настройках телефона.';
+  String get taskMicBlocked => 'Доступ к микрофону запрещён. Включите его в настройках телефона.';
 
   @override
-  String get taskRecordingError =>
-      'Не удалось начать запись. Пожалуйста, попробуйте снова.';
+  String get taskRecordingError => 'Не удалось начать запись. Пожалуйста, попробуйте снова.';
 
   @override
-  String get taskTranscriptionError =>
-      'Не удалось преобразовать речь в текст. Пожалуйста, попробуйте снова.';
+  String get taskTranscriptionError => 'Не удалось преобразовать речь в текст. Пожалуйста, попробуйте снова.';
 
   @override
   String get taskRecordingMissing => 'Записанное аудио не найдено.';
 
   @override
-  String get errorOffline =>
-      'Нет подключения к интернету. Проверьте сеть и попробуйте снова.';
+  String get errorOffline => 'Нет подключения к интернету. Проверьте сеть и попробуйте снова.';
 
   @override
   String get lessonNotFound => 'Урок не найден.';
 
   @override
-  String get lessonLoadFailed =>
-      'Не удалось загрузить уроки. Попробуйте чуть позже.';
+  String get lessonLoadFailed => 'Не удалось загрузить уроки. Попробуйте чуть позже.';
 
   @override
-  String get errorGeneric =>
-      'Что-то пошло не так. Пожалуйста, попробуйте снова.';
+  String get errorGeneric => 'Что-то пошло не так. Пожалуйста, попробуйте снова.';
 
   @override
   String lessonCompleteLowScore(int min) {
@@ -571,8 +545,7 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get lessonCompleteFailed =>
-      'Не удалось завершить урок. Пожалуйста, попробуйте снова.';
+  String get lessonCompleteFailed => 'Не удалось завершить урок. Пожалуйста, попробуйте снова.';
 
   @override
   String lessonKeyWords(int count) {
@@ -623,6 +596,5 @@ class AppLocalizationsRu extends AppLocalizations {
   String get askAiBusy => 'Learnist AI сейчас занят. Попробуйте чуть позже.';
 
   @override
-  String get askAiFailed =>
-      'Learnist AI не смог ответить. Пожалуйста, попробуйте снова.';
+  String get askAiFailed => 'Learnist AI не смог ответить. Пожалуйста, попробуйте снова.';
 }

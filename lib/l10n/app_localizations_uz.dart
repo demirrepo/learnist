@@ -92,12 +92,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get homeTodaysFocus => 'BUGUNGI MAQSAD';
 
   @override
-  String get homeHeadline =>
-      'Har bir xatoni tushunganingizda ingliz tilingiz o\'sib boradi.';
+  String get homeHeadline => 'Har bir xatoni tushunganingizda ingliz tilingiz o\'sib boradi.';
 
   @override
-  String get homeSubtitle =>
-      'Keyingi mashg\'ulot bilan sur\'atni saqlab qoling.';
+  String get homeSubtitle => 'Keyingi mashg\'ulot bilan sur\'atni saqlab qoling.';
 
   @override
   String homeContinueLesson(int number) {
@@ -159,8 +157,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get topicsTitle => '52 darslik yo\'l';
 
   @override
-  String get topicsSemesters =>
-      '1-semestr: 1–30-darslar • 2-semestr: 31–52-darslar';
+  String get topicsSemesters => '1-semestr: 1–30-darslar • 2-semestr: 31–52-darslar';
 
   @override
   String get topicsSearchHint => 'Darslarni qidirish';
@@ -175,8 +172,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get topicLocked => 'Qulflangan';
 
   @override
-  String get topicLockedMessage =>
-      'Qulflangan. Bu dars oldingi darslarni tugatgach ochiladi.';
+  String get topicLockedMessage => 'Qulflangan. Bu dars oldingi darslarni tugatgach ochiladi.';
 
   @override
   String get aiLabEyebrow => 'PROMPT SAVODXONLIGI';
@@ -185,8 +181,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get aiLabHeadline => 'Yaxshiroq savol bering. Mustaqilroq o\'rganing.';
 
   @override
-  String get aiLabIntro =>
-      'Prompt — bu AIga beradigan ko\'rsatmangiz. Aniq prompt shunchaki ko\'chirib olinadigan emas, balki o\'rganish mumkin bo\'lgan javob beradi.';
+  String get aiLabIntro => 'Prompt — bu AIga beradigan ko\'rsatmangiz. Aniq prompt shunchaki ko\'chirib olinadigan emas, balki o\'rganish mumkin bo\'lgan javob beradi.';
 
   @override
   String get aiLabExamplePrompt => 'PROMPT NAMUNASI';
@@ -218,35 +213,28 @@ class AppLocalizationsUz extends AppLocalizations {
   String get aiStepWhatTitle => 'Prompt nima?';
 
   @override
-  String get aiStepWhatBody =>
-      'Prompt — AIga yuboradigan xabaringiz. U qanchalik aniq bo\'lsa, javob shunchalik foydali bo\'ladi.';
+  String get aiStepWhatBody => 'Prompt — AIga yuboradigan xabaringiz. U qanchalik aniq bo\'lsa, javob shunchalik foydali bo\'ladi.';
 
   @override
-  String get aiStepRoleBody =>
-      'AIga kim bo\'lishini ayting, shunda u mutaxassisdek javob beradi.';
+  String get aiStepRoleBody => 'AIga kim bo\'lishini ayting, shunda u mutaxassisdek javob beradi.';
 
   @override
-  String get aiStepTaskBody =>
-      'Undan aynan nima qilishini xohlayotganingizni ayting.';
+  String get aiStepTaskBody => 'Undan aynan nima qilishini xohlayotganingizni ayting.';
 
   @override
-  String get aiStepLevelBody =>
-      'Javob sizga mos bo\'lishi uchun ingliz tili darajangizni ko\'rsating.';
+  String get aiStepLevelBody => 'Javob sizga mos bo\'lishi uchun ingliz tili darajangizni ko\'rsating.';
 
   @override
-  String get aiStepContextBody =>
-      'Vaziyatni tushuntiring: matn, savol va maqsadingiz.';
+  String get aiStepContextBody => 'Vaziyatni tushuntiring: matn, savol va maqsadingiz.';
 
   @override
-  String get aiStepFormatBody =>
-      'Javob shaklini so\'rang: ro\'yxat, jadval yoki qisqa paragraf.';
+  String get aiStepFormatBody => 'Javob shaklini so\'rang: ro\'yxat, jadval yoki qisqa paragraf.';
 
   @override
   String get aiStepExamplesTitle => 'Namuna va ohang';
 
   @override
-  String get aiStepExamplesBody =>
-      'Namuna ko\'rsating va kerakli ohangni tanlang.';
+  String get aiStepExamplesBody => 'Namuna ko\'rsating va kerakli ohangni tanlang.';
 
   @override
   String get promptCheckerTitle => 'Prompt tekshiruvi';
@@ -261,23 +249,19 @@ class AppLocalizationsUz extends AppLocalizations {
   String get promptCheckerFeedback => 'AI fikri';
 
   @override
-  String get promptCheckerUnexpected =>
-      'Kutilmagan xatolik. Qaytadan urinib ko\'ring.';
+  String get promptCheckerUnexpected => 'Kutilmagan xatolik. Qaytadan urinib ko\'ring.';
 
   @override
   String get comparisonTitle => 'Yomon prompt → yaxshiroq prompt';
 
   @override
-  String get comparisonSubtitle =>
-      'Savol bir xil, javoblar esa butunlay boshqa.';
+  String get comparisonSubtitle => 'Savol bir xil, javoblar esa butunlay boshqa.';
 
   @override
-  String get comparisonBadNote =>
-      'Rol, kontekst va daraja yo\'q. AI nima kerakligini taxmin qilishga majbur, shuning uchun javob noaniq chiqadi.';
+  String get comparisonBadNote => 'Rol, kontekst va daraja yo\'q. AI nima kerakligini taxmin qilishga majbur, shuning uchun javob noaniq chiqadi.';
 
   @override
-  String get comparisonGoodNote =>
-      'Rol + savol konteksti + daraja + format. AI sizga qanday yordam berishni aniq biladi.';
+  String get comparisonGoodNote => 'Rol + savol konteksti + daraja + format. AI sizga qanday yordam berishni aniq biladi.';
 
   @override
   String get checkupEyebrow => 'HAQIQIY DARAJANGIZ';
@@ -296,8 +280,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get checkupLevelRule =>
-      'Darajangiz — A1 dan boshlab ketma-ket o\'tgan eng yuqori darajangiz.';
+  String get checkupLevelRule => 'Darajangiz — A1 dan boshlab ketma-ket o\'tgan eng yuqori darajangiz.';
 
   @override
   String get checkupAnswers => 'Javoblar';
@@ -343,8 +326,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get checkupCooldownNote =>
-      'Kutish muddati natijangizni qisqa muddatli mashq ta\'siridan himoya qiladi.';
+  String get checkupCooldownNote => 'Kutish muddati natijangizni qisqa muddatli mashq ta\'siridan himoya qiladi.';
 
   @override
   String get checkupRetakeUnavailable => 'Hozircha qayta topshirib bo\'lmaydi';
@@ -369,8 +351,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get checkupChartEmpty =>
-      'Testni yechgach o\'sish grafigi paydo bo\'ladi';
+  String get checkupChartEmpty => 'Testni yechgach o\'sish grafigi paydo bo\'ladi';
 
   @override
   String get profileTitle => 'Profil';
@@ -435,8 +416,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get lessonNoReading => 'Ushbu darsda o\'qish mashqi yo\'q.';
 
   @override
-  String get lessonNoListening =>
-      'Ushbu darsda tinglab tushunish mashqi yo\'q.';
+  String get lessonNoListening => 'Ushbu darsda tinglab tushunish mashqi yo\'q.';
 
   @override
   String get lessonNoWriting => 'Ushbu darsda yozish mashqi yo\'q.';
@@ -451,12 +431,10 @@ class AppLocalizationsUz extends AppLocalizations {
   String get lessonCheckResults => 'Natijani tekshirish';
 
   @override
-  String get lessonAudioPending =>
-      'Bu dars uchun audio hali tayyorlanmoqda. Hozircha matndan foydalaning.';
+  String get lessonAudioPending => 'Bu dars uchun audio hali tayyorlanmoqda. Hozircha matndan foydalaning.';
 
   @override
-  String get lessonAudioError =>
-      'Audioni yuklab bo\'lmadi. Internet aloqasini tekshirib, qayta urinib ko\'ring.';
+  String get lessonAudioError => 'Audioni yuklab bo\'lmadi. Internet aloqasini tekshirib, qayta urinib ko\'ring.';
 
   @override
   String get lessonFinish => 'Darsni yakunlash';
@@ -465,48 +443,40 @@ class AppLocalizationsUz extends AppLocalizations {
   String get lessonUnlocked => 'Tabriklaymiz! Yangi dars ochildi';
 
   @override
-  String get lessonSaveScoreError =>
-      'Ball saqlanmadi. Iltimos qayta urinib ko\'ring.';
+  String get lessonSaveScoreError => 'Ball saqlanmadi. Iltimos qayta urinib ko\'ring.';
 
   @override
   String get taskEmptyAnswer => 'Avval javobingizni yozing.';
 
   @override
-  String get taskEvaluationError =>
-      'Baholashda xatolik yuz berdi. Iltimos qayta urinib ko\'ring.';
+  String get taskEvaluationError => 'Baholashda xatolik yuz berdi. Iltimos qayta urinib ko\'ring.';
 
   @override
   String get taskMicDenied => 'Ovoz yozish uchun mikrofonga ruxsat bering.';
 
   @override
-  String get taskMicBlocked =>
-      'Mikrofonga ruxsat berilmagan. Uni telefon sozlamalaridan yoqing.';
+  String get taskMicBlocked => 'Mikrofonga ruxsat berilmagan. Uni telefon sozlamalaridan yoqing.';
 
   @override
-  String get taskRecordingError =>
-      'Ovoz yozishni boshlab bo\'lmadi. Iltimos qayta urinib ko\'ring.';
+  String get taskRecordingError => 'Ovoz yozishni boshlab bo\'lmadi. Iltimos qayta urinib ko\'ring.';
 
   @override
-  String get taskTranscriptionError =>
-      'Nutqni matnga aylantirib bo\'lmadi. Iltimos qayta urinib ko\'ring.';
+  String get taskTranscriptionError => 'Nutqni matnga aylantirib bo\'lmadi. Iltimos qayta urinib ko\'ring.';
 
   @override
   String get taskRecordingMissing => 'Yozib olingan audio topilmadi.';
 
   @override
-  String get errorOffline =>
-      'Internet aloqasi yo\'q. Tarmoqni tekshirib, qayta urinib ko\'ring.';
+  String get errorOffline => 'Internet aloqasi yo\'q. Tarmoqni tekshirib, qayta urinib ko\'ring.';
 
   @override
   String get lessonNotFound => 'Dars topilmadi.';
 
   @override
-  String get lessonLoadFailed =>
-      'Darslarni yuklab bo\'lmadi. Birozdan so\'ng qayta urinib ko\'ring.';
+  String get lessonLoadFailed => 'Darslarni yuklab bo\'lmadi. Birozdan so\'ng qayta urinib ko\'ring.';
 
   @override
-  String get errorGeneric =>
-      'Nimadir xato ketdi. Iltimos, qayta urinib ko\'ring.';
+  String get errorGeneric => 'Nimadir xato ketdi. Iltimos, qayta urinib ko\'ring.';
 
   @override
   String lessonCompleteLowScore(int min) {
@@ -519,8 +489,7 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
-  String get lessonCompleteFailed =>
-      'Darsni yakunlab bo\'lmadi. Iltimos, qayta urinib ko\'ring.';
+  String get lessonCompleteFailed => 'Darsni yakunlab bo\'lmadi. Iltimos, qayta urinib ko\'ring.';
 
   @override
   String lessonKeyWords(int count) {
@@ -561,10 +530,8 @@ class AppLocalizationsUz extends AppLocalizations {
   String get askAiEmptyQuestion => 'Avval savolingizni yozing.';
 
   @override
-  String get askAiBusy =>
-      'Learnist AI hozir band. Birozdan so\'ng qayta urinib ko\'ring.';
+  String get askAiBusy => 'Learnist AI hozir band. Birozdan so\'ng qayta urinib ko\'ring.';
 
   @override
-  String get askAiFailed =>
-      'Learnist AI javob bera olmadi. Qayta urinib ko\'ring.';
+  String get askAiFailed => 'Learnist AI javob bera olmadi. Qayta urinib ko\'ring.';
 }

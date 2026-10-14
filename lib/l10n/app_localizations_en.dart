@@ -92,12 +92,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeTodaysFocus => 'TODAY\'S FOCUS';
 
   @override
-  String get homeHeadline =>
-      'Your English grows every time you understand a mistake.';
+  String get homeHeadline => 'Your English grows every time you understand a mistake.';
 
   @override
-  String get homeSubtitle =>
-      'Keep the momentum going with your next guided practice.';
+  String get homeSubtitle => 'Keep the momentum going with your next guided practice.';
 
   @override
   String homeContinueLesson(int number) {
@@ -159,8 +157,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get topicsTitle => '52-lesson pathway';
 
   @override
-  String get topicsSemesters =>
-      'Semester 1: Lessons 1-30 • Semester 2: Lessons 31-52';
+  String get topicsSemesters => 'Semester 1: Lessons 1-30 • Semester 2: Lessons 31-52';
 
   @override
   String get topicsSearchHint => 'Search lessons';
@@ -175,8 +172,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get topicLocked => 'Locked';
 
   @override
-  String get topicLockedMessage =>
-      'Locked. This lesson opens after you finish the previous ones.';
+  String get topicLockedMessage => 'Locked. This lesson opens after you finish the previous ones.';
 
   @override
   String get aiLabEyebrow => 'PROMPT LITERACY';
@@ -185,8 +181,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiLabHeadline => 'Ask better questions. Learn more independently.';
 
   @override
-  String get aiLabIntro =>
-      'A prompt is the instruction you give an AI. A clear prompt gets you an answer you can learn from, not just one to copy.';
+  String get aiLabIntro => 'A prompt is the instruction you give an AI. A clear prompt gets you an answer you can learn from, not just one to copy.';
 
   @override
   String get aiLabExamplePrompt => 'EXAMPLE PROMPT';
@@ -218,34 +213,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiStepWhatTitle => 'What is a prompt?';
 
   @override
-  String get aiStepWhatBody =>
-      'A prompt is the message you send to an AI. The clearer it is, the more useful the answer.';
+  String get aiStepWhatBody => 'A prompt is the message you send to an AI. The clearer it is, the more useful the answer.';
 
   @override
-  String get aiStepRoleBody =>
-      'Tell the AI who to be, so it answers like an expert.';
+  String get aiStepRoleBody => 'Tell the AI who to be, so it answers like an expert.';
 
   @override
   String get aiStepTaskBody => 'Say exactly what you want it to do.';
 
   @override
-  String get aiStepLevelBody =>
-      'Give your English level so the answer fits you.';
+  String get aiStepLevelBody => 'Give your English level so the answer fits you.';
 
   @override
-  String get aiStepContextBody =>
-      'Share the background: the text, the question, your goal.';
+  String get aiStepContextBody => 'Share the background: the text, the question, your goal.';
 
   @override
-  String get aiStepFormatBody =>
-      'Ask for the shape of the answer: a list, a table or a short paragraph.';
+  String get aiStepFormatBody => 'Ask for the shape of the answer: a list, a table or a short paragraph.';
 
   @override
   String get aiStepExamplesTitle => 'Examples & Tone';
 
   @override
-  String get aiStepExamplesBody =>
-      'Show an example and choose the tone you want.';
+  String get aiStepExamplesBody => 'Show an example and choose the tone you want.';
 
   @override
   String get promptCheckerTitle => 'Prompt checker';
@@ -269,12 +258,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comparisonSubtitle => 'Same question, very different answers.';
 
   @override
-  String get comparisonBadNote =>
-      'No role, no context, no level. The AI has to guess what you need, so the answer is vague.';
+  String get comparisonBadNote => 'No role, no context, no level. The AI has to guess what you need, so the answer is vague.';
 
   @override
-  String get comparisonGoodNote =>
-      'Role + question context + level + format. The AI knows exactly how to help you.';
+  String get comparisonGoodNote => 'Role + question context + level + format. The AI knows exactly how to help you.';
 
   @override
   String get checkupEyebrow => 'YOUR TRUE LEVEL';
@@ -293,8 +280,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get checkupLevelRule =>
-      'Your level is the highest one you pass in order, from A1 up.';
+  String get checkupLevelRule => 'Your level is the highest one you pass in order, from A1 up.';
 
   @override
   String get checkupAnswers => 'Answers';
@@ -358,8 +344,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get checkupCooldownNote =>
-      'A cooldown protects your result from short-term practice effects.';
+  String get checkupCooldownNote => 'A cooldown protects your result from short-term practice effects.';
 
   @override
   String get checkupRetakeUnavailable => 'Retake unavailable';
@@ -390,8 +375,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get checkupChartEmpty =>
-      'Your growth chart appears after your first check-up';
+  String get checkupChartEmpty => 'Your growth chart appears after your first check-up';
 
   @override
   String get profileTitle => 'Profile';
@@ -471,12 +455,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lessonCheckResults => 'Check results';
 
   @override
-  String get lessonAudioPending =>
-      'Audio for this lesson is still being prepared. Use the transcript for now.';
+  String get lessonAudioPending => 'Audio for this lesson is still being prepared. Use the transcript for now.';
 
   @override
-  String get lessonAudioError =>
-      'Couldn\'t load the audio. Check your internet connection and try again.';
+  String get lessonAudioError => 'Couldn\'t load the audio. Check your internet connection and try again.';
 
   @override
   String get lessonFinish => 'Finish lesson';
@@ -485,44 +467,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lessonUnlocked => 'Congratulations! A new lesson is unlocked';
 
   @override
-  String get lessonSaveScoreError =>
-      'Your score wasn\'t saved. Please try again.';
+  String get lessonSaveScoreError => 'Your score wasn\'t saved. Please try again.';
 
   @override
   String get taskEmptyAnswer => 'Write your answer first.';
 
   @override
-  String get taskEvaluationError =>
-      'Something went wrong while grading. Please try again.';
+  String get taskEvaluationError => 'Something went wrong while grading. Please try again.';
 
   @override
   String get taskMicDenied => 'Allow microphone access to record your voice.';
 
   @override
-  String get taskMicBlocked =>
-      'Microphone access is blocked. Turn it on in your phone settings.';
+  String get taskMicBlocked => 'Microphone access is blocked. Turn it on in your phone settings.';
 
   @override
-  String get taskRecordingError =>
-      'Couldn\'t start recording. Please try again.';
+  String get taskRecordingError => 'Couldn\'t start recording. Please try again.';
 
   @override
-  String get taskTranscriptionError =>
-      'Couldn\'t turn your speech into text. Please try again.';
+  String get taskTranscriptionError => 'Couldn\'t turn your speech into text. Please try again.';
 
   @override
   String get taskRecordingMissing => 'No recorded audio was found.';
 
   @override
-  String get errorOffline =>
-      'No internet connection. Check your network and try again.';
+  String get errorOffline => 'No internet connection. Check your network and try again.';
 
   @override
   String get lessonNotFound => 'Lesson not found.';
 
   @override
-  String get lessonLoadFailed =>
-      'Couldn\'t load the lessons. Please try again in a moment.';
+  String get lessonLoadFailed => 'Couldn\'t load the lessons. Please try again in a moment.';
 
   @override
   String get errorGeneric => 'Something went wrong. Please try again.';
@@ -538,8 +513,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get lessonCompleteFailed =>
-      'Couldn\'t finish the lesson. Please try again.';
+  String get lessonCompleteFailed => 'Couldn\'t finish the lesson. Please try again.';
 
   @override
   String lessonKeyWords(int count) {
@@ -586,8 +560,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get askAiEmptyQuestion => 'Write your question first.';
 
   @override
-  String get askAiBusy =>
-      'Learnist AI is busy right now. Try again in a moment.';
+  String get askAiBusy => 'Learnist AI is busy right now. Try again in a moment.';
 
   @override
   String get askAiFailed => 'Learnist AI couldn\'t answer. Please try again.';

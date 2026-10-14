@@ -17,7 +17,7 @@ class AskAiException implements Exception {
 
   final AskAiFailure failure;
 
-  /// Set when `ask_ai` answered with an error status.
+  /// Set when `ask-ai` answered with an error status.
   final int? statusCode;
 
   @override
@@ -26,14 +26,15 @@ class AskAiException implements Exception {
       '${statusCode == null ? '' : ', $statusCode'})';
 }
 
-/// Free-form questions about a lesson through the `ask_ai` Supabase Edge
+/// Free-form questions about a lesson through the `ask-ai` Supabase Edge
 /// Function. `functions.invoke` sends the signed-in user's JWT, so the
 /// function can keep JWT verification on.
 class AskAiService {
   AskAiService([SupabaseClient? client])
     : _supabase = client ?? Supabase.instance.client;
 
-  static const function = 'ask_ai';
+  /// Deployed with a hyphen, unlike `evaluate_task`.
+  static const function = 'ask-ai';
 
   /// Free-form answers take longer than a grade.
   static const _timeout = Duration(seconds: 60);
@@ -71,23 +72,11 @@ class AskAiService {
   }
 }
 
-/// Reads the answer from an `ask_ai` response: `{"content": ...}` like
-/// `evaluate_task`, one of a few other common keys, or a plain-text body.
-/// Throws an [AskAiException] when there is no answer.
+/// Reads the answer from an `ask-ai` response, `{"reply": "..."}`. Throws
+/// an [AskAiException] when there is no answer.
 String parseAskAiReply(Object? data) {
-  final answer = switch (data) {
-    String text => text,
-    Map map =>
-      [
-        'content',
-        'answer',
-        'reply',
-        'response',
-      ].map((key) => map[key]).whereType<String>().firstOrNull,
-    _ => null,
-  };
-  if (answer == null || answer.trim().isEmpty) {
-    throw const AskAiException(AskAiFailure.failed);
+  if (data case {'reply': final String reply} when reply.trim().isNotEmpty) {
+    return reply.trim();
   }
-  return answer.trim();
+  throw const AskAiException(AskAiFailure.failed);
 }

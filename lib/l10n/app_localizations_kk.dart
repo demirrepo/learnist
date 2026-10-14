@@ -92,8 +92,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get homeTodaysFocus => 'BÚGINGI MAQSET';
 
   @override
-  String get homeHeadline =>
-      'Hár bir qáteni túsingenińizde inglis tilińiz ósip baradı.';
+  String get homeHeadline => 'Hár bir qáteni túsingenińizde inglis tilińiz ósip baradı.';
 
   @override
   String get homeSubtitle => 'Keyingi shınıǵıw menen pátti saqlap qalıń.';
@@ -158,8 +157,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get topicsTitle => '52 sabaqlıq jol';
 
   @override
-  String get topicsSemesters =>
-      '1-semestr: 1–30-sabaqlar • 2-semestr: 31–52-sabaqlar';
+  String get topicsSemesters => '1-semestr: 1–30-sabaqlar • 2-semestr: 31–52-sabaqlar';
 
   @override
   String get topicsSearchHint => 'Sabaqlardı izlew';
@@ -174,8 +172,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get topicLocked => 'Qulıplanǵan';
 
   @override
-  String get topicLockedMessage =>
-      'Qulıplanǵan. Bul sabaq aldıńǵı sabaqlardı tamamlaǵannan keyin ashıladı.';
+  String get topicLockedMessage => 'Qulıplanǵan. Bul sabaq aldıńǵı sabaqlardı tamamlaǵannan keyin ashıladı.';
 
   @override
   String get aiLabEyebrow => 'PROMPT SAWATLÍLÍǴÍ';
@@ -184,8 +181,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get aiLabHeadline => 'Jaqsıraq soraw beriń. Óz betińizshe úyreniń.';
 
   @override
-  String get aiLabIntro =>
-      'Prompt — bul AI-ǵa beretuǵın kórsetpeńiz. Anıq prompt jay ǵana kóshirip alınatuǵın emes, al úyreniwge bolatuǵın juwap beredi.';
+  String get aiLabIntro => 'Prompt — bul AI-ǵa beretuǵın kórsetpeńiz. Anıq prompt jay ǵana kóshirip alınatuǵın emes, al úyreniwge bolatuǵın juwap beredi.';
 
   @override
   String get aiLabExamplePrompt => 'PROMPT ÚLGISI';
@@ -217,27 +213,22 @@ class AppLocalizationsKk extends AppLocalizations {
   String get aiStepWhatTitle => 'Prompt degen ne?';
 
   @override
-  String get aiStepWhatBody =>
-      'Prompt — AI-ǵa jiberetuǵın xabarıńız. Ol qanshelli anıq bolsa, juwap sonshelli paydalı boladı.';
+  String get aiStepWhatBody => 'Prompt — AI-ǵa jiberetuǵın xabarıńız. Ol qanshelli anıq bolsa, juwap sonshelli paydalı boladı.';
 
   @override
-  String get aiStepRoleBody =>
-      'AI-ǵa kim bolıwı kerekligin aytıń, sonda ol qánigedey juwap beredi.';
+  String get aiStepRoleBody => 'AI-ǵa kim bolıwı kerekligin aytıń, sonda ol qánigedey juwap beredi.';
 
   @override
   String get aiStepTaskBody => 'Onnan anıq ne islewin qáleytuǵınıńızdı aytıń.';
 
   @override
-  String get aiStepLevelBody =>
-      'Juwap sizge sáykes bolıwı ushın inglis tili dárejeńizdi kórsetiń.';
+  String get aiStepLevelBody => 'Juwap sizge sáykes bolıwı ushın inglis tili dárejeńizdi kórsetiń.';
 
   @override
-  String get aiStepContextBody =>
-      'Jaǵdaydı túsindiriń: tekst, soraw hám maqsetińiz.';
+  String get aiStepContextBody => 'Jaǵdaydı túsindiriń: tekst, soraw hám maqsetińiz.';
 
   @override
-  String get aiStepFormatBody =>
-      'Juwap formasın sorań: dizim, keste yamasa qısqa abzac.';
+  String get aiStepFormatBody => 'Juwap formasın sorań: dizim, keste yamasa qısqa abzac.';
 
   @override
   String get aiStepExamplesTitle => 'Úlgi hám ton';
@@ -258,23 +249,19 @@ class AppLocalizationsKk extends AppLocalizations {
   String get promptCheckerFeedback => 'AI pikiri';
 
   @override
-  String get promptCheckerUnexpected =>
-      'Kútilmegen qátelik. Qaytadan urınıp kóriń.';
+  String get promptCheckerUnexpected => 'Kútilmegen qátelik. Qaytadan urınıp kóriń.';
 
   @override
   String get comparisonTitle => 'Jaman prompt → jaqsıraq prompt';
 
   @override
-  String get comparisonSubtitle =>
-      'Soraw birdey, al juwaplar pútkilley basqasha.';
+  String get comparisonSubtitle => 'Soraw birdey, al juwaplar pútkilley basqasha.';
 
   @override
-  String get comparisonBadNote =>
-      'Rol, kontekst hám dáreje joq. AI ne kerekligin shamalawǵa májbúr, sonlıqtan juwap anıq emes shıǵadı.';
+  String get comparisonBadNote => 'Rol, kontekst hám dáreje joq. AI ne kerekligin shamalawǵa májbúr, sonlıqtan juwap anıq emes shıǵadı.';
 
   @override
-  String get comparisonGoodNote =>
-      'Rol + soraw konteksti + dáreje + format. AI sizge qalay járdem beriwdi anıq biledi.';
+  String get comparisonGoodNote => 'Rol + soraw konteksti + dáreje + format. AI sizge qalay járdem beriwdi anıq biledi.';
 
   @override
   String get checkupEyebrow => 'HAQÍYQÍY DÁREJEŃIZ';
@@ -293,8 +280,7 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get checkupLevelRule =>
-      'Dárejeńiz — A1 den baslap izbe-iz ótken eń joqarı dárejeńiz.';
+  String get checkupLevelRule => 'Dárejeńiz — A1 den baslap izbe-iz ótken eń joqarı dárejeńiz.';
 
   @override
   String get checkupAnswers => 'Juwaplar';
@@ -340,8 +326,7 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get checkupCooldownNote =>
-      'Kútiw múddeti nátiyjeńizdi qısqa múddetli shınıǵıw tásirinen qorǵaydı.';
+  String get checkupCooldownNote => 'Kútiw múddeti nátiyjeńizdi qısqa múddetli shınıǵıw tásirinen qorǵaydı.';
 
   @override
   String get checkupRetakeUnavailable => 'Házirshe qayta tapsırıwǵa bolmaydı';
@@ -366,8 +351,7 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get checkupChartEmpty =>
-      'Testti tapsırǵannan keyin ósiw grafigi payda boladı';
+  String get checkupChartEmpty => 'Testti tapsırǵannan keyin ósiw grafigi payda boladı';
 
   @override
   String get profileTitle => 'Profil';
@@ -447,12 +431,10 @@ class AppLocalizationsKk extends AppLocalizations {
   String get lessonCheckResults => 'Nátiyjeni tekseriw';
 
   @override
-  String get lessonAudioPending =>
-      'Bul sabaq ushın audio ele tayarlanbaqta. Házirshe tekstten paydalanıń.';
+  String get lessonAudioPending => 'Bul sabaq ushın audio ele tayarlanbaqta. Házirshe tekstten paydalanıń.';
 
   @override
-  String get lessonAudioError =>
-      'Audionı júklep bolmadı. Internet baylanısın tekserip, qaytadan urınıp kóriń.';
+  String get lessonAudioError => 'Audionı júklep bolmadı. Internet baylanısın tekserip, qaytadan urınıp kóriń.';
 
   @override
   String get lessonFinish => 'Sabaqtı juwmaqlaw';
@@ -467,37 +449,31 @@ class AppLocalizationsKk extends AppLocalizations {
   String get taskEmptyAnswer => 'Aldı menen juwabıńızdı jazıń.';
 
   @override
-  String get taskEvaluationError =>
-      'Bahalawda qátelik júz berdi. Qaytadan urınıp kóriń.';
+  String get taskEvaluationError => 'Bahalawda qátelik júz berdi. Qaytadan urınıp kóriń.';
 
   @override
   String get taskMicDenied => 'Dawıs jazıw ushın mikrofonǵa ruqsat beriń.';
 
   @override
-  String get taskMicBlocked =>
-      'Mikrofonǵa ruqsat berilmegen. Onı telefon sazlamalarınan qosıń.';
+  String get taskMicBlocked => 'Mikrofonǵa ruqsat berilmegen. Onı telefon sazlamalarınan qosıń.';
 
   @override
-  String get taskRecordingError =>
-      'Dawıs jazıwdı baslap bolmadı. Qaytadan urınıp kóriń.';
+  String get taskRecordingError => 'Dawıs jazıwdı baslap bolmadı. Qaytadan urınıp kóriń.';
 
   @override
-  String get taskTranscriptionError =>
-      'Sóylewdi tekstke aylandırıp bolmadı. Qaytadan urınıp kóriń.';
+  String get taskTranscriptionError => 'Sóylewdi tekstke aylandırıp bolmadı. Qaytadan urınıp kóriń.';
 
   @override
   String get taskRecordingMissing => 'Jazıp alınǵan audio tabılmadı.';
 
   @override
-  String get errorOffline =>
-      'Internet baylanısı joq. Tarmaqtı tekserip, qaytadan urınıp kóriń.';
+  String get errorOffline => 'Internet baylanısı joq. Tarmaqtı tekserip, qaytadan urınıp kóriń.';
 
   @override
   String get lessonNotFound => 'Sabaq tabılmadı.';
 
   @override
-  String get lessonLoadFailed =>
-      'Sabaqlardı júklep bolmadı. Azdan soń qaytadan urınıp kóriń.';
+  String get lessonLoadFailed => 'Sabaqlardı júklep bolmadı. Azdan soń qaytadan urınıp kóriń.';
 
   @override
   String get errorGeneric => 'Bir nárse qáte boldı. Qaytadan urınıp kóriń.';
@@ -513,8 +489,7 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
-  String get lessonCompleteFailed =>
-      'Sabaqtı juwmaqlap bolmadı. Qaytadan urınıp kóriń.';
+  String get lessonCompleteFailed => 'Sabaqtı juwmaqlap bolmadı. Qaytadan urınıp kóriń.';
 
   @override
   String lessonKeyWords(int count) {
@@ -555,10 +530,8 @@ class AppLocalizationsKk extends AppLocalizations {
   String get askAiEmptyQuestion => 'Aldı menen sorawıńızdı jazıń.';
 
   @override
-  String get askAiBusy =>
-      'Learnist AI házir bánt. Azdan soń qaytadan urınıp kóriń.';
+  String get askAiBusy => 'Learnist AI házir bánt. Azdan soń qaytadan urınıp kóriń.';
 
   @override
-  String get askAiFailed =>
-      'Learnist AI juwap bere almadı. Qaytadan urınıp kóriń.';
+  String get askAiFailed => 'Learnist AI juwap bere almadı. Qaytadan urınıp kóriń.';
 }
