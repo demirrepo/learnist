@@ -6,6 +6,7 @@ import '../../l10n/l10n.dart';
 import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 import 'ai_graded_task.dart';
+import 'ask_ai_dialog.dart';
 import 'lesson_common.dart';
 
 /// The lesson's grammar rule and a practical task that the AI scores as
@@ -54,7 +55,12 @@ class GrammarTab extends StatelessWidget {
                 evaluate:
                     (ai, answer) =>
                         ai.evaluateGrammar(answer, lesson.grammarFocus),
-                onAskAi: () => showComingSoon(context, 'Ask AI'),
+                onAskAi:
+                    () => showAskAiDialog(
+                      context,
+                      lesson: lesson,
+                      section: AskAiSection.grammar,
+                    ),
               ),
             ],
           ),

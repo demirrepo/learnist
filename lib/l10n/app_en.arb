@@ -180,5 +180,17 @@
   "@lessonKeyWords": {"placeholders": {"count": {"type": "int"}}},
   "vocabularyListen": "Listen to “{word}”",
   "@vocabularyListen": {"placeholders": {"word": {"type": "String"}}},
-  "vocabularySpeakError": "Couldn't play the pronunciation."
+  "vocabularySpeakError": "Couldn't play the pronunciation.",
+
+  "askAiEyebrow": "CONTEXT-AWARE ASK AI",
+  "askAiTitle": "Ask about {section}",
+  "@askAiTitle": {"placeholders": {"section": {"type": "String"}}},
+  "askAiContextAttached": "Your context is already attached:",
+  "askAiHint": "Example: You are a reading expert. In Lesson {lesson}, question 4, I chose B. Explain why my reasoning may be wrong. Give me two hints without revealing the correct answer.",
+  "@askAiHint": {"placeholders": {"lesson": {"type": "int"}}},
+  "askAiSubmit": "Ask Learnist AI",
+  "askAiThinking": "Learnist AI is thinking…",
+  "askAiEmptyQuestion": "Write your question first.",
+  "askAiBusy": "Learnist AI is busy right now. Try again in a moment.",
+  "askAiFailed": "Learnist AI couldn't answer. Please try again."
 }

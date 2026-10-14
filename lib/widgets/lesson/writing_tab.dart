@@ -6,6 +6,7 @@ import '../../l10n/l10n.dart';
 import '../../models/lesson_model.dart';
 import '../../theme/app_theme.dart';
 import 'ai_graded_task.dart';
+import 'ask_ai_dialog.dart';
 import 'lesson_common.dart';
 
 const _lenses = [
@@ -55,7 +56,12 @@ class WritingTab extends StatelessWidget {
                 maxLines: 20,
                 evaluate: (ai, answer) => ai.evaluateWriting(answer, prompt),
                 fieldFooter: _WordCount.new,
-                onAskAi: () => showComingSoon(context, 'Ask AI'),
+                onAskAi:
+                    () => showAskAiDialog(
+                      context,
+                      lesson: lesson,
+                      section: AskAiSection.writing,
+                    ),
               ),
             ],
           ),

@@ -310,10 +310,3 @@ class LessonNotice extends StatelessWidget {
     );
   }
 }
-
-/// Stand-in for actions that will call the backend later.
-void showComingSoon(BuildContext context, String feature) {
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text('$feature is coming soon.')));
-}

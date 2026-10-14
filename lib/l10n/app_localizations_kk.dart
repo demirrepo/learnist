@@ -528,4 +528,37 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get vocabularySpeakError => 'Aytılıwın oynatıp bolmadı.';
+
+  @override
+  String get askAiEyebrow => 'KONTEKSTLI ASK AI';
+
+  @override
+  String askAiTitle(String section) {
+    return '$section boyınsha soraw';
+  }
+
+  @override
+  String get askAiContextAttached => 'Kontekstińiz álleqashan biriktirilgen:';
+
+  @override
+  String askAiHint(int lesson) {
+    return 'Mısalı: Sen oqıw boyınsha qánigesen. $lesson-sabaqtıń 4-sorawında men B nı tańladım. Pikirlewimniń ne ushın qáte bolıwı múmkin ekenin túsindir. Durıs juwaptı aytpay eki kórsetpe ber.';
+  }
+
+  @override
+  String get askAiSubmit => 'Learnist AI dan soraw';
+
+  @override
+  String get askAiThinking => 'Learnist AI oylanbaqta…';
+
+  @override
+  String get askAiEmptyQuestion => 'Aldı menen sorawıńızdı jazıń.';
+
+  @override
+  String get askAiBusy =>
+      'Learnist AI házir bánt. Azdan soń qaytadan urınıp kóriń.';
+
+  @override
+  String get askAiFailed =>
+      'Learnist AI juwap bere almadı. Qaytadan urınıp kóriń.';
 }

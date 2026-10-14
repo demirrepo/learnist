@@ -154,5 +154,15 @@
   "lessonCompleteFailed": "Sabaqtı juwmaqlap bolmadı. Qaytadan urınıp kóriń.",
   "lessonKeyWords": "{count} tiykarǵı sóz",
   "vocabularyListen": "«{word}» aytılıwın tıńlaw",
-  "vocabularySpeakError": "Aytılıwın oynatıp bolmadı."
+  "vocabularySpeakError": "Aytılıwın oynatıp bolmadı.",
+
+  "askAiEyebrow": "KONTEKSTLI ASK AI",
+  "askAiTitle": "{section} boyınsha soraw",
+  "askAiContextAttached": "Kontekstińiz álleqashan biriktirilgen:",
+  "askAiHint": "Mısalı: Sen oqıw boyınsha qánigesen. {lesson}-sabaqtıń 4-sorawında men B nı tańladım. Pikirlewimniń ne ushın qáte bolıwı múmkin ekenin túsindir. Durıs juwaptı aytpay eki kórsetpe ber.",
+  "askAiSubmit": "Learnist AI dan soraw",
+  "askAiThinking": "Learnist AI oylanbaqta…",
+  "askAiEmptyQuestion": "Aldı menen sorawıńızdı jazıń.",
+  "askAiBusy": "Learnist AI házir bánt. Azdan soń qaytadan urınıp kóriń.",
+  "askAiFailed": "Learnist AI juwap bere almadı. Qaytadan urınıp kóriń."
 }

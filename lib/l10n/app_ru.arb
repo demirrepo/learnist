@@ -154,5 +154,15 @@
   "lessonCompleteFailed": "Не удалось завершить урок. Пожалуйста, попробуйте снова.",
   "lessonKeyWords": "{count, plural, one{{count} ключевое слово} few{{count} ключевых слова} other{{count} ключевых слов}}",
   "vocabularyListen": "Прослушать «{word}»",
-  "vocabularySpeakError": "Не удалось воспроизвести произношение."
+  "vocabularySpeakError": "Не удалось воспроизвести произношение.",
+
+  "askAiEyebrow": "ASK AI С УЧЁТОМ КОНТЕКСТА",
+  "askAiTitle": "Вопрос: {section}",
+  "askAiContextAttached": "Ваш контекст уже прикреплён:",
+  "askAiHint": "Например: Ты эксперт по чтению. В уроке {lesson}, в вопросе 4, я выбрал B. Объясни, почему моё рассуждение может быть неверным. Дай две подсказки, не раскрывая правильный ответ.",
+  "askAiSubmit": "Спросить Learnist AI",
+  "askAiThinking": "Learnist AI думает…",
+  "askAiEmptyQuestion": "Сначала напишите вопрос.",
+  "askAiBusy": "Learnist AI сейчас занят. Попробуйте чуть позже.",
+  "askAiFailed": "Learnist AI не смог ответить. Пожалуйста, попробуйте снова."
 }

@@ -593,4 +593,36 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get vocabularySpeakError => 'Не удалось воспроизвести произношение.';
+
+  @override
+  String get askAiEyebrow => 'ASK AI С УЧЁТОМ КОНТЕКСТА';
+
+  @override
+  String askAiTitle(String section) {
+    return 'Вопрос: $section';
+  }
+
+  @override
+  String get askAiContextAttached => 'Ваш контекст уже прикреплён:';
+
+  @override
+  String askAiHint(int lesson) {
+    return 'Например: Ты эксперт по чтению. В уроке $lesson, в вопросе 4, я выбрал B. Объясни, почему моё рассуждение может быть неверным. Дай две подсказки, не раскрывая правильный ответ.';
+  }
+
+  @override
+  String get askAiSubmit => 'Спросить Learnist AI';
+
+  @override
+  String get askAiThinking => 'Learnist AI думает…';
+
+  @override
+  String get askAiEmptyQuestion => 'Сначала напишите вопрос.';
+
+  @override
+  String get askAiBusy => 'Learnist AI сейчас занят. Попробуйте чуть позже.';
+
+  @override
+  String get askAiFailed =>
+      'Learnist AI не смог ответить. Пожалуйста, попробуйте снова.';
 }

@@ -989,6 +989,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t play the pronunciation.'**
   String get vocabularySpeakError;
+
+  /// No description provided for @askAiEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTEXT-AWARE ASK AI'**
+  String get askAiEyebrow;
+
+  /// No description provided for @askAiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about {section}'**
+  String askAiTitle(String section);
+
+  /// No description provided for @askAiContextAttached.
+  ///
+  /// In en, this message translates to:
+  /// **'Your context is already attached:'**
+  String get askAiContextAttached;
+
+  /// No description provided for @askAiHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: You are a reading expert. In Lesson {lesson}, question 4, I chose B. Explain why my reasoning may be wrong. Give me two hints without revealing the correct answer.'**
+  String askAiHint(int lesson);
+
+  /// No description provided for @askAiSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Learnist AI'**
+  String get askAiSubmit;
+
+  /// No description provided for @askAiThinking.
+  ///
+  /// In en, this message translates to:
+  /// **'Learnist AI is thinking…'**
+  String get askAiThinking;
+
+  /// No description provided for @askAiEmptyQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your question first.'**
+  String get askAiEmptyQuestion;
+
+  /// No description provided for @askAiBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Learnist AI is busy right now. Try again in a moment.'**
+  String get askAiBusy;
+
+  /// No description provided for @askAiFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Learnist AI couldn\'t answer. Please try again.'**
+  String get askAiFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -559,4 +559,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vocabularySpeakError => 'Couldn\'t play the pronunciation.';
+
+  @override
+  String get askAiEyebrow => 'CONTEXT-AWARE ASK AI';
+
+  @override
+  String askAiTitle(String section) {
+    return 'Ask about $section';
+  }
+
+  @override
+  String get askAiContextAttached => 'Your context is already attached:';
+
+  @override
+  String askAiHint(int lesson) {
+    return 'Example: You are a reading expert. In Lesson $lesson, question 4, I chose B. Explain why my reasoning may be wrong. Give me two hints without revealing the correct answer.';
+  }
+
+  @override
+  String get askAiSubmit => 'Ask Learnist AI';
+
+  @override
+  String get askAiThinking => 'Learnist AI is thinking…';
+
+  @override
+  String get askAiEmptyQuestion => 'Write your question first.';
+
+  @override
+  String get askAiBusy =>
+      'Learnist AI is busy right now. Try again in a moment.';
+
+  @override
+  String get askAiFailed => 'Learnist AI couldn\'t answer. Please try again.';
 }

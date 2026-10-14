@@ -9,6 +9,7 @@ import 'package:learnist/models/lesson_model.dart';
 import 'package:learnist/models/user_progress.dart';
 import 'package:learnist/screens/lesson_detail_screen.dart';
 import 'package:learnist/theme/app_theme.dart';
+import 'package:learnist/services/ask_ai_service.dart';
 import 'package:learnist/services/deepgram_service.dart';
 import 'package:learnist/services/lesson_service.dart';
 import 'package:learnist/services/openai_service.dart';
@@ -22,6 +23,7 @@ import 'package:learnist/widgets/lesson/lesson_quiz.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import '../support/fake_ask_ai_service.dart';
 import '../support/fake_deepgram_service.dart';
 import '../support/fake_lesson_service.dart';
 import '../support/fake_openai_service.dart';
@@ -45,6 +47,7 @@ Future<void> _pump(
   FakeDeepgramService? deepgram,
   FakeSpeechRecorder? recorder,
   FakePronunciationService? pronunciation,
+  FakeAskAiService? askAi,
   Locale locale = testLocale,
   bool settle = true,
 }) async {
@@ -66,6 +69,7 @@ Future<void> _pump(
         pronunciationServiceProvider.overrideWithValue(
           pronunciation ?? FakePronunciationService(),
         ),
+        askAiServiceProvider.overrideWithValue(askAi ?? FakeAskAiService()),
       ],
       child: MaterialApp(
         locale: locale,
@@ -640,6 +644,166 @@ void main() {
       await tester.pumpWidget(const SizedBox());
       expect(recorder.cancelCount, 1);
       expect(recorder.recording, isFalse);
+    });
+  });
+
+  group('Ask AI', () {
+    final askButton = find.byType(AskAiButton);
+    final question = find.byKey(const ValueKey('ask-ai-question'));
+    final submit = find.byKey(const ValueKey('ask-ai-submit'));
+    final grammarContext =
+        'Lesson 1: ${lesson1.title} | Grammar | ${lesson1.grammarFocus}';
+
+    Future<void> openGrammarAskAi(
+      WidgetTester tester, {
+      FakeAskAiService? askAi,
+      Locale locale = testLocale,
+    }) async {
+      _useTallView(tester);
+      await _pump(tester, askAi: askAi, locale: locale);
+      await tester.ensureVisible(askButton);
+      await tester.tap(askButton);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('opens with the lesson context attached', (tester) async {
+      await openGrammarAskAi(tester, locale: const Locale('en'));
+
+      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.text('CONTEXT-AWARE ASK AI'), findsOneWidget);
+      expect(find.text('Ask about Grammar'), findsOneWidget);
+      expect(
+        find.text(
+          'Your context is already attached: $grammarContext',
+          findRichText: true,
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Example: You are a reading expert. In Lesson 1,'),
+        findsOneWidget,
+      );
+      expect(find.text('Ask Learnist AI'), findsOneWidget);
+    });
+
+    testWidgets('asks, shows a spinner, then renders the answer', (
+      tester,
+    ) async {
+      final askAi = FakeAskAiService(answer: '**Hint 1:** look at the verb.')
+        ..pending = Completer<void>();
+      await openGrammarAskAi(tester, askAi: askAi);
+
+      await tester.enterText(question, '  Why is "I English learn" wrong?  ');
+      await tester.tap(submit);
+      await tester.pump();
+
+      expect(askAi.questions.single, (
+        prompt: 'Why is "I English learn" wrong?',
+        lessonContext: grammarContext,
+      ));
+      expect(
+        find.descendant(
+          of: submit,
+          matching: find.byType(CircularProgressIndicator),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text("Learnist AI o'ylamoqda…"), findsOneWidget);
+
+      // A second tap while waiting doesn't ask again.
+      await tester.tap(submit);
+      askAi.pending!.complete();
+      await tester.pumpAndSettle();
+
+      expect(askAi.questions, hasLength(1));
+      final answer = find.byKey(const ValueKey('ask-ai-answer'));
+      expect(answer, findsOneWidget);
+      // Markdown is rendered, not shown with its asterisks.
+      expect(
+        find.descendant(
+          of: answer,
+          matching: find.textContaining('look at the verb', findRichText: true),
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('**'), findsNothing);
+    });
+
+    testWidgets('an empty question is not sent', (tester) async {
+      final askAi = FakeAskAiService();
+      await openGrammarAskAi(tester, askAi: askAi);
+
+      await tester.tap(submit);
+      await tester.pump();
+
+      expect(find.text('Avval savolingizni yozing.'), findsOneWidget);
+      expect(askAi.questions, isEmpty);
+    });
+
+    for (final (failure, message) in [
+      (
+        AskAiFailure.offline,
+        "Internet aloqasi yo'q. Tarmoqni tekshirib, qayta urinib ko'ring.",
+      ),
+      (
+        AskAiFailure.busy,
+        "Learnist AI hozir band. Birozdan so'ng qayta urinib ko'ring.",
+      ),
+      (
+        AskAiFailure.failed,
+        "Learnist AI javob bera olmadi. Qayta urinib ko'ring.",
+      ),
+    ]) {
+      testWidgets('${failure.name}: shows the error and keeps the question', (
+        tester,
+      ) async {
+        final askAi = FakeAskAiService()..error = AskAiException(failure);
+        await openGrammarAskAi(tester, askAi: askAi);
+
+        await tester.enterText(question, 'Why?');
+        await tester.tap(submit);
+        await tester.pumpAndSettle();
+
+        expect(find.text(message), findsOneWidget);
+        expect(find.byKey(const ValueKey('ask-ai-answer')), findsNothing);
+        expect(tester.widget<TextField>(question).controller!.text, 'Why?');
+
+        // Retrying clears the error.
+        askAi.error = null;
+        await tester.tap(submit);
+        await tester.pumpAndSettle();
+        expect(find.text(message), findsNothing);
+        expect(find.byKey(const ValueKey('ask-ai-answer')), findsOneWidget);
+      });
+    }
+
+    testWidgets('the close button dismisses the dialog', (tester) async {
+      await openGrammarAskAi(tester);
+
+      await tester.tap(find.byIcon(LucideIcons.x));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Dialog), findsNothing);
+    });
+
+    testWidgets('the writing tab asks about writing', (tester) async {
+      final askAi = FakeAskAiService();
+      _useTallView(tester);
+      await _pump(tester, askAi: askAi, locale: const Locale('en'));
+      await _openTab(tester, 'Writing');
+      await tester.ensureVisible(askButton);
+      await tester.tap(askButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ask about Writing'), findsOneWidget);
+      await tester.enterText(question, 'Is my intro too long?');
+      await tester.tap(submit);
+      await tester.pumpAndSettle();
+
+      expect(
+        askAi.questions.single.lessonContext,
+        'Lesson 1: ${lesson1.title} | Writing | ${lesson1.grammarFocus}',
+      );
     });
   });
 

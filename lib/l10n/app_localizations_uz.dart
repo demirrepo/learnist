@@ -534,4 +534,37 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get vocabularySpeakError => 'Talaffuzni ijro etib bo\'lmadi.';
+
+  @override
+  String get askAiEyebrow => 'KONTEKSTLI ASK AI';
+
+  @override
+  String askAiTitle(String section) {
+    return '$section bo\'yicha savol';
+  }
+
+  @override
+  String get askAiContextAttached => 'Kontekstingiz allaqachon biriktirilgan:';
+
+  @override
+  String askAiHint(int lesson) {
+    return 'Masalan: Sen o\'qish bo\'yicha mutaxassissan. $lesson-darsning 4-savolida men B ni tanladim. Fikrlashim nega noto\'g\'ri bo\'lishi mumkinligini tushuntir. To\'g\'ri javobni aytmasdan ikkita maslahat ber.';
+  }
+
+  @override
+  String get askAiSubmit => 'Learnist AI\'dan so\'rash';
+
+  @override
+  String get askAiThinking => 'Learnist AI o\'ylamoqda…';
+
+  @override
+  String get askAiEmptyQuestion => 'Avval savolingizni yozing.';
+
+  @override
+  String get askAiBusy =>
+      'Learnist AI hozir band. Birozdan so\'ng qayta urinib ko\'ring.';
+
+  @override
+  String get askAiFailed =>
+      'Learnist AI javob bera olmadi. Qayta urinib ko\'ring.';
 }
