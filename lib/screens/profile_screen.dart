@@ -309,6 +309,8 @@ class _SettingsCard extends ConsumerWidget {
   void _openLanguageSheet(BuildContext context) {
     showModalBottomSheet<void>(
       context: context,
+      // Sized to its options, not the default 9/16 of the screen.
+      isScrollControlled: true,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -426,7 +428,7 @@ class _LanguageSheet extends ConsumerWidget {
     final selected = ref.watch(appLanguageProvider);
 
     return SafeArea(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -22,9 +22,10 @@ void main() {
 
     c.read(appLanguageProvider.notifier).select('en');
     c.read(appLanguageProvider.notifier).select('ru');
+    c.read(appLanguageProvider.notifier).select('kk');
 
-    expect(c.read(appLanguageProvider), 'ru');
-    expect(seen, ['en', 'ru']);
+    expect(c.read(appLanguageProvider), 'kk');
+    expect(seen, ['en', 'ru', 'kk']);
   });
 
   test('unknown codes are ignored', () {
@@ -37,8 +38,9 @@ void main() {
   });
 
   test('every language has a label', () {
-    expect(appLanguages.map((l) => l.$1), ['uz', 'en', 'ru']);
+    expect(appLanguages.map((l) => l.$1), ['uz', 'en', 'ru', 'kk']);
     expect(appLanguageLabel('ru'), 'Русский');
+    expect(appLanguageLabel('kk'), 'Qaraqalpaqsha');
     expect(appLanguageLabel('xx'), "O'zbekcha");
   });
 }

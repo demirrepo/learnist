@@ -695,6 +695,47 @@ void main() {
       expect(_navTab('Bosh sahifa'), findsOneWidget);
     });
 
+    testWidgets('the sheet offers Karakalpak and switches to it', (
+      tester,
+    ) async {
+      await openProfile(tester, _FakeSupabaseService(signedIn: true));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ProfileScreen)),
+      );
+
+      await _tapVisible(tester, find.text('Til'));
+      for (final label in ['English', 'Русский', 'Qaraqalpaqsha']) {
+        expect(find.text(label), findsOneWidget, reason: label);
+      }
+      expect(find.text("O'zbekcha"), findsNWidgets(2));
+
+      await pickLanguage(tester, 'Qaraqalpaqsha');
+
+      expect(container.read(appLanguageProvider), 'kk');
+      expect(
+        Localizations.localeOf(tester.element(find.byType(ProfileScreen))),
+        const Locale('kk'),
+      );
+      expect(find.text('Tildi tańlań'), findsNothing);
+      expect(find.text('Qaraqalpaqsha'), findsOneWidget);
+      expect(find.text('Sistemadan shıǵıw'), findsOneWidget);
+      expect(find.bySemanticsLabel('Úyrenilgen temalar: 0/52'), findsOneWidget);
+      for (final tab in ['Bas bet', 'Temalar', 'AI Lab', 'Tekseriw']) {
+        expect(_navTab(tab), findsOneWidget, reason: tab);
+      }
+
+      await _tapVisible(tester, find.text('Til'));
+      expect(find.text('Tildi tańlań'), findsOneWidget);
+      final checked = find.ancestor(
+        of: find.byIcon(Icons.check_circle),
+        matching: find.byType(ListTile),
+      );
+      expect(
+        find.descendant(of: checked, matching: find.text('Qaraqalpaqsha')),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('every primary screen follows the picked language', (
       tester,
     ) async {

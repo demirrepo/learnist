@@ -5,6 +5,7 @@ const appLanguages = [
   ('uz', "O'zbekcha"),
   ('en', 'English'),
   ('ru', 'Русский'),
+  ('kk', 'Qaraqalpaqsha'),
 ];
 
 /// The picked app language code, 'uz' by default.
