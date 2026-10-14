@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'l10n/l10n.dart';
@@ -19,7 +20,15 @@ Future<void> main() async {
     publishableKey: dotenv.get('SUPABASE_ANON_KEY'),
   );
 
-  runApp(const ProviderScope(child: LearnistApp()));
+  // Loaded up front so the saved language is used from the first frame.
+  final preferences = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      overrides: [sharedPreferencesProvider.overrideWithValue(preferences)],
+      child: const LearnistApp(),
+    ),
+  );
 }
 
 class LearnistApp extends ConsumerWidget {

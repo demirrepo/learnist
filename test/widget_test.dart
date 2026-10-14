@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:http/http.dart' show ClientException;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:learnist/l10n/app_localizations.dart';
@@ -195,8 +196,10 @@ Widget _app(
   FakeLessonService? lessons,
   FakeProgressService? progress,
   FakeTeacherService? teacher,
+  SharedPreferences? preferences,
 }) => ProviderScope(
   overrides: [
+    sharedPreferencesProvider.overrideWithValue(preferences),
     supabaseServiceProvider.overrideWithValue(auth),
     lessonServiceProvider.overrideWithValue(lessons ?? FakeLessonService()),
     progressServiceProvider.overrideWithValue(
@@ -693,6 +696,32 @@ void main() {
       expect(container.read(appLanguageProvider), 'uz');
       expect(find.widgetWithText(AppBar, 'Profil'), findsOneWidget);
       expect(_navTab('Bosh sahifa'), findsOneWidget);
+    });
+
+    testWidgets('the picked language survives an app restart', (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final preferences = await SharedPreferences.getInstance();
+      final auth = _FakeSupabaseService(signedIn: true);
+
+      await tester.pumpWidget(_app(auth, preferences: preferences));
+      await tester.pumpAndSettle();
+      await tester.tap(_navTab('Profil'));
+      await tester.pumpAndSettle();
+      await _tapVisible(tester, find.text('Til'));
+      await pickLanguage(tester, 'English');
+      expect(preferences.getString(selectedLanguageKey), 'en');
+
+      // A new ProviderScope is a cold start reading the same storage.
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(_app(auth, preferences: preferences));
+      await tester.pump();
+
+      expect(
+        Localizations.localeOf(tester.element(find.byType(LearnistNavBar))),
+        const Locale('en'),
+      );
+      expect(_navTab('Home'), findsOneWidget);
+      expect(_navTab('Bosh sahifa'), findsNothing);
     });
 
     testWidgets('the sheet offers Karakalpak and switches to it', (
