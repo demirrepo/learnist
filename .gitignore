@@ -56,3 +56,6 @@ __pycache__/
 
 # Generated listening MP3s (uploaded to Supabase, then deleted)
 audio_out/
+
+# translate_grammar.py response cache
+.cache/
