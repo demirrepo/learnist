@@ -283,12 +283,12 @@ class _AudioControlsState extends State<_AudioControls> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            _formatTime(
+                            formatAudioTime(
                               Duration(milliseconds: clamped.round()),
                             ),
                             style: timeStyle,
                           ),
-                          Text(_formatTime(duration), style: timeStyle),
+                          Text(formatAudioTime(duration), style: timeStyle),
                         ],
                       ),
                     ),
@@ -428,13 +428,6 @@ class _AudioError extends StatelessWidget {
       ],
     );
   }
-}
-
-String _formatTime(Duration duration) {
-  String two(int value) => value.toString().padLeft(2, '0');
-  final minutes = duration.inMinutes;
-  final seconds = duration.inSeconds.remainder(60);
-  return '${two(minutes)}:${two(seconds)}';
 }
 
 /// Transcript is blurred until the learner chooses to reveal it.

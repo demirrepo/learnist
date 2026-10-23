@@ -13,6 +13,7 @@ import '../../services/progress_service.dart';
 import '../../services/speech_recorder.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
+import 'recording_playback.dart';
 import 'section_score.dart';
 
 /// Answer field, grading button and result for an AI-graded task.
@@ -22,8 +23,10 @@ import 'section_score.dart';
 /// feedback. Kept alive, so the answer and result survive scrolling away
 /// and switching tabs.
 ///
-/// With [isSpeakingTask] the student can also record the answer: Deepgram
-/// transcribes it into the field, where it can be corrected before grading.
+/// With [isSpeakingTask] the student can also record the answer, for up to
+/// [maxRecording]: Deepgram transcribes it into the field, where it can be
+/// corrected before grading, and the recording can be played back until
+/// the next one replaces it.
 class AiGradedTask extends ConsumerStatefulWidget {
   const AiGradedTask({
     super.key,
@@ -38,6 +41,9 @@ class AiGradedTask extends ConsumerStatefulWidget {
     this.onAskAi,
     this.isSpeakingTask = false,
   });
+
+  /// Recording stops itself, and is transcribed, after this long.
+  static const maxRecording = Duration(minutes: 5);
 
   final int lessonNumber;
 
@@ -73,14 +79,32 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
   /// Set while a recording is running, so leaving the lesson stops it.
   SpeechRecorder? _recorder;
 
+  /// Ticks once a second while recording, up to [AiGradedTask.maxRecording].
+  Timer? _ticker;
+  Duration _elapsed = Duration.zero;
+
+  /// The last finished recording, kept for playback until the next
+  /// recording starts or the student leaves the lesson.
+  ({SpeechRecorder recorder, String path})? _lastRecording;
+
   @override
   bool get wantKeepAlive => true;
 
   @override
   void dispose() {
+    _ticker?.cancel();
     if (_recorder case final recorder?) unawaited(recorder.cancel());
+    _discardLastRecording();
     _answer.dispose();
     super.dispose();
+  }
+
+  /// Deletes the kept recording's file. Callers rebuild if they need to.
+  void _discardLastRecording() {
+    if (_lastRecording case (:final recorder, :final path)) {
+      unawaited(recorder.delete(path));
+    }
+    _lastRecording = null;
   }
 
   void _toggleRecording() {
@@ -127,9 +151,18 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
       return;
     }
     setState(() {
+      _discardLastRecording();
       _recorder = recorder;
       _mic = _MicState.recording;
+      _elapsed = Duration.zero;
     });
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  }
+
+  void _tick() {
+    final elapsed = _elapsed + const Duration(seconds: 1);
+    setState(() => _elapsed = elapsed);
+    if (elapsed >= AiGradedTask.maxRecording) _stopAndTranscribe();
   }
 
   Future<void> _stopAndTranscribe() async {
@@ -138,17 +171,23 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
     final messenger = ScaffoldMessenger.of(context);
     final l10n = context.l10n;
     final deepgram = ref.read(deepgramServiceProvider);
+    _ticker?.cancel();
+    _ticker = null;
     setState(() {
       _recorder = null;
       _mic = _MicState.transcribing;
     });
 
-    String? path;
     try {
-      path = await recorder.stop();
+      final path = await recorder.stop();
       if (path == null) {
         throw DeepgramException(l10n.taskRecordingMissing);
       }
+      if (!mounted) {
+        unawaited(recorder.delete(path));
+        return;
+      }
+      setState(() => _lastRecording = (recorder: recorder, path: path));
       final text = await deepgram.transcribeAudio(path);
       if (mounted) {
         _answer.value = TextEditingValue(
@@ -165,7 +204,6 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
             : l10n.taskTranscriptionError,
       );
     } finally {
-      if (path != null) unawaited(recorder.delete(path));
       if (mounted) setState(() => _mic = _MicState.idle);
     }
   }
@@ -238,8 +276,17 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
           _MicRecorder(
             key: ValueKey('${widget.section}-mic'),
             state: _mic,
+            elapsed: _elapsed,
             onPressed: _evaluating ? null : _toggleRecording,
           ),
+          // Gone while a new recording starts, which stops its playback.
+          if (_lastRecording case (
+            recorder: _,
+            :final path,
+          ) when _mic == _MicState.idle || _mic == _MicState.transcribing) ...[
+            const SizedBox(height: 10),
+            RecordingPlayback(key: ValueKey(path), path: path),
+          ],
         ],
         if (footer != null) ...[
           const SizedBox(height: 8),
@@ -278,11 +325,20 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
 enum _MicState { idle, starting, recording, transcribing }
 
 /// Microphone button with its state spelled out beside it. While
-/// recording it turns red and pulses; while transcribing it spins.
+/// recording it turns red, pulses and counts up to the limit; while
+/// transcribing it spins.
 class _MicRecorder extends StatefulWidget {
-  const _MicRecorder({super.key, required this.state, required this.onPressed});
+  const _MicRecorder({
+    super.key,
+    required this.state,
+    required this.elapsed,
+    required this.onPressed,
+  });
 
   final _MicState state;
+
+  /// How long the running recording has gone on.
+  final Duration elapsed;
   final VoidCallback? onPressed;
 
   @override
@@ -328,8 +384,10 @@ class _MicRecorderState extends State<_MicRecorder>
   Widget build(BuildContext context) {
     final recording = _recording;
     final accent = recording ? AppColors.danger : AppColors.primary;
+    final limit = AiGradedTask.maxRecording;
     final label = switch (widget.state) {
-      _MicState.idle || _MicState.starting => 'Tap the mic and speak',
+      _MicState.idle || _MicState.starting =>
+        'Tap the mic and speak (up to ${limit.inMinutes} minutes)',
       _MicState.recording => 'Recording… Tap to stop',
       _MicState.transcribing => 'Transcribing…',
     };
@@ -396,13 +454,31 @@ class _MicRecorderState extends State<_MicRecorder>
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              label,
-              style: GoogleFonts.manrope(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: accent,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: GoogleFonts.manrope(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: accent,
+                  ),
+                ),
+                if (recording) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    '${formatAudioTime(widget.elapsed)} / '
+                    '${formatAudioTime(limit)}',
+                    key: const ValueKey('recording-elapsed'),
+                    style: GoogleFonts.manrope(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: accent,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ],

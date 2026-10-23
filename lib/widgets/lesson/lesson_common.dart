@@ -6,6 +6,14 @@ import '../../theme/app_theme.dart';
 
 const lessonCardRadius = BorderRadius.all(Radius.circular(16));
 
+/// "mm:ss", for audio positions and durations.
+String formatAudioTime(Duration duration) {
+  String two(int value) => value.toString().padLeft(2, '0');
+  final minutes = duration.inMinutes;
+  final seconds = duration.inSeconds.remainder(60);
+  return '${two(minutes)}:${two(seconds)}';
+}
+
 /// Scrollable body for one lesson tab. Kept alive so typed answers and quiz
 /// selections survive switching tabs.
 class LessonTabBody extends StatefulWidget {

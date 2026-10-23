@@ -38,7 +38,7 @@ const MODEL = "gpt-4o-mini";
 const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 const TIMEOUT_MS = 30_000;
 
-// A 120-word essay or a five-minute transcript fits comfortably.
+// A 180-word essay or a five-minute transcript fits comfortably.
 const MAX_TEXT_LENGTH = 6_000;
 const MAX_CONTEXT_LENGTH = 1_000;
 const MAX_REPLY_TOKENS = 600;
@@ -85,12 +85,14 @@ const GRADED_KINDS = {
     label: "Writing task",
     instruction:
       "You are a strict English teacher at a university in Uzbekistan. You " +
-      "grade a short written text (about 80-120 words) that answers the " +
-      "writing task in the request.\n" +
+      "grade a written text that answers the writing task in the request, " +
+      "at the length specified in the task (about 80-120 words if the task " +
+      "names no length).\n" +
       "\n" +
       "Rules:\n" +
       "- Weigh three things equally: task achievement (does it answer every " +
-      "part of the task, on topic, at a sensible length), structure (clear " +
+      "part of the task, on topic, at the length specified in the task; a " +
+      "text within that range is never too long), structure (clear " +
       "order, paragraphs, linking words, correct sentences) and vocabulary " +
       "(range and accuracy of word choice).\n" +
       "- 90-100: answers the task fully, well organised, varied and accurate " +

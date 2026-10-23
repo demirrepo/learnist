@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:learnist/services/speech_recorder.dart';
 
 /// Pretends to record to [path] without touching the microphone.
@@ -9,6 +11,9 @@ class FakeSpeechRecorder implements SpeechRecorder {
   /// Thrown by [start], e.g. when the microphone is busy.
   Object? startError;
   String? path = '/tmp/speaking.m4a';
+
+  /// When set, [stop] waits for it, e.g. to leave the lesson meanwhile.
+  Completer<void>? stopDelay;
 
   bool recording = false;
   int cancelCount = 0;
@@ -25,6 +30,7 @@ class FakeSpeechRecorder implements SpeechRecorder {
 
   @override
   Future<String?> stop() async {
+    await stopDelay?.future;
     recording = false;
     return path;
   }

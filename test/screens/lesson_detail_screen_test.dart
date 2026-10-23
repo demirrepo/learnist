@@ -20,10 +20,12 @@ import 'package:learnist/services/supabase_service.dart';
 import 'package:learnist/widgets/lesson/lesson_common.dart';
 import 'package:learnist/models/vocabulary_item.dart';
 import 'package:learnist/widgets/lesson/lesson_quiz.dart';
+import 'package:learnist/widgets/lesson/recording_playback.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../support/fake_ask_ai_service.dart';
+import '../support/fake_audio_player.dart';
 import '../support/fake_deepgram_service.dart';
 import '../support/fake_lesson_service.dart';
 import '../support/fake_openai_service.dart';
@@ -46,6 +48,7 @@ Future<void> _pump(
   FakeOpenAIService? ai,
   FakeDeepgramService? deepgram,
   FakeSpeechRecorder? recorder,
+  List<FakeAudioPlayer>? players,
   FakePronunciationService? pronunciation,
   FakeAskAiService? askAi,
   Locale locale = testLocale,
@@ -66,6 +69,11 @@ Future<void> _pump(
         speechRecorderProvider.overrideWithValue(
           recorder ?? FakeSpeechRecorder(),
         ),
+        recordingPlayerProvider.overrideWithValue(() {
+          final player = FakeAudioPlayer();
+          players?.add(player);
+          return player;
+        }),
         pronunciationServiceProvider.overrideWithValue(
           pronunciation ?? FakePronunciationService(),
         ),
@@ -433,18 +441,42 @@ void main() {
       });
     }
 
-    testWidgets('writing counts words as the student types', (tester) async {
+    testWidgets('writing counts words against the task\'s range', (
+      tester,
+    ) async {
       _useTallView(tester);
       await _pump(tester);
       await _openTab(tester, 'Yozish');
 
-      expect(find.text('0 / 80–120 words'), findsOneWidget);
+      // Lesson 1 asks for "(80–100 words)".
+      expect(find.text('0 / 80–100 words'), findsOneWidget);
       await tester.enterText(
         find.byKey(const ValueKey('writing-answer')),
         'One two  three',
       );
       await tester.pump();
-      expect(find.text('3 / 80–120 words'), findsOneWidget);
+      expect(find.text('3 / 80–100 words'), findsOneWidget);
+    });
+
+    testWidgets('a task without a word range counts against 80–120', (
+      tester,
+    ) async {
+      _useTallView(tester);
+      const lesson = Lesson(
+        lessonNumber: 1,
+        originalNumber: 1,
+        semester: 1,
+        title: 'Questions only',
+        grammarFocus: 'Questions',
+        cefrLevel: 'A1',
+        writingPrompt: 'Write 8–10 questions and their possible answers.',
+      );
+      await _pump(tester, service: FakeLessonService(lessons: const [lesson]));
+      await _openTab(tester, 'Yozish');
+
+      expect(find.text('0 / 80–120 words'), findsOneWidget);
+      // No task title yet: the lesson title stands in.
+      expect(find.text('Questions only'), findsWidgets);
     });
 
     testWidgets('speaking keeps "Darsni yakunlash" below the assessment', (
@@ -549,7 +581,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(answerText(tester), 'I usually cook on Sundays.');
-      expect(recorder.deleted, ['/tmp/speaking.m4a']);
+      // Kept for playback until the next recording.
+      expect(recorder.deleted, isEmpty);
+      expect(find.byType(RecordingPlayback), findsOneWidget);
       expect(find.byTooltip('Start recording'), findsOneWidget);
       expect(ai.calls, isEmpty);
 
@@ -627,7 +661,9 @@ void main() {
         AppColors.danger,
       );
       expect(answerText(tester), 'My typed answer.');
-      expect(recorder.deleted, ['/tmp/speaking.m4a']);
+      // The student can still listen to what they said.
+      expect(find.byType(RecordingPlayback), findsOneWidget);
+      expect(recorder.deleted, isEmpty);
       expect(tester.widget<ButtonStyleButton>(assess).onPressed, isNotNull);
     });
 
@@ -644,6 +680,175 @@ void main() {
       await tester.pumpWidget(const SizedBox());
       expect(recorder.cancelCount, 1);
       expect(recorder.recording, isFalse);
+    });
+
+    testWidgets('counts the recording up to the limit, then stops it', (
+      tester,
+    ) async {
+      final recorder = FakeSpeechRecorder();
+      final deepgram = FakeDeepgramService(transcript: 'A long answer.');
+      await openSpeaking(tester, deepgram: deepgram, recorder: recorder);
+      expect(
+        find.text('Tap the mic and speak (up to 5 minutes)'),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      expect(find.text('00:00 / 05:00'), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 3));
+      expect(find.text('00:03 / 05:00'), findsOneWidget);
+
+      await tester.pump(const Duration(minutes: 4, seconds: 56));
+      expect(recorder.recording, isTrue);
+      expect(find.text('04:59 / 05:00'), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 1));
+      expect(recorder.recording, isFalse);
+      await tester.pumpAndSettle();
+      expect(deepgram.paths, ['/tmp/speaking.m4a']);
+      expect(answerText(tester), 'A long answer.');
+      expect(find.byKey(const ValueKey('recording-elapsed')), findsNothing);
+    });
+
+    testWidgets('plays the recording back, also while it is graded', (
+      tester,
+    ) async {
+      final players = <FakeAudioPlayer>[];
+      final ai = FakeOpenAIService()..pending = Completer<void>();
+      _useTallView(tester);
+      await _pump(tester, ai: ai, players: players);
+      await _openTab(tester, 'Gapirish');
+      expect(find.byType(RecordingPlayback), findsNothing);
+
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      expect(find.byType(RecordingPlayback), findsNothing);
+      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.pumpAndSettle();
+
+      final player = players.single;
+      expect(player.filePath, '/tmp/speaking.m4a');
+      expect(find.text('Your recording'), findsOneWidget);
+      expect(find.text('00:00 / 00:42'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Play recording'));
+      await tester.pump();
+      expect(player.playing, isTrue);
+      expect(find.byTooltip('Pause recording'), findsOneWidget);
+
+      await tester.tap(assess);
+      await tester.pump();
+      await tester.tap(find.byTooltip('Pause recording'));
+      await tester.pump();
+      expect(player.playing, isFalse);
+
+      ai.pending!.complete();
+      await tester.pumpAndSettle();
+      expect(find.byType(RecordingPlayback), findsOneWidget);
+    });
+
+    testWidgets('a new recording replaces the previous one', (tester) async {
+      final recorder = FakeSpeechRecorder();
+      final players = <FakeAudioPlayer>[];
+      _useTallView(tester);
+      await _pump(tester, recorder: recorder, players: players);
+      await _openTab(tester, 'Gapirish');
+
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Play recording'));
+      await tester.pump();
+
+      recorder.path = '/tmp/second.m4a';
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      expect(players.first.disposed, isTrue);
+      expect(recorder.deleted, ['/tmp/speaking.m4a']);
+      expect(find.byType(RecordingPlayback), findsNothing);
+
+      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.pumpAndSettle();
+      expect(players, hasLength(2));
+      expect(players.last.filePath, '/tmp/second.m4a');
+      expect(find.byType(RecordingPlayback), findsOneWidget);
+    });
+
+    testWidgets('a refused microphone keeps the previous recording', (
+      tester,
+    ) async {
+      final recorder = FakeSpeechRecorder();
+      await openSpeaking(tester, recorder: recorder);
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.pumpAndSettle();
+
+      recorder.permission = MicPermission.denied;
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pumpAndSettle();
+
+      expect(recorder.deleted, isEmpty);
+      expect(find.byType(RecordingPlayback), findsOneWidget);
+    });
+
+    testWidgets('an unplayable recording says so', (tester) async {
+      final recorder = FakeSpeechRecorder();
+      _useTallView(tester);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            recordingPlayerProvider.overrideWithValue(
+              () => FakeAudioPlayer()..loadError = Exception('bad file'),
+            ),
+            speechRecorderProvider.overrideWithValue(recorder),
+          ],
+          child: const MaterialApp(
+            home: Scaffold(body: RecordingPlayback(path: '/tmp/broken.m4a')),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text("Your recording can't be played back."), findsOneWidget);
+      expect(find.byTooltip('Play recording'), findsNothing);
+    });
+
+    testWidgets('leaving the lesson releases the player and the file', (
+      tester,
+    ) async {
+      final recorder = FakeSpeechRecorder();
+      final players = <FakeAudioPlayer>[];
+      _useTallView(tester);
+      await _pump(tester, recorder: recorder, players: players);
+      await _openTab(tester, 'Gapirish');
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(const SizedBox());
+      expect(players.single.disposed, isTrue);
+      expect(recorder.deleted, ['/tmp/speaking.m4a']);
+    });
+
+    testWidgets('a recording that ends after leaving is deleted', (
+      tester,
+    ) async {
+      final recorder = FakeSpeechRecorder()..stopDelay = Completer<void>();
+      await openSpeaking(tester, recorder: recorder);
+      await tester.tap(find.byTooltip('Start recording'));
+      await tester.pump();
+      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.pump();
+
+      await tester.pumpWidget(const SizedBox());
+      recorder.stopDelay!.complete();
+      await tester.pump();
+      expect(recorder.deleted, ['/tmp/speaking.m4a']);
     });
   });
 
@@ -1009,9 +1214,11 @@ void main() {
     await _pump(tester);
 
     await _openTab(tester, 'Yozish');
+    expect(find.text('My Life and the People Around Me'), findsOneWidget);
     expect(find.text(lesson1.writingPrompt!), findsOneWidget);
 
     await _openTab(tester, 'Gapirish');
+    expect(find.text('Introduce Yourself and Your World'), findsOneWidget);
     expect(find.text(lesson1.speakingPrompt!), findsOneWidget);
   });
 

@@ -16,8 +16,17 @@ const _lenses = [
   (level: 'B2', focus: 'Vary your vocabulary and sentence structure.'),
 ];
 
-const _minWords = 80;
-const _maxWords = 120;
+/// Used when the instruction names no "(80–100 words)" range.
+const _defaultWords = (min: 80, max: 120);
+
+final _wordRangePattern = RegExp(r'(\d+)\s*[–-]\s*(\d+)\s+words');
+
+/// The word range the instruction asks for, e.g. "(80–100 words)".
+({int min, int max}) _wordRange(String prompt) {
+  final match = _wordRangePattern.firstMatch(prompt);
+  if (match == null) return _defaultWords;
+  return (min: int.parse(match[1]!), max: int.parse(match[2]!));
+}
 
 /// The writing task, graded by the AI as the lesson's `writing` section.
 class WritingTab extends StatelessWidget {
@@ -33,6 +42,7 @@ class WritingTab extends StatelessWidget {
         children: [LessonNotice(context.l10n.lessonNoWriting)],
       );
     }
+    final words = _wordRange(prompt);
 
     return LessonTabBody(
       children: [
@@ -43,7 +53,7 @@ class WritingTab extends StatelessWidget {
               LessonPrompt(
                 tagIcon: LucideIcons.pencil,
                 tag: 'Writing task',
-                title: lesson.title,
+                title: lesson.writingTitle ?? lesson.title,
                 body: prompt,
               ),
               const SizedBox(height: 18),
@@ -55,7 +65,7 @@ class WritingTab extends StatelessWidget {
                 minLines: 10,
                 maxLines: 20,
                 evaluate: (ai, answer) => ai.evaluateWriting(answer, prompt),
-                fieldFooter: _WordCount.new,
+                fieldFooter: (answer) => _WordCount(answer, range: words),
                 onAskAi:
                     () => showAskAiDialog(
                       context,
@@ -73,18 +83,19 @@ class WritingTab extends StatelessWidget {
 }
 
 class _WordCount extends StatelessWidget {
-  const _WordCount(this.text);
+  const _WordCount(this.text, {required this.range});
 
   final String text;
+  final ({int min, int max}) range;
 
   @override
   Widget build(BuildContext context) {
     final trimmed = text.trim();
     final count = trimmed.isEmpty ? 0 : trimmed.split(RegExp(r'\s+')).length;
-    final inRange = count >= _minWords && count <= _maxWords;
+    final inRange = count >= range.min && count <= range.max;
 
     return Text(
-      '$count / $_minWords–$_maxWords words',
+      '$count / ${range.min}–${range.max} words',
       textAlign: TextAlign.end,
       style: GoogleFonts.manrope(
         fontSize: 12.5,

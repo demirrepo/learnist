@@ -45,12 +45,28 @@ void main() {
       expect(lesson.listeningSpeakers, ['Maya', 'Daniel']);
       expect(lesson.listeningTranscript, startsWith('Maya: Hi Daniel.'));
       expect(lesson.listeningQuestions, hasLength(10));
-      expect(lesson.writingPrompt, startsWith('Write a short opinion'));
-      expect(lesson.speakingPrompt, isNotNull);
+      expect(lesson.writingTitle, 'My Life and the People Around Me');
+      expect(lesson.writingPrompt, startsWith('Write a short paragraph'));
+      expect(lesson.speakingTitle, 'Introduce Yourself and Your World');
+      expect(lesson.speakingPrompt, startsWith('Imagine you are meeting'));
 
       final question = lesson.readingQuestions.first as Map;
       expect(question['answer_index'], isA<int>());
       expect(question['options'], isA<List>());
+    });
+
+    test('every lesson has a titled speaking and writing task', () {
+      for (final lesson in lessons) {
+        for (final text in [
+          lesson.speakingTitle,
+          lesson.speakingPrompt,
+          lesson.writingTitle,
+          lesson.writingPrompt,
+        ]) {
+          expect(text, isNotNull, reason: '$lesson');
+          expect(text, isNot(startsWith('Instruction')), reason: '$lesson');
+        }
+      }
     });
 
     test('every grammar explanation is translated', () {
@@ -99,7 +115,9 @@ void main() {
     expect(lesson.readingPassage, isNull);
     expect(lesson.listeningTranscript, isNull);
     expect(lesson.audioUrl, isNull);
+    expect(lesson.writingTitle, isNull);
     expect(lesson.writingPrompt, isNull);
+    expect(lesson.speakingTitle, isNull);
     expect(lesson.speakingPrompt, isNull);
     expect(lesson.taskMeta, isEmpty);
     expect(lesson.readingVocabulary, isEmpty);

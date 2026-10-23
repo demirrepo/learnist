@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
@@ -12,6 +13,13 @@ final speechRecorderProvider = Provider<SpeechRecorder>((ref) {
   ref.onDispose(recorder.dispose);
   return recorder;
 });
+
+/// Makes the player that plays a finished recording back to the student.
+/// Each playback widget owns and disposes its own; overridden with a fake
+/// in tests, where just_audio has no platform.
+final recordingPlayerProvider = Provider<AudioPlayer Function()>(
+  (ref) => AudioPlayer.new,
+);
 
 enum MicPermission { granted, denied, permanentlyDenied }
 
@@ -67,7 +75,7 @@ class SpeechRecorder {
     if (_recorder case final recorder?) await recorder.cancel();
   }
 
-  /// Removes a finished recording once it has been transcribed.
+  /// Removes a finished recording once the student no longer needs it.
   Future<void> delete(String path) async {
     try {
       await File(path).delete();

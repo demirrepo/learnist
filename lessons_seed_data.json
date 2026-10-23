@@ -318,8 +318,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “Hello, everybody!”. Use Subject pronouns + am / is / are naturally and make your ideas clear.",
-    "speaking_prompt": "You have just joined a new university English group. Introduce yourself: name, age, hometown, student status and one personal goal."
+    "writing_title": "My Life and the People Around Me",
+    "writing_prompt": "Write a short paragraph (80–100 words) introducing yourself and describing the important people and places in your life.",
+    "speaking_title": "Introduce Yourself and Your World",
+    "speaking_prompt": "Imagine you are meeting an international student for the first time. Introduce yourself and talk about your life for 1–2 minutes."
   },
   {
     "lesson_number": 2,
@@ -640,8 +642,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “A world of sport”. Use To be: negatives, questions & short answers naturally and make your ideas clear.",
-    "speaking_prompt": "You meet a student at a sports club. Ask and answer short questions about identity, hometown and whether you are interested in sport."
+    "writing_title": "Correct the Information About You!",
+    "writing_prompt": "Your new international friend has some incorrect information about you. Your friend thinks you are 25 years old, you are from London, your school is very small, and your friends are teachers. Write a message (80–100 words) to correct this information and learn more about your friend.",
+    "speaking_title": "Getting to Know a New Friend",
+    "speaking_prompt": "Imagine you are meeting a new student at an international language school. Have a 2-minute conversation with your new friend. Ask questions to get to know each other and correct any information that is not true about you."
   },
   {
     "lesson_number": 3,
@@ -961,8 +965,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “The digital era”. Use Word order: Subject + Verb + Object naturally and make your ideas clear.",
-    "speaking_prompt": "Explain how you use your phone or AI for studying. Keep English word order clear: who + does what + object."
+    "writing_title": "My Daily Life",
+    "writing_prompt": "Write a short paragraph (60–80 words) about your daily life, family, and studies.",
+    "speaking_title": "Build and Speak",
+    "speaking_prompt": "Talk about yourself, your family, and your daily life for 1–2 minutes."
   },
   {
     "lesson_number": 4,
@@ -1282,8 +1288,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “Open your books”. Use Personal, possessive & reflexive pronouns naturally and make your ideas clear.",
-    "speaking_prompt": "Introduce a classmate without repeating their name. Then say what belongs to them and one action you did for them."
+    "writing_title": "My Family and Our Responsibilities",
+    "writing_prompt": "Write a short paragraph (70–90 words) about your family, your belongings, and how you help each other.",
+    "speaking_title": "The People in My Life",
+    "speaking_prompt": "Talk about yourself, your family, and your best friend for 1–2 minutes."
   },
   {
     "lesson_number": 5,
@@ -1603,8 +1611,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “A Your desk and you”. Use Singular/plural nouns + there is/are + place prepositions naturally and make your ideas clear.",
-    "speaking_prompt": "Describe your study desk to a friend: what is there, how many items there are, and where they are."
+    "writing_title": "My Dream Bedroom",
+    "writing_prompt": "Imagine you are designing your dream bedroom. Write a short description (70–90 words) explaining what is inside and where everything is located.",
+    "speaking_title": "Describe Your Room",
+    "speaking_prompt": "Imagine you are showing your room to a friend. Describe it for 1–2 minutes."
   },
   {
     "lesson_number": 6,
@@ -1924,8 +1934,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “Computer basics”. Use Countable and uncountable nouns naturally and make your ideas clear.",
-    "speaking_prompt": "You are preparing for a study session. Say what countable and uncountable things you need: books, water, information, etc."
+    "writing_title": "Planning a Weekend Party",
+    "writing_prompt": "You are organizing a small party for your friends. Write a message (70–90 words) explaining what food and drinks you have and what you need to buy.",
+    "speaking_title": "What's in Your Kitchen?",
+    "speaking_prompt": "Imagine you are preparing dinner with a friend. Talk about the food and ingredients you have at home for 1–2 minutes."
   },
   {
     "lesson_number": 7,
@@ -2245,8 +2257,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “Made in the USA”. Use Adjectives naturally and make your ideas clear.",
-    "speaking_prompt": "Recommend a product made in your country. Describe it with at least five useful adjectives."
+    "writing_title": "My Perfect Holiday Destination",
+    "writing_prompt": "Imagine you are recommending your favorite holiday destination to a friend. Write a short description (70–90 words).",
+    "speaking_title": "Describe Your Favorite Person and Place",
+    "speaking_prompt": "Talk about your favorite person and a place you love for 1–2 minutes."
   },
   {
     "lesson_number": 8,
@@ -2566,8 +2580,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “Don’t worry. Be happy!”. Use Imperatives, Let’s & feelings naturally and make your ideas clear.",
-    "speaking_prompt": "Your classmate is nervous before a test. Give instructions, advice and one suggestion using imperatives and Let’s."
+    "writing_title": "Help a Friend Feel Better",
+    "writing_prompt": "Your friend is nervous about an important exam. Write a supportive message (70–90 words) to help them feel more confident.",
+    "speaking_title": "Cheer Up Your Friend!",
+    "speaking_prompt": "Imagine your friend is feeling sad, tired, and stressed. Talk to your friend for 1–2 minutes and help them feel better."
   },
   {
     "lesson_number": 9,
@@ -2887,8 +2903,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “Peripherals I”. Use Linking words and sequencing naturally and make your ideas clear.",
-    "speaking_prompt": "Explain how you complete an online assignment. Connect your ideas with because, so, but, first, then and finally."
+    "writing_title": "My Perfect Weekend",
+    "writing_prompt": "Write a short paragraph (80–100 words) describing how you would spend your perfect weekend.",
+    "speaking_title": "A Day to Remember",
+    "speaking_prompt": "Talk about an interesting or memorable day in your life for 1–2 minutes."
   },
   {
     "lesson_number": 10,
@@ -3208,8 +3226,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “Great Britain”. Use Present Simple naturally and make your ideas clear.",
-    "speaking_prompt": "Describe your normal weekday at university using Present Simple and at least one third-person sentence."
+    "writing_title": "Two Different Lifestyles",
+    "writing_prompt": "Write a short paragraph (80–100 words) comparing your daily routine with your best friend’s routine.",
+    "speaking_title": "My Daily Routine vs. My Best Friend’s Routine",
+    "speaking_prompt": "Talk about your daily routine and compare it with your best friend’s routine for 1–2 minutes."
   },
   {
     "lesson_number": 11,
@@ -3529,8 +3549,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “Goodbye to the office?”. Use Adverbs naturally and make your ideas clear.",
-    "speaking_prompt": "Describe how you study: how often, how carefully and how well you do different activities."
+    "writing_title": "A Productive Day in My Life",
+    "writing_prompt": "Write a short paragraph (80–100 words) describing how you organize your day and complete your daily activities.",
+    "speaking_title": "How Do You Do Things?",
+    "speaking_prompt": "Talk about your daily activities, habits, and abilities for 1–2 minutes."
   },
   {
     "lesson_number": 12,
@@ -3850,8 +3872,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “Peripherals II”. Use Degrees of adjectives naturally and make your ideas clear.",
-    "speaking_prompt": "Compare two learning apps and say which is the best for you using comparative and superlative forms."
+    "writing_title": "Which Is the Best Place to Study?",
+    "writing_prompt": "Write a short paragraph (80–100 words) comparing three schools or universities and explaining which one you think is the best.",
+    "speaking_title": "Compare and Choose the Best",
+    "speaking_prompt": "Imagine you are choosing the best city to live in. Compare three cities you know and explain which one you prefer. Speak for 1–2 minutes."
   },
   {
     "lesson_number": 13,
@@ -4171,8 +4195,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “Are you a “dog person”?”. Use Articles: a / an / the naturally and make your ideas clear.",
-    "speaking_prompt": "Describe a classroom object, then refer to it again correctly using a/an/the."
+    "writing_title": "My Dream Holiday",
+    "writing_prompt": "Write a short paragraph (80–100 words) describing a dream holiday in a country you would love to visit.",
+    "speaking_title": "A Tourist in My City",
+    "speaking_prompt": "Imagine you are a tour guide showing a foreign tourist around your city. Describe interesting places and recommend things to see and do. Speak for 1–2 minutes."
   },
   {
     "lesson_number": 14,
@@ -4492,8 +4518,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “Who’s that in the photo”. Use Possessive ’s + Whose...? naturally and make your ideas clear.",
-    "speaking_prompt": "You found several items after class. Ask whose they are and explain who owns each item."
+    "writing_title": "A Mix-Up at School",
+    "writing_prompt": "Imagine several students have accidentally mixed up their belongings after a class. Write a short message (80–100 words) to help everyone find their things.",
+    "speaking_title": "Whose Things Are These?",
+    "speaking_prompt": "Imagine you are helping your classmates find their lost belongings. Describe the items and explain who owns them. Speak for 1–2 minutes."
   },
   {
     "lesson_number": 15,
@@ -4813,8 +4841,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “Data Storage”. Use Wh- questions naturally and make your ideas clear.",
-    "speaking_prompt": "Interview a new student using what, where, when, why, who, how, which and whose."
+    "writing_title": "Interview a Famous Person",
+    "writing_prompt": "Imagine you are a journalist interviewing your favorite celebrity, athlete, or successful person. Write 8–10 questions and their possible answers.",
+    "speaking_title": "My Life in 8 Questions",
+    "speaking_prompt": "Imagine you are recording a short self-interview to introduce yourself to new classmates. Ask questions aloud and answer them yourself. Speak for 1–2 minutes."
   },
   {
     "lesson_number": 16,
@@ -5134,8 +5164,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “Eat, sleep, repeat”. Use Prepositions of time, place & movement naturally and make your ideas clear.",
-    "speaking_prompt": "Explain your weekly timetable and how you move around campus using time, place and movement prepositions."
+    "writing_title": "A Visit to My City",
+    "writing_prompt": "Your foreign friend is visiting your city for the first time. Write an email (80–100 words) explaining where to meet, when to arrive, and how to reach some interesting places.",
+    "speaking_title": "A Day Around My City",
+    "speaking_prompt": "Imagine you are recording a short travel guide for a friend visiting your city. Explain where important places are, when to visit them, and how to get there. Speak for 1–2 minutes."
   },
   {
     "lesson_number": 17,
@@ -5455,8 +5487,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “Blue Zones”. Use Position of adverbs & frequency expressions naturally and make your ideas clear.",
-    "speaking_prompt": "Describe your study habits using frequency expressions in natural sentence positions."
+    "writing_title": "How Often Do We Do Things?",
+    "writing_prompt": "Write a short paragraph (80–100 words) comparing your weekly routine with your best friend's routine.",
+    "speaking_title": "My Habits and Lifestyle",
+    "speaking_prompt": "Record a 1–2 minute talk about your daily habits and how often you do different activities."
   },
   {
     "lesson_number": 18,
@@ -5776,8 +5810,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “Introduction to Computer Software”. Use Countable/Uncountable quantifiers naturally and make your ideas clear.",
-    "speaking_prompt": "Plan snacks and materials for a study group using countable/uncountable nouns and suitable quantity words."
+    "writing_title": "Shopping for a Family Dinner",
+    "writing_prompt": "You are preparing dinner for your family. Write a short message (80–100 words) explaining what ingredients are available, what is missing, and what you need to buy.",
+    "speaking_title": "Planning a Weekend Picnic",
+    "speaking_prompt": "Imagine you are organizing a picnic for 6 friends. Record a 1–2 minute talk explaining what food and drinks you have, what you need to buy, and whether everything is enough."
   },
   {
     "lesson_number": 19,
@@ -6097,8 +6133,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “Sing me a song”. Use Can / can’t naturally and make your ideas clear.",
-    "speaking_prompt": "Tell a new classmate what you can and can’t do in English now, and what skills you want to improve."
+    "writing_title": "Join Our Student Club!",
+    "writing_prompt": "Write a short application (80–100 words) to join a student club. Explain your abilities, limitations, and how you can contribute.",
+    "speaking_title": "My Abilities and Skills",
+    "speaking_prompt": "Imagine you are applying to join an international student club. Record a 1–2 minute introduction explaining what you can and can't do."
   },
   {
     "lesson_number": 20,
@@ -6418,8 +6456,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “What a noise!”. Use Present Continuous naturally and make your ideas clear.",
-    "speaking_prompt": "You are in the university library now. Describe what people are doing at this moment."
+    "writing_title": "A Busy Day at the Park",
+    "writing_prompt": "Imagine you are sitting in a busy park and watching people around you. Write a short description (80–100 words) of what is happening.",
+    "speaking_title": "What's Happening Around You?",
+    "speaking_prompt": "Imagine you are recording a live video for your friends. Describe what is happening around you right now. Speak for 1–2 minutes."
   },
   {
     "lesson_number": 21,
@@ -6739,8 +6779,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “The Internet and the Web”. Use Questions in Present Continuous naturally and make your ideas clear.",
-    "speaking_prompt": "Call a friend and ask what different people are doing right now using Present Continuous questions."
+    "writing_title": "An Interview at a Summer Camp",
+    "writing_prompt": "Imagine you are a journalist visiting a summer camp. Write an interview (80–100 words) with a student about what everyone is doing at the moment.",
+    "speaking_title": "What's Everyone Doing?",
+    "speaking_prompt": "Imagine you are a reporter investigating what people are doing at a busy school. Record a 1–2 minute report by asking and answering your own questions."
   },
   {
     "lesson_number": 22,
@@ -7060,8 +7102,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “I love London”. Use Present Simple vs Present Continuous naturally and make your ideas clear.",
-    "speaking_prompt": "Compare your usual routine with what you are doing differently this week."
+    "writing_title": "A Different Day in My Life",
+    "writing_prompt": "Imagine today is different from your normal routine. Write a short paragraph (80–100 words) comparing your usual activities with what is happening today.",
+    "speaking_title": "My Usual Routine vs. Today",
+    "speaking_prompt": "Record a 1–2 minute talk comparing what you usually do with what you are doing today."
   },
   {
     "lesson_number": 23,
@@ -7381,8 +7425,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “A traditional story”. Use Object pronouns naturally and make your ideas clear.",
-    "speaking_prompt": "Tell a short story about helping your friends. Replace repeated nouns with object pronouns."
+    "writing_title": "A Day with My Friends",
+    "writing_prompt": "Write a short story (80–100 words) about spending a day with your friends or family.",
+    "speaking_title": "The People in My Life",
+    "speaking_prompt": "Record a 1–2 minute talk about the important people in your life and how you interact with them."
   },
   {
     "lesson_number": 24,
@@ -7702,8 +7748,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “Netiquette and Cybersecurity”. Use Past Simple naturally and make your ideas clear.",
-    "speaking_prompt": "Explain what you did yesterday to stay safe online, using Past Simple."
+    "writing_title": "My Most Memorable Weekend",
+    "writing_prompt": "Write a short story (80–100 words) about an interesting or unusual weekend you experienced.",
+    "speaking_title": "A Day I Will Never Forget",
+    "speaking_prompt": "Record a 1–2 minute talk about a memorable day in your past. Explain what happened, where you went, and how you felt."
   },
   {
     "lesson_number": 25,
@@ -8023,8 +8071,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “I don’t like Mondays”. Use Like + verb-ing naturally and make your ideas clear.",
-    "speaking_prompt": "Talk about activities you like and dislike doing on Mondays using like/love/hate + -ing."
+    "writing_title": "My Hobbies and Interests",
+    "writing_prompt": "Write a short paragraph (80–100 words) about your hobbies, interests, and activities you enjoy or dislike.",
+    "speaking_title": "Things I Love and Hate Doing",
+    "speaking_prompt": "Record a 1–2 minute talk about activities you enjoy and dislike doing in your daily life."
   },
   {
     "lesson_number": 26,
@@ -8344,8 +8394,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “Making music”. Use To be vs to do naturally and make your ideas clear.",
-    "speaking_prompt": "Interview a musician: mix questions with be and do correctly."
+    "writing_title": "My Life and My Best Friend's Life",
+    "writing_prompt": "Write a short paragraph (80–100 words) comparing yourself with your best friend.",
+    "speaking_title": "Getting to Know Me",
+    "speaking_prompt": "Record a 1–2 minute self-interview about your personality, daily routine, and interests. Ask questions aloud and answer them yourself."
   },
   {
     "lesson_number": 27,
@@ -8665,8 +8717,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “Computer Graphics and Web Design”. Use -ing forms & modals naturally and make your ideas clear.",
-    "speaking_prompt": "Explain rules for a design lab using useful -ing forms and modal verbs."
+    "writing_title": "Advice for a Successful Student",
+    "writing_prompt": "Your friend wants to become a more successful student but has problems with studying and managing time. Write an advice message (80–100 words).",
+    "speaking_title": "How to Live a Better Life",
+    "speaking_prompt": "Record a 1–2 minute talk about your lifestyle, daily habits, and ways to improve your life."
   },
   {
     "lesson_number": 28,
@@ -8986,8 +9040,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “This is me”. Use Past Simple of be: was / were naturally and make your ideas clear.",
-    "speaking_prompt": "Describe where you and your friends were yesterday and how you felt."
+    "writing_title": "Then and Now",
+    "writing_prompt": "Write a short paragraph (80–100 words) comparing your childhood with your present life.",
+    "speaking_title": "My Life Five Years Ago",
+    "speaking_prompt": "Record a 1–2 minute talk comparing your life five years ago with your life today."
   },
   {
     "lesson_number": 29,
@@ -9307,8 +9363,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “Small mistake, big problem”. Use Past Simple: regular verbs naturally and make your ideas clear.",
-    "speaking_prompt": "Tell what happened after a small mistake using regular Past Simple verbs."
+    "writing_title": "A Special Day at School",
+    "writing_prompt": "Write a short email (80–100 words) to a friend describing an interesting event that happened at your school or university last week.",
+    "speaking_title": "My Last Weekend",
+    "speaking_prompt": "Record a 1–2 minute talk about how you spent your last weekend. Describe your activities and experiences."
   },
   {
     "lesson_number": 30,
@@ -9628,8 +9686,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “Multimedia and Desktop Publishing”. Use Present Simple / Continuous / Past Simple review naturally and make your ideas clear.",
-    "speaking_prompt": "Give a short multimedia project update: what you usually do, what you are doing now, and what you did yesterday."
+    "writing_title": "How My Life Has Changed",
+    "writing_prompt": "Write a short paragraph (100–120 words) comparing your life last year with your current lifestyle and daily routine.",
+    "speaking_title": "My Life — Yesterday, Today, and Every Day",
+    "speaking_prompt": "Record a 1–2 minute talk comparing your usual routine, what is happening in your life now, and what you did yesterday."
   },
   {
     "lesson_number": 31,
@@ -9949,8 +10009,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “Happy New Year”. Use Past Simple: irregular verbs naturally and make your ideas clear.",
-    "speaking_prompt": "Tell your friend about a memorable New Year using at least five irregular Past Simple verbs."
+    "writing_title": "A Trip I Will Never Forget",
+    "writing_prompt": "Write a short story (90–110 words) about a memorable trip or adventure you had in the past.",
+    "speaking_title": "An Unforgettable Experience",
+    "speaking_prompt": "Record a 1–2 minute talk about an interesting or unforgettable experience from your past."
   },
   {
     "lesson_number": 32,
@@ -10270,8 +10332,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “A murder in the family”. Use Past Continuous naturally and make your ideas clear.",
-    "speaking_prompt": "Describe what different family members were doing when an unexpected event happened."
+    "writing_title": "An Unexpected Event",
+    "writing_prompt": "Write a short story (90–110 words) about an unexpected event that happened while you were doing something else.",
+    "speaking_title": "What Were You Doing?",
+    "speaking_prompt": "Record a 1–2 minute talk about an unusual or interesting evening in your past. Describe what you and other people were doing when something unexpected happened."
   },
   {
     "lesson_number": 33,
@@ -10591,8 +10655,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “Careers in ICT”. Use Present Perfect naturally and make your ideas clear.",
-    "speaking_prompt": "You are applying for an ICT internship. Explain what you have already done and what experience you have gained."
+    "writing_title": "My Achievements and Future Goals",
+    "writing_prompt": "Write a short paragraph (100–120 words) about your achievements, life experiences, and things you haven't accomplished yet.",
+    "speaking_title": "My Life Experiences",
+    "speaking_prompt": "Record a 1–2 minute talk about your life experiences, achievements, and things you haven't done yet."
   },
   {
     "lesson_number": 34,
@@ -10912,8 +10978,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “A house with a history”. Use Relative clauses + linking words naturally and make your ideas clear.",
-    "speaking_prompt": "Describe an old house using relative clauses, then connect the story with linking words."
+    "writing_title": "The People and Places That Inspire Me",
+    "writing_prompt": "Write a short paragraph (100–120 words) about people, places, and things that are important in your life.",
+    "speaking_title": "People, Places, and Things That Matter to Me",
+    "speaking_prompt": "Record a 1–2 minute talk about important people, places, and things in your life."
   },
   {
     "lesson_number": 35,
@@ -11233,8 +11301,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “Do you believe in ghosts?”. Use First & Second Conditionals naturally and make your ideas clear.",
-    "speaking_prompt": "Give advice to a friend: one real future possibility and one imaginary situation using first and second conditionals."
+    "writing_title": "My Future — Reality vs. Imagination",
+    "writing_prompt": "Write a short paragraph (100–120 words) comparing your realistic future plans with your imaginary dreams.",
+    "speaking_title": "Real Plans and Impossible Dreams",
+    "speaking_prompt": "Record a 1–2 minute talk about your future plans and imaginary situations."
   },
   {
     "lesson_number": 36,
@@ -11554,8 +11624,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “Networking and communications”. Use Opinion language: I think / I believe / In my opinion naturally and make your ideas clear.",
-    "speaking_prompt": "Discuss whether social networking helps students. Give and support your opinion politely."
+    "writing_title": "Should Students Use Smartphones at School?",
+    "writing_prompt": "Write a short opinion paragraph (100–120 words) answering the question: \"Should students be allowed to use smartphones during lessons?\"",
+    "speaking_title": "Express Your Opinion",
+    "speaking_prompt": "Record a 1–2 minute talk sharing your opinions about the following statement: \"Online learning is better than traditional classroom learning.\""
   },
   {
     "lesson_number": 37,
@@ -11875,8 +11947,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “What’s for dinner?”. Use Third & Mixed Conditionals naturally and make your ideas clear.",
-    "speaking_prompt": "Reflect on a past decision: say what would have happened differently and connect it to the present if possible."
+    "writing_title": "A Different Life",
+    "writing_prompt": "Imagine you could go back in time and change some important decisions. Write a reflective paragraph (120–150 words) explaining what you would change and how your life might be different today.",
+    "speaking_title": "If I Could Change the Past",
+    "speaking_prompt": "Record a 2-minute talk about a past decision you regret and how your life might be different today."
   },
   {
     "lesson_number": 38,
@@ -12196,8 +12270,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “White Gold”. Use Future plans, suggestions & planning language naturally and make your ideas clear.",
-    "speaking_prompt": "Plan a trip with a friend. Talk about future plans, food and suggestions."
+    "writing_title": "Organizing a Weekend Trip",
+    "writing_prompt": "Write an email (100–120 words) to your friends suggesting a weekend trip and explaining your plans.",
+    "speaking_title": "Planning a Weekend Trip",
+    "speaking_prompt": "Record a 1–2 minute talk about a weekend trip you are planning with your friends. Explain your plans and suggest activities."
   },
   {
     "lesson_number": 39,
@@ -12517,8 +12593,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “Beyond the Digital Era”. Use Future Simple: will naturally and make your ideas clear.",
-    "speaking_prompt": "Predict how digital learning will change in ten years using will/won’t."
+    "writing_title": "Life in 2050",
+    "writing_prompt": "Write a short paragraph (100–120 words) predicting what life will be like in 2050.",
+    "speaking_title": "My Predictions for the Future",
+    "speaking_prompt": "Record a 1–2 minute talk about how you think your life and the world will change in the next 10 years."
   },
   {
     "lesson_number": 40,
@@ -12838,8 +12916,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “Quizzes and quizzers”. Use Past Perfect naturally and make your ideas clear.",
-    "speaking_prompt": "Explain two past events and make clear which had happened first."
+    "writing_title": "The Day I Missed an Important Event",
+    "writing_prompt": "Imagine you missed an important exam, meeting, or flight because several things had gone wrong earlier. Write a short story (100–120 words) explaining what happened.",
+    "speaking_title": "A Day When Everything Went Wrong",
+    "speaking_prompt": "Record a 1–2 minute story about a day when something unexpected happened because of earlier events."
   },
   {
     "lesson_number": 41,
@@ -13159,8 +13239,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “A top of the list”. Use Future Perfect naturally and make your ideas clear.",
-    "speaking_prompt": "Set study goals for the end of the semester using Future Perfect."
+    "writing_title": "My Future Success Story",
+    "writing_prompt": "Imagine it is the year 2035. Write a short paragraph (100–120 words) describing what you will have accomplished by then.",
+    "speaking_title": "My Life and Achievements by 2035",
+    "speaking_prompt": "Record a 1–2 minute talk about what you hope to have achieved by 2035."
   },
   {
     "lesson_number": 42,
@@ -13480,8 +13562,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “Software engineer”. Use Gerund / Infinitive naturally and make your ideas clear.",
-    "speaking_prompt": "Describe a software engineer’s habits using gerunds and infinitives accurately."
+    "writing_title": "My Personal Development Plan",
+    "writing_prompt": "Write a short paragraph (100–120 words) about the skills you want to develop and the habits you want to change.",
+    "speaking_title": "My Goals, Habits, and Interests",
+    "speaking_prompt": "Record a 1–2 minute talk about your hobbies, daily habits, and future goals."
   },
   {
     "lesson_number": 43,
@@ -13801,8 +13885,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “In the footsteps of Marco Polo”. Use Future forms: going to / will / Present Continuous naturally and make your ideas clear.",
-    "speaking_prompt": "Explain three future arrangements: a plan, a prediction/decision, and a fixed arrangement."
+    "writing_title": "Planning My Perfect Summer Holiday",
+    "writing_prompt": "Write an email (100–120 words) to a friend describing your summer holiday plans, confirmed arrangements, and predictions.",
+    "speaking_title": "My Plans for the Next Year",
+    "speaking_prompt": "Record a 1–2 minute talk about your plans, arrangements, and predictions for the next year."
   },
   {
     "lesson_number": 44,
@@ -14122,8 +14208,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “The cards don’t lie”. Use Future Perfect Continuous naturally and make your ideas clear.",
-    "speaking_prompt": "Imagine graduation day: say how long you will have been studying or developing key skills by then."
+    "writing_title": "My Life Five Years from Now",
+    "writing_prompt": "Imagine your life five years from now. Write a short paragraph (100–120 words) describing how long you will have been working toward your goals.",
+    "speaking_title": "How Long Will You Have Been Doing It?",
+    "speaking_prompt": "Record a 1–2 minute talk about activities you will still be doing in the future and how long you will have been doing them."
   },
   {
     "lesson_number": 45,
@@ -14443,8 +14531,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “Game developer”. Use Present Perfect Continuous naturally and make your ideas clear.",
-    "speaking_prompt": "Explain an activity you started in the past and are still doing now; emphasize duration."
+    "writing_title": "My Progress and Recent Activities",
+    "writing_prompt": "Write a short paragraph (100–120 words) about the activities you have been doing recently and how they have affected your life.",
+    "speaking_title": "What Have You Been Doing Lately?",
+    "speaking_prompt": "Record a 1–2 minute talk about activities you started in the past and are still doing or have recently stopped."
   },
   {
     "lesson_number": 46,
@@ -14764,8 +14854,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “A culture shock”. Use Past Perfect Continuous naturally and make your ideas clear.",
-    "speaking_prompt": "Tell a past story where one activity had been continuing before another past event."
+    "writing_title": "The Day Everything Changed",
+    "writing_prompt": "Write a short story (100–120 words) about an important event that happened after weeks or months of preparation.",
+    "speaking_title": "Why Was I So Exhausted?",
+    "speaking_prompt": "Record a 1–2 minute story about a day when you felt extremely tired, stressed, or excited because of activities you had been doing earlier."
   },
   {
     "lesson_number": 47,
@@ -15085,8 +15177,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “It’s on my list”. Use Passive Voice naturally and make your ideas clear.",
-    "speaking_prompt": "Explain how an app is developed, tested and released using Passive Voice."
+    "writing_title": "How a Product Is Made",
+    "writing_prompt": "Write a short report (120–150 words) explaining how a product you use every day is manufactured.",
+    "speaking_title": "How Things Are Made",
+    "speaking_prompt": "Record a 1–2 minute talk explaining how a common product (such as chocolate, paper, or bread) is made and used."
   },
   {
     "lesson_number": 48,
@@ -15406,8 +15500,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a reflective paragraph connected with “Computer security speacialist”. Use Indirect Questions naturally and make your ideas clear.",
-    "speaking_prompt": "You are speaking to an IT specialist. Ask polite indirect questions about security and passwords."
+    "writing_title": "Requesting University Information",
+    "writing_prompt": "Write a formal email (100–120 words) to an international university asking for information about its English language courses.",
+    "speaking_title": "Asking for Information Politely",
+    "speaking_prompt": "Imagine you are visiting a university abroad and need information about courses, accommodation, and student life. Record a 1–2 minute talk asking polite questions."
   },
   {
     "lesson_number": 49,
@@ -15727,8 +15823,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a message to a classmate connected with “Download the app”. Use Complex clauses & connectors naturally and make your ideas clear.",
-    "speaking_prompt": "Explain why you downloaded an app using complex clauses and varied connectors."
+    "writing_title": "Is Technology Making Students' Lives Better?",
+    "writing_prompt": "Write a short opinion essay (150–180 words) discussing the advantages and disadvantages of technology in education.",
+    "speaking_title": "The Challenges of Student Life",
+    "speaking_prompt": "Record a 2-minute talk about the challenges students face and how they can overcome them."
   },
   {
     "lesson_number": 50,
@@ -16048,8 +16146,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short academic-style response connected with “It’s a classic!”. Use Participle clauses & nominalisation naturally and make your ideas clear.",
-    "speaking_prompt": "Summarize an academic story using participle clauses and more formal nominalised language."
+    "writing_title": "The Impact of Artificial Intelligence on Education",
+    "writing_prompt": "Write a short academic paragraph (150–180 words) discussing how artificial intelligence is transforming education.",
+    "speaking_title": "How Technology Is Changing Education",
+    "speaking_prompt": "Record a 2-minute talk explaining how technology is changing education and influencing students' learning experiences."
   },
   {
     "lesson_number": 51,
@@ -16369,8 +16469,10 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a short opinion paragraph connected with “Let’s go out for dinner!”. Use Inversion naturally and make your ideas clear.",
-    "speaking_prompt": "Give an emphatic review of a restaurant or experience using at least one correct inversion structure."
+    "writing_title": "A Challenge That Changed My Life",
+    "writing_prompt": "Write a reflective essay (150–180 words) about a difficult experience that taught you an important lesson.",
+    "speaking_title": "Lessons Life Has Taught Me",
+    "speaking_prompt": "Record a 2-minute talk about important experiences, challenges, and lessons you have learned in life."
   },
   {
     "lesson_number": 52,
@@ -16690,7 +16792,9 @@
         "hint": "Combine the speakers’ purpose, details and final result rather than focusing on one word."
       }
     ],
-    "writing_prompt": "Write a formal email connected with “National treasure”. Use Formal conclusions naturally and make your ideas clear.",
-    "speaking_prompt": "Give a formal 45-second conclusion to a short academic presentation. Do not introduce a new idea."
+    "writing_title": "The Future of Artificial Intelligence in Education",
+    "writing_prompt": "Write a formal conclusion (100–120 words) for an essay discussing the benefits and risks of artificial intelligence in education.",
+    "speaking_title": "My Final Thoughts on Online Education",
+    "speaking_prompt": "Record a 2-minute talk discussing whether online education is as effective as traditional classroom learning. End your talk with a clear, formal conclusion."
   }
 ]

@@ -4,9 +4,11 @@ Create the table first (SQL in the Supabase SQL Editor), then run:
 
     .venv/bin/python seed_supabase.py            # upsert all lessons
     .venv/bin/python seed_supabase.py --dry-run  # validate only, no network
+    .venv/bin/python seed_supabase.py --verify   # compare the table, no writes
 
 Rows are upserted on `lesson_number`, so re-running updates lessons in place
-instead of duplicating them.
+instead of duplicating them. Afterwards every row is read back and compared
+with the seed file, column by column.
 
 Credentials: SUPABASE_URL is read from `.env`. The service_role key must go
 in `.env.seed` (git-ignored) as SUPABASE_SERVICE_ROLE_KEY — never in `.env`,
@@ -49,7 +51,9 @@ COLUMNS = [
     "listening_format",
     "listening_speakers",
     "listening_questions",
+    "writing_title",
     "writing_prompt",
+    "speaking_title",
     "speaking_prompt",
 ]
 
@@ -102,6 +106,27 @@ def create_client_from_env():
     return create_client(url, key)
 
 
+def verify(client, lessons):
+    """Reads every row back and exits if any seeded column differs."""
+    rows = client.table(TABLE).select(",".join(COLUMNS)).execute().data
+    live = {row["lesson_number"]: row for row in rows}
+    problems = []
+    if len(rows) != len(lessons):
+        problems.append(f"table has {len(rows)} rows, seed file {len(lessons)}")
+    for lesson in lessons:
+        number = lesson["lesson_number"]
+        row = live.get(number)
+        if row is None:
+            problems.append(f"lesson {number}: missing from the table")
+            continue
+        differing = [column for column in COLUMNS if row[column] != lesson[column]]
+        if differing:
+            problems.append(f"lesson {number}: {', '.join(differing)} differ")
+    if problems:
+        sys.exit(f"`{TABLE}` does not match {DATA_FILE.name}:\n  " + "\n  ".join(problems))
+    print(f"Verified: all {len(rows)} rows of `{TABLE}` match {DATA_FILE.name}.")
+
+
 def progress_bar(done, total, width=30):
     filled = round(width * done / total)
     return f"[{'#' * filled}{'.' * (width - filled)}] {done}/{total}"
@@ -116,6 +141,10 @@ def main():
         return
 
     client = create_client_from_env()
+    if "--verify" in sys.argv:
+        verify(client, lessons)
+        return
+
     total = len(lessons)
     done = 0
     for start in range(0, total, BATCH_SIZE):
@@ -134,9 +163,7 @@ def main():
         print(f"\r{progress_bar(done, total)}  lessons {first}–{last}", end="", flush=True)
 
     print(f"\nSeeded {done} lessons into `{TABLE}`.")
-
-    count = client.table(TABLE).select("lesson_number", count="exact").execute().count
-    print(f"Table `{TABLE}` now has {count} rows.")
+    verify(client, lessons)
 
 
 if __name__ == "__main__":

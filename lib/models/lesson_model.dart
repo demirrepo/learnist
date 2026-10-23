@@ -27,7 +27,9 @@ class Lesson {
     this.listeningSpeakers = const [],
     this.listeningQuestions = const [],
     this.audioUrl,
+    this.writingTitle,
     this.writingPrompt,
+    this.speakingTitle,
     this.speakingPrompt,
   });
 
@@ -57,7 +59,9 @@ class Lesson {
       listeningSpeakers: _stringList(json['listening_speakers']),
       listeningQuestions: _jsonList(json['listening_questions']),
       audioUrl: _optionalString(json['audio_url']),
+      writingTitle: _optionalString(json['writing_title']),
       writingPrompt: _optionalString(json['writing_prompt']),
+      speakingTitle: _optionalString(json['speaking_title']),
       speakingPrompt: _optionalString(json['speaking_prompt']),
     );
   }
@@ -109,7 +113,13 @@ class Lesson {
   /// `listening_audios` bucket. Null until `generate_audios.py` has run for
   /// this lesson; the listening tab then falls back to transcript-only.
   final String? audioUrl;
+
+  /// Title of the writing task; [writingPrompt] is its instruction.
+  final String? writingTitle;
   final String? writingPrompt;
+
+  /// Title of the speaking task; [speakingPrompt] is its instruction.
+  final String? speakingTitle;
   final String? speakingPrompt;
 
   /// The grammar explanation in [languageCode], or the Uzbek one when it

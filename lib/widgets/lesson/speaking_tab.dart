@@ -42,7 +42,7 @@ class SpeakingTab extends ConsumerWidget {
           child: LessonPrompt(
             tagIcon: LucideIcons.mic,
             tag: 'Speaking task',
-            title: lesson.title,
+            title: lesson.speakingTitle ?? lesson.title,
             body: prompt,
           ),
         ),
