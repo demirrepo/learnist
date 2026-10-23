@@ -41,7 +41,7 @@ class SpeakingTab extends ConsumerWidget {
         LessonCard(
           child: LessonPrompt(
             tagIcon: LucideIcons.mic,
-            tag: 'Speaking task',
+            tag: context.l10n.lessonTagSpeakingTask,
             title: lesson.speakingTitle ?? lesson.title,
             body: prompt,
           ),
@@ -51,7 +51,7 @@ class SpeakingTab extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Transcript',
+                context.l10n.lessonTranscript,
                 style: GoogleFonts.manrope(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
@@ -62,8 +62,8 @@ class SpeakingTab extends ConsumerWidget {
               AiGradedTask(
                 lessonNumber: number,
                 section: 'speaking',
-                buttonLabel: 'Assess speaking',
-                hint: 'Record your answer, or type what you said here…',
+                buttonLabel: context.l10n.lessonAssessSpeaking,
+                hint: context.l10n.lessonSpeakingHint,
                 minLines: 5,
                 isSpeakingTask: true,
                 evaluate: (ai, answer) => ai.evaluateSpeaking(answer, prompt),

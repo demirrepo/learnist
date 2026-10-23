@@ -64,7 +64,8 @@ import 'app_localizations_uz.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,7 +73,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -84,19 +86,20 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('kk'),
     Locale('ru'),
-    Locale('uz')
+    Locale('uz'),
   ];
 
   /// No description provided for @navHome.
@@ -1040,9 +1043,1102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Learnist AI couldn\'t answer. Please try again.'**
   String get askAiFailed;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @teacherEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'CLASS ANALYTICS'**
+  String get teacherEyebrow;
+
+  /// No description provided for @teacherWorkspaceEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'TEACHER WORKSPACE'**
+  String get teacherWorkspaceEyebrow;
+
+  /// No description provided for @teacherWorkspaceHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'See who is learning — and where they struggle.'**
+  String get teacherWorkspaceHeadline;
+
+  /// No description provided for @teacherWorkspaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create classes, connect students through a class login/password, and monitor lesson progress, CEFR history and recurring error categories.'**
+  String get teacherWorkspaceBody;
+
+  /// No description provided for @teacherCreateGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create group'**
+  String get teacherCreateGroup;
+
+  /// No description provided for @teacherConnectedStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECTED STUDENTS'**
+  String get teacherConnectedStudents;
+
+  /// No description provided for @teacherConnectedStudentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 connected student} other{{count} connected students}}'**
+  String teacherConnectedStudentCount(int count);
+
+  /// No description provided for @teacherGroupCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 group} other{{count} groups}}'**
+  String teacherGroupCount(int count);
+
+  /// No description provided for @teacherStudentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 student} other{{count} students}}'**
+  String teacherStudentCount(int count);
+
+  /// No description provided for @teacherClassOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Class overview'**
+  String get teacherClassOverview;
+
+  /// No description provided for @teacherStudentsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Students active'**
+  String get teacherStudentsActive;
+
+  /// No description provided for @teacherAverageMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'Average mastery'**
+  String get teacherAverageMastery;
+
+  /// No description provided for @teacherGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get teacherGroups;
+
+  /// No description provided for @teacherGroupsAndStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups & students'**
+  String get teacherGroupsAndStudents;
+
+  /// No description provided for @teacherNoGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups yet. Create one to connect students.'**
+  String get teacherNoGroups;
+
+  /// No description provided for @teacherNoStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'No students connected yet.'**
+  String get teacherNoStudents;
+
+  /// No description provided for @groupClassLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Class login'**
+  String get groupClassLogin;
+
+  /// Lowercase label after the class login, e.g. "Class login: ELT301 • password: elt301".
+  ///
+  /// In en, this message translates to:
+  /// **'password'**
+  String get teacherPasswordInline;
+
+  /// No description provided for @teacherColumnStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'STUDENT'**
+  String get teacherColumnStudent;
+
+  /// No description provided for @teacherColumnCurrentLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'CURRENT LESSON'**
+  String get teacherColumnCurrentLesson;
+
+  /// No description provided for @teacherColumnMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'MASTERY'**
+  String get teacherColumnMastery;
+
+  /// No description provided for @teacherColumnAction.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTION'**
+  String get teacherColumnAction;
+
+  /// Compact current-lesson cell in the student table.
+  ///
+  /// In en, this message translates to:
+  /// **'L{number}'**
+  String teacherLessonShort(int number);
+
+  /// No description provided for @teacherChipLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson'**
+  String get teacherChipLesson;
+
+  /// No description provided for @teacherChipMastery.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery'**
+  String get teacherChipMastery;
+
+  /// No description provided for @teacherView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get teacherView;
+
+  /// No description provided for @teacherGroupCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Group «{name}» created.'**
+  String teacherGroupCreated(String name);
+
+  /// No description provided for @teacherGroupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Group name'**
+  String get teacherGroupName;
+
+  /// No description provided for @teacherLoginHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'3–32 characters: A–Z, 0–9, _ or -'**
+  String get teacherLoginHelper;
+
+  /// No description provided for @groupPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get groupPassword;
+
+  /// No description provided for @teacherGroupNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a group name.'**
+  String get teacherGroupNameRequired;
+
+  /// No description provided for @teacherLoginInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The login must be 3–32 letters, digits, _ or -.'**
+  String get teacherLoginInvalid;
+
+  /// No description provided for @teacherPasswordInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The password must be 4–64 characters long.'**
+  String get teacherPasswordInvalid;
+
+  /// No description provided for @teacherCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get teacherCreate;
+
+  /// No description provided for @teacherLoginTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This login is taken. Please choose another one.'**
+  String get teacherLoginTaken;
+
+  /// No description provided for @teacherCreateGroupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t create the group. Please try again.'**
+  String get teacherCreateGroupFailed;
+
+  /// No description provided for @teacherLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the data. Please try again.'**
+  String get teacherLoadFailed;
+
+  /// No description provided for @teacherStudentDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'STUDENT DETAIL'**
+  String get teacherStudentDetail;
+
+  /// No description provided for @teacherCurrentLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'current lesson {number}'**
+  String teacherCurrentLesson(int number);
+
+  /// No description provided for @teacherLessonProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson progress'**
+  String get teacherLessonProgress;
+
+  /// No description provided for @teacherLessonInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} • in progress'**
+  String teacherLessonInProgress(String title);
+
+  /// No description provided for @teacherNoLessonsStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'No lessons started yet.'**
+  String get teacherNoLessonsStarted;
+
+  /// No description provided for @joinGroupIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the class login and password your teacher gave you.'**
+  String get joinGroupIntro;
+
+  /// No description provided for @joinGroupFieldRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in this field.'**
+  String get joinGroupFieldRequired;
+
+  /// No description provided for @joinGroupSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get joinGroupSubmit;
+
+  /// No description provided for @joinGroupJoined.
+  ///
+  /// In en, this message translates to:
+  /// **'You joined «{name}».'**
+  String joinGroupJoined(String name);
+
+  /// No description provided for @joinGroupAlreadyMember.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already in «{name}».'**
+  String joinGroupAlreadyMember(String name);
+
+  /// No description provided for @joinGroupInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong login or password.'**
+  String get joinGroupInvalidCredentials;
+
+  /// No description provided for @joinGroupOwnGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t join a group you created.'**
+  String get joinGroupOwnGroup;
+
+  /// No description provided for @joinGroupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t join the group. Please try again.'**
+  String get joinGroupFailed;
+
+  /// No description provided for @authEyebrowSignUp.
+  ///
+  /// In en, this message translates to:
+  /// **'START YOUR ENGLISH JOURNEY'**
+  String get authEyebrowSignUp;
+
+  /// No description provided for @authEyebrowSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'WELCOME BACK'**
+  String get authEyebrowSignIn;
+
+  /// No description provided for @authTitleSignUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get authTitleSignUp;
+
+  /// No description provided for @authTitleSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to Learnist'**
+  String get authTitleSignIn;
+
+  /// No description provided for @authSubtitleSignUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Join thousands of students preparing for their CEFR certificate.'**
+  String get authSubtitleSignUp;
+
+  /// No description provided for @authSubtitleSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up right where you left off.'**
+  String get authSubtitleSignIn;
+
+  /// No description provided for @authSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get authSignIn;
+
+  /// No description provided for @authSignUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get authSignUp;
+
+  /// No description provided for @authCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get authCreateAccount;
+
+  /// No description provided for @authEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get authEmail;
+
+  /// No description provided for @authEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get authEmailRequired;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'That email address isn\'t valid'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get authPassword;
+
+  /// No description provided for @authPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password'**
+  String get authPasswordHint;
+
+  /// No description provided for @authPasswordHintNew.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 6 characters'**
+  String get authPasswordHintNew;
+
+  /// No description provided for @authShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get authShowPassword;
+
+  /// No description provided for @authHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get authHidePassword;
+
+  /// No description provided for @authPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get authPasswordRequired;
+
+  /// No description provided for @authPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'The password must be at least 6 characters'**
+  String get authPasswordTooShort;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your password?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get authFullName;
+
+  /// No description provided for @authFullNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your full name'**
+  String get authFullNameHint;
+
+  /// No description provided for @authFullNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your full name'**
+  String get authFullNameRequired;
+
+  /// No description provided for @authUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get authUsername;
+
+  /// No description provided for @authUsernameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. learner_01'**
+  String get authUsernameHint;
+
+  /// No description provided for @authUsernameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'3–30 characters: letters, digits, _ or .'**
+  String get authUsernameInvalid;
+
+  /// No description provided for @authUniversity.
+  ///
+  /// In en, this message translates to:
+  /// **'University'**
+  String get authUniversity;
+
+  /// No description provided for @authUniversityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your university'**
+  String get authUniversityHint;
+
+  /// No description provided for @authUniversityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your university'**
+  String get authUniversityRequired;
+
+  /// University list entry for a university that isn't listed.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get authOtherUniversity;
+
+  /// No description provided for @authUniversityName.
+  ///
+  /// In en, this message translates to:
+  /// **'University name'**
+  String get authUniversityName;
+
+  /// No description provided for @authUniversityNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your university name'**
+  String get authUniversityNameHint;
+
+  /// No description provided for @authUniversityNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the university name'**
+  String get authUniversityNameRequired;
+
+  /// No description provided for @authHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get authHaveAccount;
+
+  /// No description provided for @authNewToLearnist.
+  ///
+  /// In en, this message translates to:
+  /// **'New to Learnist?'**
+  String get authNewToLearnist;
+
+  /// No description provided for @authSignInInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in instead'**
+  String get authSignInInstead;
+
+  /// No description provided for @authCreateAnAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account'**
+  String get authCreateAnAccount;
+
+  /// No description provided for @authConfirmEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve sent a confirmation link to your email. Open it, then sign in.'**
+  String get authConfirmEmailSent;
+
+  /// No description provided for @authResetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get authResetTitle;
+
+  /// No description provided for @authResetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the email linked to your account — we\'ll send you a reset link.'**
+  String get authResetBody;
+
+  /// No description provided for @authResetSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send link'**
+  String get authResetSend;
+
+  /// No description provided for @authResetSent.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve sent a password reset link to your email.'**
+  String get authResetSent;
+
+  /// No description provided for @passwordEyebrow.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCOUNT RECOVERY'**
+  String get passwordEyebrow;
+
+  /// No description provided for @passwordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a new password'**
+  String get passwordTitle;
+
+  /// No description provided for @passwordBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a new, secure password for your account. You\'ll use it the next time you sign in.'**
+  String get passwordBody;
+
+  /// No description provided for @passwordNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get passwordNew;
+
+  /// No description provided for @passwordNewRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a new password'**
+  String get passwordNewRequired;
+
+  /// No description provided for @passwordSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save password'**
+  String get passwordSave;
+
+  /// No description provided for @passwordUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password has been updated.'**
+  String get passwordUpdated;
+
+  /// No description provided for @authRoleMismatchStudent.
+  ///
+  /// In en, this message translates to:
+  /// **'You registered as a student. Please pick the \'Student\' tab.'**
+  String get authRoleMismatchStudent;
+
+  /// No description provided for @authRoleMismatchTeacher.
+  ///
+  /// In en, this message translates to:
+  /// **'You registered as a teacher. Please pick the \'Teacher\' tab.'**
+  String get authRoleMismatchTeacher;
+
+  /// No description provided for @authUsernameTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This username is already taken. Please choose another one.'**
+  String get authUsernameTaken;
+
+  /// No description provided for @errorServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong on the server. Please try again in a moment.'**
+  String get errorServer;
+
+  /// No description provided for @authResetOtherDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the link on the device where you asked to reset your password.'**
+  String get authResetOtherDevice;
+
+  /// No description provided for @authLinkExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The link has expired or was already used. Please request a new one.'**
+  String get authLinkExpired;
+
+  /// No description provided for @authEmailExists.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists. Please sign in.'**
+  String get authEmailExists;
+
+  /// No description provided for @authInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong email or password.'**
+  String get authInvalidCredentials;
+
+  /// No description provided for @authEmailNotConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email isn\'t confirmed yet. Click the link in your inbox.'**
+  String get authEmailNotConfirmed;
+
+  /// No description provided for @authWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The password is too simple. Enter a stronger one of at least 6 characters.'**
+  String get authWeakPassword;
+
+  /// No description provided for @authSamePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The new password must be different from the old one.'**
+  String get authSamePassword;
+
+  /// No description provided for @authSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please request a new reset link.'**
+  String get authSessionExpired;
+
+  /// No description provided for @authEmailAddressInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'The email address was entered incorrectly.'**
+  String get authEmailAddressInvalid;
+
+  /// No description provided for @authRateLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please try again in a moment.'**
+  String get authRateLimited;
+
+  /// No description provided for @authSignupDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-up is turned off for now.'**
+  String get authSignupDisabled;
+
+  /// No description provided for @profileUsernameTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'This username is taken.'**
+  String get profileUsernameTaken;
+
+  /// No description provided for @profileNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile wasn\'t found. Sign out and sign in again.'**
+  String get profileNotFound;
+
+  /// No description provided for @profileUpdateForbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not allowed to change this profile.'**
+  String get profileUpdateForbidden;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @editProfileFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'First and last name'**
+  String get editProfileFullName;
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your changes have been saved'**
+  String get profileSaved;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @lessonTitleWithNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson {number}: {title}'**
+  String lessonTitleWithNumber(int number, String title);
+
+  /// No description provided for @lessonTagPracticalTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Practical task'**
+  String get lessonTagPracticalTask;
+
+  /// No description provided for @lessonTagGrammarRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Grammar rule'**
+  String get lessonTagGrammarRule;
+
+  /// No description provided for @lessonTagSpeakingTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking task'**
+  String get lessonTagSpeakingTask;
+
+  /// No description provided for @lessonTagWritingTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Writing task'**
+  String get lessonTagWritingTask;
+
+  /// No description provided for @lessonAnalyzeAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze my answer'**
+  String get lessonAnalyzeAnswer;
+
+  /// No description provided for @lessonAnswerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your answer here…'**
+  String get lessonAnswerHint;
+
+  /// No description provided for @lessonAssessWriting.
+  ///
+  /// In en, this message translates to:
+  /// **'Assess my writing'**
+  String get lessonAssessWriting;
+
+  /// No description provided for @lessonWritingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your text here…'**
+  String get lessonWritingHint;
+
+  /// No description provided for @lessonWordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} / {min}–{max} words'**
+  String lessonWordCount(int count, int min, int max);
+
+  /// No description provided for @lessonCefrLenses.
+  ///
+  /// In en, this message translates to:
+  /// **'CEFR lenses'**
+  String get lessonCefrLenses;
+
+  /// No description provided for @lessonCefrLensesCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Your writing is assessed through these levels.'**
+  String get lessonCefrLensesCaption;
+
+  /// No description provided for @lessonLensA1.
+  ///
+  /// In en, this message translates to:
+  /// **'Short, correct sentences using the lesson\'s grammar.'**
+  String get lessonLensA1;
+
+  /// No description provided for @lessonLensA2.
+  ///
+  /// In en, this message translates to:
+  /// **'Link ideas with and, but and because.'**
+  String get lessonLensA2;
+
+  /// No description provided for @lessonLensB1.
+  ///
+  /// In en, this message translates to:
+  /// **'Add details and reasons in clear paragraphs.'**
+  String get lessonLensB1;
+
+  /// No description provided for @lessonLensB2.
+  ///
+  /// In en, this message translates to:
+  /// **'Vary your vocabulary and sentence structure.'**
+  String get lessonLensB2;
+
+  /// No description provided for @lessonTranscript.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcript'**
+  String get lessonTranscript;
+
+  /// No description provided for @lessonAssessSpeaking.
+  ///
+  /// In en, this message translates to:
+  /// **'Assess speaking'**
+  String get lessonAssessSpeaking;
+
+  /// No description provided for @lessonSpeakingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your answer, or type what you said here…'**
+  String get lessonSpeakingHint;
+
+  /// No description provided for @lessonAskAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get lessonAskAi;
+
+  /// No description provided for @micIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the mic and speak (up to {minutes, plural, =1{1 minute} other{{minutes} minutes}})'**
+  String micIdle(int minutes);
+
+  /// No description provided for @micRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording… Tap to stop'**
+  String get micRecording;
+
+  /// No description provided for @micTranscribing.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcribing…'**
+  String get micTranscribing;
+
+  /// No description provided for @micStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start recording'**
+  String get micStart;
+
+  /// No description provided for @micStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop recording'**
+  String get micStop;
+
+  /// No description provided for @taskMasteryReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Mastery reached: {score}%'**
+  String taskMasteryReached(int score);
+
+  /// No description provided for @recordingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your recording'**
+  String get recordingTitle;
+
+  /// No description provided for @recordingPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play recording'**
+  String get recordingPlay;
+
+  /// No description provided for @recordingPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause recording'**
+  String get recordingPause;
+
+  /// No description provided for @recordingUnplayable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your recording can\'t be played back.'**
+  String get recordingUnplayable;
+
+  /// No description provided for @audioRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get audioRestart;
+
+  /// No description provided for @audioPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get audioPlay;
+
+  /// No description provided for @audioPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get audioPause;
+
+  /// No description provided for @transcriptShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get transcriptShow;
+
+  /// No description provided for @transcriptHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get transcriptHide;
+
+  /// No description provided for @quizAnswerAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer all {total} questions to check your results.'**
+  String quizAnswerAll(int total);
+
+  /// No description provided for @quizScore.
+  ///
+  /// In en, this message translates to:
+  /// **'{correct}/{total} correct'**
+  String quizScore(int correct, int total);
+
+  /// No description provided for @quizReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the text and try again to improve your score.'**
+  String get quizReviewHint;
+
+  /// No description provided for @checkupCooldownError.
+  ///
+  /// In en, this message translates to:
+  /// **'The next level check isn\'t open yet.'**
+  String get checkupCooldownError;
+
+  /// No description provided for @checkupInvalidAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer every question and submit again.'**
+  String get checkupInvalidAnswers;
+
+  /// No description provided for @errorNoResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'The server didn\'t respond. Please try again.'**
+  String get errorNoResponse;
+
+  /// No description provided for @recordingEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'The recorded audio is empty.'**
+  String get recordingEmpty;
+
+  /// No description provided for @transcriptionNoSpeech.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t hear you. Speak closer to the microphone and try again.'**
+  String get transcriptionNoSpeech;
+
+  /// No description provided for @aiEmptyPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your prompt first.'**
+  String get aiEmptyPrompt;
+
+  /// No description provided for @aiBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI is busy right now. Try again in a moment.'**
+  String get aiBusy;
+
+  /// No description provided for @aiFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI couldn\'t answer. Try again.'**
+  String get aiFailed;
+
+  /// No description provided for @aiTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI didn\'t respond. Try again.'**
+  String get aiTimeout;
+
+  /// No description provided for @aiEmptyReply.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI sent an empty reply. Try again.'**
+  String get aiEmptyReply;
+
+  /// No description provided for @aiUnreadableReply.
+  ///
+  /// In en, this message translates to:
+  /// **'The AI\'s reply couldn\'t be read. Try again.'**
+  String get aiUnreadableReply;
+
+  /// No description provided for @errorMapIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions you keep getting wrong in tests. Mistakes repeated at least {count} times are shown — tap a card to study the topic again.'**
+  String errorMapIntro(int count);
+
+  /// No description provided for @errorLegendHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeated often (4+)'**
+  String get errorLegendHigh;
+
+  /// No description provided for @errorLegendMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate (2–3)'**
+  String get errorLegendMedium;
+
+  /// No description provided for @errorMapEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Great! No recurring mistakes yet'**
+  String get errorMapEmptyTitle;
+
+  /// No description provided for @errorMapEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you get the same test question wrong twice, it will show up here.'**
+  String get errorMapEmptyBody;
+
+  /// Card title for a mistake with no description yet.
+  ///
+  /// In en, this message translates to:
+  /// **'{section}: question {number}'**
+  String errorMapQuestion(String section, int number);
+
+  /// No description provided for @errorMistakeCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Missed once in recent tests} other{Missed {count} times in recent tests}}'**
+  String errorMistakeCount(int count);
+
+  /// No description provided for @errorSeverityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'high'**
+  String get errorSeverityHigh;
+
+  /// No description provided for @errorSeverityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'medium'**
+  String get errorSeverityMedium;
+
+  /// No description provided for @errorPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority: {level}'**
+  String errorPriority(String level);
+
+  /// No description provided for @errorReviewLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the lesson'**
+  String get errorReviewLesson;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1051,27 +2147,30 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'kk', 'ru', 'uz'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'kk', 'ru', 'uz'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'kk': return AppLocalizationsKk();
-    case 'ru': return AppLocalizationsRu();
-    case 'uz': return AppLocalizationsUz();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'kk':
+      return AppLocalizationsKk();
+    case 'ru':
+      return AppLocalizationsRu();
+    case 'uz':
+      return AppLocalizationsUz();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

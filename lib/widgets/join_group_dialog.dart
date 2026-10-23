@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../l10n/l10n.dart';
 import '../models/teacher_dashboard.dart';
 import '../services/teacher_service.dart';
 import '../theme/app_theme.dart';
@@ -15,7 +16,9 @@ Future<void> showJoinGroupDialog(BuildContext context) async {
   if (result == null || !context.mounted) return;
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text(joinGroupSuccessMessage(result))));
+    ..showSnackBar(
+      SnackBar(content: Text(joinGroupSuccessMessage(result, context.l10n))),
+    );
 }
 
 /// "Guruhga qo'shilish": the class login and password a teacher shared.
@@ -56,22 +59,26 @@ class _JoinGroupDialogState extends ConsumerState<JoinGroupDialog> {
           .joinGroup(login: _login.text, password: _password.text);
       if (mounted) Navigator.of(context).pop(result);
     } catch (error) {
-      if (mounted) setState(() => _error = joinGroupErrorMessage(error));
+      if (mounted) {
+        setState(() => _error = joinGroupErrorMessage(error, context.l10n));
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
 
   String? _required(String? value) =>
-      (value ?? '').trim().isEmpty ? "Maydonni to'ldiring." : null;
+      (value ?? '').trim().isEmpty ? context.l10n.joinGroupFieldRequired : null;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return AlertDialog(
       backgroundColor: AppColors.surface,
       surfaceTintColor: Colors.transparent,
       title: Text(
-        "Guruhga qo'shilish",
+        l10n.profileJoinGroup,
         style: GoogleFonts.manrope(
           fontSize: 20,
           fontWeight: FontWeight.w800,
@@ -86,7 +93,7 @@ class _JoinGroupDialogState extends ConsumerState<JoinGroupDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                "O'qituvchingiz bergan login va parolni kiriting.",
+                l10n.joinGroupIntro,
                 style: GoogleFonts.manrope(
                   fontSize: 14,
                   height: 1.4,
@@ -102,7 +109,7 @@ class _JoinGroupDialogState extends ConsumerState<JoinGroupDialog> {
                 autofocus: true,
                 textCapitalization: TextCapitalization.characters,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'Class login'),
+                decoration: InputDecoration(labelText: l10n.groupClassLogin),
                 validator: _required,
               ),
               const SizedBox(height: 8),
@@ -113,7 +120,7 @@ class _JoinGroupDialogState extends ConsumerState<JoinGroupDialog> {
                 obscureText: true,
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) => _submit(),
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(labelText: l10n.groupPassword),
                 validator: _required,
               ),
               if (_error case final error?) ...[
@@ -134,7 +141,7 @@ class _JoinGroupDialogState extends ConsumerState<JoinGroupDialog> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(),
-          child: const Text('Bekor qilish'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           key: const ValueKey('join-group-submit'),
@@ -148,7 +155,7 @@ class _JoinGroupDialogState extends ConsumerState<JoinGroupDialog> {
                       color: Colors.white,
                     ),
                   )
-                  : const Text("Qo'shilish"),
+                  : Text(l10n.joinGroupSubmit),
         ),
       ],
     );

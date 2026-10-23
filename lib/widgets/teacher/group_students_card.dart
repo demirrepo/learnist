@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/teacher_dashboard.dart';
 import '../../theme/app_theme.dart';
 import 'teacher_common.dart';
@@ -32,7 +33,7 @@ class GroupStudentsCard extends StatelessWidget {
               _GroupHeader(group: group),
               const SizedBox(height: 16),
               if (group.students.isEmpty)
-                const TeacherEmptyText('No students connected yet.')
+                TeacherEmptyText(context.l10n.teacherNoStudents)
               else if (wide)
                 _StudentTable(students: group.students, onView: onViewStudent)
               else
@@ -67,6 +68,7 @@ class _GroupHeader extends StatelessWidget {
       fontWeight: FontWeight.w800,
       color: AppColors.textPrimary,
     );
+    final l10n = context.l10n;
     final count = group.students.length;
 
     return Row(
@@ -89,9 +91,9 @@ class _GroupHeader extends StatelessWidget {
                 TextSpan(
                   style: muted,
                   children: [
-                    const TextSpan(text: 'Class login: '),
+                    TextSpan(text: '${l10n.groupClassLogin}: '),
                     TextSpan(text: group.login, style: bold),
-                    const TextSpan(text: ' • password: '),
+                    TextSpan(text: ' • ${l10n.teacherPasswordInline}: '),
                     TextSpan(text: group.password, style: bold),
                   ],
                 ),
@@ -107,7 +109,7 @@ class _GroupHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(99),
           ),
           child: Text(
-            count == 1 ? '1 student' : '$count students',
+            l10n.teacherStudentCount(count),
             style: GoogleFonts.manrope(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -139,28 +141,33 @@ class _StudentTable extends StatelessWidget {
       color: AppColors.textMuted,
     );
     const divider = Divider(height: 1, color: AppColors.border);
+    final l10n = context.l10n;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _TableRow(
           cells: [
-            for (final label in const [
-              'TALABA',
-              'CURRENT LESSON',
-              'MASTERY',
+            for (final label in [
+              l10n.teacherColumnStudent,
+              l10n.teacherColumnCurrentLesson,
+              l10n.teacherColumnMastery,
               'CEFR',
             ])
               Text(label, style: headerStyle),
           ],
-          action: Text('ACTION', style: headerStyle, textAlign: TextAlign.end),
+          action: Text(
+            l10n.teacherColumnAction,
+            style: headerStyle,
+            textAlign: TextAlign.end,
+          ),
         ),
         divider,
         for (final student in students) ...[
           _TableRow(
             cells: [
               _NameCell(student: student),
-              _BodyText('L${student.currentLesson}'),
+              _BodyText(l10n.teacherLessonShort(student.currentLesson)),
               _BodyText('${student.masteryPercent}%'),
               _BodyText(student.cefrLevel ?? '—'),
             ],
@@ -206,6 +213,8 @@ class _StudentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -227,8 +236,11 @@ class _StudentTile extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _InfoChip('Lesson', 'L${student.currentLesson}'),
-              _InfoChip('Mastery', '${student.masteryPercent}%'),
+              _InfoChip(
+                l10n.teacherChipLesson,
+                l10n.teacherLessonShort(student.currentLesson),
+              ),
+              _InfoChip(l10n.teacherChipMastery, '${student.masteryPercent}%'),
               _InfoChip('CEFR', student.cefrLevel ?? '—'),
             ],
           ),
@@ -357,7 +369,7 @@ class _ViewButton extends StatelessWidget {
           fontWeight: FontWeight.w800,
         ),
       ),
-      child: const Text('View'),
+      child: Text(context.l10n.teacherView),
     );
   }
 }

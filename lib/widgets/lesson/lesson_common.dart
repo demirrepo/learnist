@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 
 const lessonCardRadius = BorderRadius.all(Radius.circular(16));
@@ -248,7 +249,7 @@ class AskAiButton extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onPressed,
       icon: const Icon(LucideIcons.messageCircle, size: 18),
-      label: const Text('Ask AI', maxLines: 1),
+      label: Text(context.l10n.lessonAskAi, maxLines: 1),
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
         backgroundColor: AppColors.primarySoft,
@@ -280,20 +281,63 @@ class LessonActionRow extends StatelessWidget {
   final VoidCallback? onAskAi;
   final bool primaryLoading;
 
+  static const _gap = 10.0;
+
+  /// Width both buttons need side by side: their labels plus the icons and
+  /// padding of [FilledButton.icon] (16 + 24, 8 between icon and label) and
+  /// [AskAiButton] (18 + 18, 8 between).
+  double _rowWidth(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    double textWidth(String text, TextStyle style) {
+      final painter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        textDirection: TextDirection.ltr,
+        textScaler: scaler,
+        maxLines: 1,
+      )..layout();
+      final width = painter.width;
+      painter.dispose();
+      return width;
+    }
+
+    final primary = textWidth(
+      primaryLabel,
+      GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w700),
+    );
+    final askAi = textWidth(
+      context.l10n.lessonAskAi,
+      GoogleFonts.manrope(fontSize: 15, fontWeight: FontWeight.w700),
+    );
+    return (16 + 20 + 8 + primary + 24) + _gap + (18 + 18 + 8 + askAi + 18);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: LessonPrimaryButton(
-            label: primaryLabel,
-            onPressed: onPrimary,
-            loading: primaryLoading,
-          ),
-        ),
-        const SizedBox(width: 10),
-        AskAiButton(onPressed: onAskAi),
-      ],
+    final primary = LessonPrimaryButton(
+      label: primaryLabel,
+      onPressed: onPrimary,
+      loading: primaryLoading,
+    );
+    final askAi = AskAiButton(onPressed: onAskAi);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Long translations on narrow phones get a button per line instead
+        // of cut-off labels.
+        if (_rowWidth(context) > constraints.maxWidth) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [primary, const SizedBox(height: _gap), askAi],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: primary),
+            const SizedBox(width: _gap),
+            askAi,
+          ],
+        );
+      },
     );
   }
 }

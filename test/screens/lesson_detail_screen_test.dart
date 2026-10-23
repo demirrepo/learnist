@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:learnist/l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:learnist/models/lesson_model.dart';
@@ -137,6 +138,9 @@ List<int> _wrongWithFirstOptions(List<dynamic> raw) {
   ];
 }
 
+/// UI text is checked in the app's default language.
+final _uz = lookupAppLocalizations(testLocale);
+
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
@@ -149,14 +153,17 @@ void main() {
     await _pump(tester, lessonId: 7, service: service, settle: false);
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
-    expect(find.text('Lesson 7'), findsOneWidget);
+    expect(find.text(_uz.lessonLabel(7)), findsOneWidget);
 
     service.pending!.complete();
     await tester.pumpAndSettle();
 
     final lesson7 = seedLessons[6];
     expect(find.byType(CircularProgressIndicator), findsNothing);
-    expect(find.text('Lesson 7: ${lesson7.title}'), findsOneWidget);
+    expect(
+      find.text(_uz.lessonTitleWithNumber(7, lesson7.title)),
+      findsOneWidget,
+    );
     expect(find.text(lesson7.cefrLevel), findsOneWidget);
   });
 
@@ -176,7 +183,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(service.fetchCount, 2);
-    expect(find.text('Lesson 1: ${lesson1.title}'), findsOneWidget);
+    expect(
+      find.text(_uz.lessonTitleWithNumber(1, lesson1.title)),
+      findsOneWidget,
+    );
   });
 
   testWidgets('an unknown lesson says it was not found', (tester) async {
@@ -203,14 +213,20 @@ void main() {
         _useTallView(tester);
         await _pump(tester, locale: Locale(code));
 
+        final l10n = lookupAppLocalizations(Locale(code));
         expect(find.text(tab), findsOneWidget);
         expect(find.text("O'qish"), findsNothing);
+        expect(find.text(l10n.lessonTagPracticalTask), findsOneWidget);
+        expect(find.text(l10n.lessonAnalyzeAnswer), findsOneWidget);
         final rules = lesson1.grammarRulesFor(code)!;
         expect(rules, startsWith(firstWords));
         expect(find.text(rules), findsOneWidget);
         expect(find.text(lesson1.grammarRules!), findsNothing);
         // Course-book titles and grammar terms stay English everywhere.
-        expect(find.text('Lesson 1: ${lesson1.title}'), findsOneWidget);
+        expect(
+          find.text(l10n.lessonTitleWithNumber(1, lesson1.title)),
+          findsOneWidget,
+        );
         expect(find.text(lesson1.grammarFocus), findsOneWidget);
       });
     }
@@ -263,7 +279,7 @@ void main() {
   group('Analyze my answer', () {
     final answer = find.byKey(const ValueKey('grammar-answer'));
     final analyze = find.ancestor(
-      of: find.text('Analyze my answer'),
+      of: find.text(_uz.lessonAnalyzeAnswer),
       matching: find.bySubtype<FilledButton>(),
     );
     final result = find.byKey(const ValueKey('grammar-result'));
@@ -306,7 +322,7 @@ void main() {
       expect(progress.sectionScores, {
         1: {'grammar': 85},
       });
-      expect(find.text('Mastery reached: 85%'), findsOneWidget);
+      expect(find.text(_uz.taskMasteryReached(85)), findsOneWidget);
       expect(find.text('Zamon to\'g\'ri.'), findsOneWidget);
       expect(tester.widget<ButtonStyleButton>(analyze).onPressed, isNotNull);
     });
@@ -326,7 +342,7 @@ void main() {
       expect(result, findsNothing);
       await _openTab(tester, 'Grammatika');
 
-      expect(find.text('Mastery reached: 85%'), findsOneWidget);
+      expect(find.text(_uz.taskMasteryReached(85)), findsOneWidget);
       expect(find.text(text), findsOneWidget);
     });
 
@@ -335,7 +351,7 @@ void main() {
     ) async {
       _useTallView(tester);
       final ai =
-          FakeOpenAIService()..error = const OpenAIException('Internet yo\'q');
+          FakeOpenAIService()..error = const OpenAIException(AiFailure.offline);
       final progress = FakeProgressService();
       await _pump(tester, ai: ai, progress: progress);
 
@@ -387,7 +403,7 @@ void main() {
       await tester.tap(analyze);
       await tester.pumpAndSettle();
 
-      expect(find.text('Mastery reached: 85%'), findsOneWidget);
+      expect(find.text(_uz.taskMasteryReached(85)), findsOneWidget);
       expect(
         find.text("Ball saqlanmadi. Iltimos qayta urinib ko'ring."),
         findsOneWidget,
@@ -400,13 +416,13 @@ void main() {
       (
         tab: 'Yozish',
         section: 'writing',
-        button: 'Assess my writing',
+        button: _uz.lessonAssessWriting,
         topic: lesson1.writingPrompt!,
       ),
       (
         tab: 'Gapirish',
         section: 'speaking',
-        button: 'Assess speaking',
+        button: _uz.lessonAssessSpeaking,
         topic: lesson1.speakingPrompt!,
       ),
     ]) {
@@ -436,7 +452,7 @@ void main() {
         expect(progress.sectionScores, {
           1: {task.section: 72},
         });
-        expect(find.text('Mastery reached: 72%'), findsOneWidget);
+        expect(find.text(_uz.taskMasteryReached(72)), findsOneWidget);
         expect(find.text('Yaxshi.'), findsOneWidget);
       });
     }
@@ -449,13 +465,13 @@ void main() {
       await _openTab(tester, 'Yozish');
 
       // Lesson 1 asks for "(80–100 words)".
-      expect(find.text('0 / 80–100 words'), findsOneWidget);
+      expect(find.text(_uz.lessonWordCount(0, 80, 100)), findsOneWidget);
       await tester.enterText(
         find.byKey(const ValueKey('writing-answer')),
         'One two  three',
       );
       await tester.pump();
-      expect(find.text('3 / 80–100 words'), findsOneWidget);
+      expect(find.text(_uz.lessonWordCount(3, 80, 100)), findsOneWidget);
     });
 
     testWidgets('a task without a word range counts against 80–120', (
@@ -474,7 +490,7 @@ void main() {
       await _pump(tester, service: FakeLessonService(lessons: const [lesson]));
       await _openTab(tester, 'Yozish');
 
-      expect(find.text('0 / 80–120 words'), findsOneWidget);
+      expect(find.text(_uz.lessonWordCount(0, 80, 120)), findsOneWidget);
       // No task title yet: the lesson title stands in.
       expect(find.text('Questions only'), findsWidgets);
     });
@@ -486,7 +502,7 @@ void main() {
       await _pump(tester);
       await _openTab(tester, 'Gapirish');
 
-      final assess = tester.getTopLeft(find.text('Assess speaking'));
+      final assess = tester.getTopLeft(find.text(_uz.lessonAssessSpeaking));
       final complete = tester.getTopLeft(find.text('Darsni yakunlash'));
       expect(complete.dy, greaterThan(assess.dy));
     });
@@ -496,7 +512,7 @@ void main() {
     final mic = find.byKey(const ValueKey('speaking-mic'));
     final answer = find.byKey(const ValueKey('speaking-answer'));
     final assess = find.ancestor(
-      of: find.text('Assess speaking'),
+      of: find.text(_uz.lessonAssessSpeaking),
       matching: find.bySubtype<FilledButton>(),
     );
 
@@ -539,7 +555,7 @@ void main() {
 
       await _openTab(tester, 'Gapirish');
       expect(mic, findsOneWidget);
-      expect(find.byTooltip('Start recording'), findsOneWidget);
+      expect(find.byTooltip(_uz.micStart), findsOneWidget);
     });
 
     testWidgets('records, transcribes into the field, then grades it', (
@@ -557,17 +573,17 @@ void main() {
         recorder: recorder,
       );
 
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       // The pulse repeats while recording, so pump rather than settle.
       await tester.pump();
       expect(recorder.recording, isTrue);
-      expect(find.text('Recording… Tap to stop'), findsOneWidget);
+      expect(find.text(_uz.micRecording), findsOneWidget);
       expect(tester.widget<ButtonStyleButton>(assess).onPressed, isNull);
 
-      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.tap(find.byTooltip(_uz.micStop));
       await tester.pump();
       expect(recorder.recording, isFalse);
-      expect(find.text('Transcribing…'), findsOneWidget);
+      expect(find.text(_uz.micTranscribing), findsOneWidget);
       expect(
         find.descendant(
           of: mic,
@@ -584,13 +600,13 @@ void main() {
       // Kept for playback until the next recording.
       expect(recorder.deleted, isEmpty);
       expect(find.byType(RecordingPlayback), findsOneWidget);
-      expect(find.byTooltip('Start recording'), findsOneWidget);
+      expect(find.byTooltip(_uz.micStart), findsOneWidget);
       expect(ai.calls, isEmpty);
 
       await tester.tap(assess);
       await tester.pumpAndSettle();
       expect(ai.calls.single.studentText, 'I usually cook on Sundays.');
-      expect(find.text('Mastery reached: 85%'), findsOneWidget);
+      expect(find.text(_uz.taskMasteryReached(85)), findsOneWidget);
     });
 
     for (final denial in [
@@ -610,12 +626,12 @@ void main() {
         final recorder = FakeSpeechRecorder(permission: denial.permission);
         await openSpeaking(tester, recorder: recorder);
 
-        await tester.tap(find.byTooltip('Start recording'));
+        await tester.tap(find.byTooltip(_uz.micStart));
         await tester.pumpAndSettle();
 
         expect(recorder.recording, isFalse);
         expect(snackBarColor(tester, denial.message), AppColors.danger);
-        expect(find.byTooltip('Start recording'), findsOneWidget);
+        expect(find.byTooltip(_uz.micStart), findsOneWidget);
       });
     }
 
@@ -624,7 +640,7 @@ void main() {
           FakeSpeechRecorder()..startError = Exception('mic in use');
       await openSpeaking(tester, recorder: recorder);
 
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pumpAndSettle();
 
       expect(
@@ -642,24 +658,16 @@ void main() {
       final recorder = FakeSpeechRecorder();
       final deepgram =
           FakeDeepgramService()
-            ..error = const DeepgramException(
-              "Internet aloqasi yo'q. Iltimos qayta urinib ko'ring.",
-            );
+            ..error = const DeepgramException(DeepgramFailure.offline);
       await openSpeaking(tester, deepgram: deepgram, recorder: recorder);
       await tester.enterText(answer, 'My typed answer.');
 
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
-      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.tap(find.byTooltip(_uz.micStop));
       await tester.pumpAndSettle();
 
-      expect(
-        snackBarColor(
-          tester,
-          "Internet aloqasi yo'q. Iltimos qayta urinib ko'ring.",
-        ),
-        AppColors.danger,
-      );
+      expect(snackBarColor(tester, _uz.errorOffline), AppColors.danger);
       expect(answerText(tester), 'My typed answer.');
       // The student can still listen to what they said.
       expect(find.byType(RecordingPlayback), findsOneWidget);
@@ -673,7 +681,7 @@ void main() {
       final recorder = FakeSpeechRecorder();
       await openSpeaking(tester, recorder: recorder);
 
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
       expect(recorder.recording, isTrue);
 
@@ -688,12 +696,9 @@ void main() {
       final recorder = FakeSpeechRecorder();
       final deepgram = FakeDeepgramService(transcript: 'A long answer.');
       await openSpeaking(tester, deepgram: deepgram, recorder: recorder);
-      expect(
-        find.text('Tap the mic and speak (up to 5 minutes)'),
-        findsOneWidget,
-      );
+      expect(find.text(_uz.micIdle(5)), findsOneWidget);
 
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
       expect(find.text('00:00 / 05:00'), findsOneWidget);
 
@@ -722,25 +727,25 @@ void main() {
       await _openTab(tester, 'Gapirish');
       expect(find.byType(RecordingPlayback), findsNothing);
 
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
       expect(find.byType(RecordingPlayback), findsNothing);
-      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.tap(find.byTooltip(_uz.micStop));
       await tester.pumpAndSettle();
 
       final player = players.single;
       expect(player.filePath, '/tmp/speaking.m4a');
-      expect(find.text('Your recording'), findsOneWidget);
+      expect(find.text(_uz.recordingTitle), findsOneWidget);
       expect(find.text('00:00 / 00:42'), findsOneWidget);
 
-      await tester.tap(find.byTooltip('Play recording'));
+      await tester.tap(find.byTooltip(_uz.recordingPlay));
       await tester.pump();
       expect(player.playing, isTrue);
-      expect(find.byTooltip('Pause recording'), findsOneWidget);
+      expect(find.byTooltip(_uz.recordingPause), findsOneWidget);
 
       await tester.tap(assess);
       await tester.pump();
-      await tester.tap(find.byTooltip('Pause recording'));
+      await tester.tap(find.byTooltip(_uz.recordingPause));
       await tester.pump();
       expect(player.playing, isFalse);
 
@@ -756,21 +761,21 @@ void main() {
       await _pump(tester, recorder: recorder, players: players);
       await _openTab(tester, 'Gapirish');
 
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
-      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.tap(find.byTooltip(_uz.micStop));
       await tester.pumpAndSettle();
-      await tester.tap(find.byTooltip('Play recording'));
+      await tester.tap(find.byTooltip(_uz.recordingPlay));
       await tester.pump();
 
       recorder.path = '/tmp/second.m4a';
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
       expect(players.first.disposed, isTrue);
       expect(recorder.deleted, ['/tmp/speaking.m4a']);
       expect(find.byType(RecordingPlayback), findsNothing);
 
-      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.tap(find.byTooltip(_uz.micStop));
       await tester.pumpAndSettle();
       expect(players, hasLength(2));
       expect(players.last.filePath, '/tmp/second.m4a');
@@ -782,13 +787,13 @@ void main() {
     ) async {
       final recorder = FakeSpeechRecorder();
       await openSpeaking(tester, recorder: recorder);
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
-      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.tap(find.byTooltip(_uz.micStop));
       await tester.pumpAndSettle();
 
       recorder.permission = MicPermission.denied;
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pumpAndSettle();
 
       expect(recorder.deleted, isEmpty);
@@ -807,14 +812,17 @@ void main() {
             speechRecorderProvider.overrideWithValue(recorder),
           ],
           child: const MaterialApp(
+            locale: testLocale,
+            localizationsDelegates: testLocalizationsDelegates,
+            supportedLocales: testSupportedLocales,
             home: Scaffold(body: RecordingPlayback(path: '/tmp/broken.m4a')),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text("Your recording can't be played back."), findsOneWidget);
-      expect(find.byTooltip('Play recording'), findsNothing);
+      expect(find.text(_uz.recordingUnplayable), findsOneWidget);
+      expect(find.byTooltip(_uz.recordingPlay), findsNothing);
     });
 
     testWidgets('leaving the lesson releases the player and the file', (
@@ -825,9 +833,9 @@ void main() {
       _useTallView(tester);
       await _pump(tester, recorder: recorder, players: players);
       await _openTab(tester, 'Gapirish');
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
-      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.tap(find.byTooltip(_uz.micStop));
       await tester.pumpAndSettle();
 
       await tester.pumpWidget(const SizedBox());
@@ -840,9 +848,9 @@ void main() {
     ) async {
       final recorder = FakeSpeechRecorder()..stopDelay = Completer<void>();
       await openSpeaking(tester, recorder: recorder);
-      await tester.tap(find.byTooltip('Start recording'));
+      await tester.tap(find.byTooltip(_uz.micStart));
       await tester.pump();
-      await tester.tap(find.byTooltip('Stop recording'));
+      await tester.tap(find.byTooltip(_uz.micStop));
       await tester.pump();
 
       await tester.pumpWidget(const SizedBox());
@@ -1114,7 +1122,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final score = _firstOptionScore(lesson1.readingQuestions);
-    expect(find.text('$score/10 correct'), findsOneWidget);
+    expect(find.text(_uz.quizScore(score, 10)), findsOneWidget);
     expect(progress.sectionScores, {
       1: {'reading': score * 10},
     });
@@ -1151,7 +1159,7 @@ void main() {
     );
     // The score dialog still shows.
     final score = _firstOptionScore(lesson1.readingQuestions);
-    expect(find.text('$score/10 correct'), findsOneWidget);
+    expect(find.text(_uz.quizScore(score, 10)), findsOneWidget);
   });
 
   testWidgets('a failed mistake update only logs; the score still saves', (
@@ -1172,7 +1180,7 @@ void main() {
       1: {'reading': score * 10},
     });
     expect(find.byType(SnackBar), findsNothing);
-    expect(find.text('$score/10 correct'), findsOneWidget);
+    expect(find.text(_uz.quizScore(score, 10)), findsOneWidget);
   });
 
   testWidgets('listening tab: format, blurred transcript, live quiz', (
@@ -1189,7 +1197,7 @@ void main() {
     expect(find.textContaining(firstLine), findsOneWidget);
     expect(find.byType(ImageFiltered), findsOneWidget);
 
-    await tester.tap(find.text('Show'));
+    await tester.tap(find.text(_uz.transcriptShow));
     await tester.pumpAndSettle();
     expect(find.byType(ImageFiltered), findsNothing);
 
@@ -1198,7 +1206,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final score = _firstOptionScore(lesson1.listeningQuestions);
-    expect(find.text('$score/10 correct'), findsOneWidget);
+    expect(find.text(_uz.quizScore(score, 10)), findsOneWidget);
     expect(progress.sectionScores, {
       1: {'listening': score * 10},
     });

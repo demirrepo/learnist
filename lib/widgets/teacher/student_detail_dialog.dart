@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/teacher_dashboard.dart';
 import '../../services/teacher_service.dart';
 import '../../theme/app_theme.dart';
@@ -28,6 +29,7 @@ class StudentDetailDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final lessons = ref.watch(studentLessonsProvider(student.id));
 
     return Dialog(
@@ -52,7 +54,7 @@ class StudentDetailDialog extends ConsumerWidget {
                       children: [
                         Expanded(
                           child: TeacherMetric(
-                            label: 'Average mastery',
+                            label: l10n.teacherAverageMastery,
                             value: '${student.masteryPercent}%',
                           ),
                         ),
@@ -67,11 +69,11 @@ class StudentDetailDialog extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const TeacherSectionTitle('Lesson progress'),
+                  TeacherSectionTitle(l10n.teacherLessonProgress),
                   const SizedBox(height: 12),
                   switch (lessons) {
                     AsyncData(value: final lessons) when lessons.isEmpty =>
-                      const TeacherEmptyText('No lessons started yet.'),
+                      TeacherEmptyText(l10n.teacherNoLessonsStarted),
                     AsyncData(value: final lessons) => Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -82,7 +84,7 @@ class StudentDetailDialog extends ConsumerWidget {
                       ],
                     ),
                     AsyncError(:final error) => _LoadError(
-                      message: teacherLoadErrorMessage(error),
+                      message: teacherLoadErrorMessage(error, l10n),
                       onRetry:
                           () => ref.invalidate(
                             studentLessonsProvider(student.id),
@@ -101,7 +103,7 @@ class StudentDetailDialog extends ConsumerWidget {
               right: 12,
               child: IconButton(
                 key: const ValueKey('student-detail-close'),
-                tooltip: 'Close',
+                tooltip: l10n.close,
                 onPressed: () => Navigator.of(context).pop(),
                 style: IconButton.styleFrom(
                   backgroundColor: AppColors.surface,
@@ -131,7 +133,7 @@ class _Header extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'STUDENT DETAIL',
+            context.l10n.teacherStudentDetail,
             style: GoogleFonts.manrope(
               fontSize: 11,
               fontWeight: FontWeight.w800,
@@ -153,7 +155,7 @@ class _Header extends StatelessWidget {
           Text(
             [
               if (student.username case final username?) '@$username',
-              'current Lesson ${student.currentLesson}',
+              context.l10n.teacherCurrentLesson(student.currentLesson),
             ].join(' • '),
             style: GoogleFonts.manrope(
               fontSize: 13.5,
@@ -183,7 +185,7 @@ class _LoadError extends StatelessWidget {
         TextButton.icon(
           onPressed: onRetry,
           icon: const Icon(LucideIcons.refreshCw, size: 16),
-          label: const Text('Qayta urinish'),
+          label: Text(context.l10n.retry),
           style: TextButton.styleFrom(foregroundColor: AppColors.teacherAccent),
         ),
       ],
@@ -198,8 +200,16 @@ class _LessonProgressRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final breakdown = [
-      for (final (skill, percent) in lesson.skills) '$skill $percent%',
+      for (final (skill, percent) in [
+        (l10n.lessonTabGrammar, lesson.grammar),
+        (l10n.lessonTabReading, lesson.reading),
+        (l10n.lessonTabListening, lesson.listening),
+        (l10n.lessonTabWriting, lesson.writing),
+        (l10n.lessonTabSpeaking, lesson.speaking),
+      ])
+        '$skill $percent%',
     ].join(' • ');
 
     return Row(
@@ -229,7 +239,7 @@ class _LessonProgressRow extends StatelessWidget {
             children: [
               Text(
                 lesson.isCurrent
-                    ? '${lesson.title} • in progress'
+                    ? l10n.teacherLessonInProgress(lesson.title)
                     : lesson.title,
                 style: GoogleFonts.manrope(
                   fontSize: 14,

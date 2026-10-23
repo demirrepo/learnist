@@ -40,7 +40,7 @@ class GrammarTab extends StatelessWidget {
             children: [
               LessonPrompt(
                 tagIcon: LucideIcons.target,
-                tag: 'Practical task',
+                tag: context.l10n.lessonTagPracticalTask,
                 title: 'Use it in context',
                 body:
                     'Write at least three sentences of your own about '
@@ -50,8 +50,8 @@ class GrammarTab extends StatelessWidget {
               AiGradedTask(
                 lessonNumber: lesson.lessonNumber,
                 section: 'grammar',
-                buttonLabel: 'Analyze my answer',
-                hint: 'Write your answer here…',
+                buttonLabel: context.l10n.lessonAnalyzeAnswer,
+                hint: context.l10n.lessonAnswerHint,
                 evaluate:
                     (ai, answer) =>
                         ai.evaluateGrammar(answer, lesson.grammarFocus),
@@ -89,7 +89,10 @@ class _RulesCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const LessonTag(icon: LucideIcons.bookMarked, label: 'Grammar rule'),
+          LessonTag(
+            icon: LucideIcons.bookMarked,
+            label: context.l10n.lessonTagGrammarRule,
+          ),
           const SizedBox(height: 14),
           Text(focus, style: lessonHeadingStyle),
           if (isGeneralGuide) ...[

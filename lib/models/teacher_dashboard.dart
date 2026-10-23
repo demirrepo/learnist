@@ -147,14 +147,6 @@ class LessonSkillProgress {
   final int listening;
   final int writing;
   final int speaking;
-
-  List<(String, int)> get skills => [
-    ('Grammar', grammar),
-    ('Reading', reading),
-    ('Listening', listening),
-    ('Writing', writing),
-    ('Speaking', speaking),
-  ];
 }
 
 /// Result of `join_group`.

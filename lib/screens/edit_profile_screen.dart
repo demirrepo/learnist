@@ -5,11 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../constants/universities.dart';
+import '../l10n/l10n.dart';
 import '../router.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
-
-const profileSavedMessage = "O'zgarishlar muvaffaqiyatli saqlandi";
 
 final _usernamePattern = RegExp(r'^[a-z0-9_.]{3,30}$');
 
@@ -32,7 +31,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late final String _initialUniversity;
 
   bool _saving = false;
-  String? _usernameError;
+
+  /// Set when the username turned out to be taken on save.
+  bool _usernameTaken = false;
 
   @override
   void initState() {
@@ -66,7 +67,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> _save() async {
     FocusScope.of(context).unfocus();
-    setState(() => _usernameError = null);
+    setState(() => _usernameTaken = false);
     if (!_formKey.currentState!.validate()) return;
 
     final auth = ref.read(supabaseServiceProvider);
@@ -78,9 +79,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     try {
       if (username != _initialUsername.toLowerCase() &&
           await auth.isUsernameTaken(username)) {
-        if (mounted) {
-          setState(() => _usernameError = profileUsernameTakenMessage);
-        }
+        if (mounted) setState(() => _usernameTaken = true);
         return;
       }
 
@@ -93,7 +92,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text(profileSavedMessage)));
+        ..showSnackBar(SnackBar(content: Text(context.l10n.profileSaved)));
       if (context.canPop()) {
         context.pop();
       } else {
@@ -102,10 +101,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     } catch (error, stackTrace) {
       logAuthError('Profile update', error, stackTrace);
       if (!mounted) return;
-      final message = profileUpdateErrorMessage(error);
-      if (message == profileUsernameTakenMessage) {
-        setState(() => _usernameError = message);
+      if (isProfileUsernameTaken(error)) {
+        setState(() => _usernameTaken = true);
       } else {
+        final message = profileUpdateErrorMessage(error, context.l10n);
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(SnackBar(content: Text(message)));
@@ -117,6 +116,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return PopScope(
       // Blocks the back button and system back while a save is in flight.
       canPop: !_saving,
@@ -124,7 +125,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         backgroundColor: AppColors.background,
         appBar: AppBar(
           title: Text(
-            'Profilni tahrirlash',
+            l10n.editProfileTitle,
             style: GoogleFonts.manrope(
               fontSize: 18,
               fontWeight: FontWeight.w800,
@@ -148,7 +149,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const _FieldLabel('Ism va familiya'),
+                    _FieldLabel(l10n.editProfileFullName),
                     TextFormField(
                       key: const ValueKey('edit-full-name'),
                       controller: _fullNameController,
@@ -163,11 +164,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       validator:
                           (value) =>
                               (value?.trim().length ?? 0) < 3
-                                  ? "To'liq ismingizni kiriting"
+                                  ? l10n.authFullNameRequired
                                   : null,
                     ),
                     const SizedBox(height: 18),
-                    const _FieldLabel('Foydalanuvchi nomi'),
+                    _FieldLabel(l10n.authUsername),
                     TextFormField(
                       key: const ValueKey('edit-username'),
                       controller: _usernameController,
@@ -175,11 +176,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       autocorrect: false,
                       enableSuggestions: false,
                       autofillHints: const [AutofillHints.username],
-                      onChanged: (_) => setState(() => _usernameError = null),
+                      onChanged: (_) => setState(() => _usernameTaken = false),
                       decoration: InputDecoration(
                         hintText: 'demir_dev',
                         prefixIcon: const Icon(LucideIcons.atSign, size: 20),
-                        errorText: _usernameError,
+                        errorText:
+                            _usernameTaken ? l10n.profileUsernameTaken : null,
                         errorMaxLines: 2,
                       ),
                       validator:
@@ -188,10 +190,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                     value?.trim().toLowerCase() ?? '',
                                   )
                                   ? null
-                                  : "3–30 ta belgi: harflar, raqamlar, _ yoki .",
+                                  : l10n.authUsernameInvalid,
                     ),
                     const SizedBox(height: 18),
-                    const _FieldLabel('Universitet'),
+                    _FieldLabel(l10n.authUniversity),
                     _UniversityField(
                       controller: _universityController,
                       focusNode: _universityFocus,
@@ -210,7 +212,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                              : const Text('Saqlash'),
+                              : Text(l10n.save),
                     ),
                   ],
                 ),
@@ -265,7 +267,7 @@ class _UniversityField extends StatelessWidget {
           validator:
               (value) =>
                   (value?.trim().isEmpty ?? true)
-                      ? 'Universitet nomini kiriting'
+                      ? context.l10n.authUniversityNameRequired
                       : null,
         );
       },

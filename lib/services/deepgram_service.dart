@@ -6,24 +6,45 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/app_localizations.dart';
+
 /// The shared [DeepgramService]; overridden with a fake in tests.
 final deepgramServiceProvider = Provider<DeepgramService>(
   (ref) => DeepgramService(),
 );
 
-/// Thrown when a recording can't be transcribed. [message] is already
-/// user-facing (Uzbek), so the UI can show it as-is. [statusCode] is set when
-/// the `transcribe_audio` function answered with an error.
-class DeepgramException implements Exception {
-  const DeepgramException(this.message, {this.statusCode});
+/// Why a recording couldn't be transcribed.
+enum DeepgramFailure {
+  recordingMissing,
+  recordingEmpty,
+  failed,
+  timeout,
+  offline,
+  noSpeech,
+}
 
-  final String message;
+/// Thrown when a recording can't be transcribed. [message] gives the
+/// user-facing reason in the app's language. [statusCode] is set when the
+/// `transcribe_audio` function answered with an error.
+class DeepgramException implements Exception {
+  const DeepgramException(this.failure, {this.statusCode});
+
+  final DeepgramFailure failure;
   final int? statusCode;
+
+  String message(AppLocalizations l10n) => switch (failure) {
+    DeepgramFailure.recordingMissing => l10n.taskRecordingMissing,
+    DeepgramFailure.recordingEmpty => l10n.recordingEmpty,
+    DeepgramFailure.failed => l10n.taskTranscriptionError,
+    DeepgramFailure.timeout => l10n.errorNoResponse,
+    DeepgramFailure.offline => l10n.errorOffline,
+    DeepgramFailure.noSpeech => l10n.transcriptionNoSpeech,
+  };
 
   @override
   String toString() =>
       'DeepgramException${statusCode == null ? '' : ' ($statusCode)'}: '
-      '$message';
+      '${failure.name}';
 }
 
 /// Speech-to-text for the speaking tab through the `transcribe_audio`
@@ -48,10 +69,10 @@ class DeepgramService {
     try {
       audio = await File(filePath).readAsBytes();
     } on FileSystemException {
-      throw const DeepgramException("Yozib olingan audio topilmadi.");
+      throw const DeepgramException(DeepgramFailure.recordingMissing);
     }
     if (audio.isEmpty) {
-      throw const DeepgramException("Yozib olingan audio bo'sh.");
+      throw const DeepgramException(DeepgramFailure.recordingEmpty);
     }
 
     final FunctionResponse response;
@@ -64,14 +85,9 @@ class DeepgramService {
           )
           .timeout(_timeout);
     } on FunctionException catch (error) {
-      throw DeepgramException(
-        "Nutqni matnga aylantirib bo'lmadi. Iltimos qayta urinib ko'ring.",
-        statusCode: error.status,
-      );
+      throw DeepgramException(DeepgramFailure.failed, statusCode: error.status);
     } on TimeoutException {
-      throw const DeepgramException(
-        "Server javob bermadi. Iltimos qayta urinib ko'ring.",
-      );
+      throw const DeepgramException(DeepgramFailure.timeout);
     } on ClientException {
       throw _offline;
     } on SocketException {
@@ -93,9 +109,7 @@ class DeepgramService {
   };
 }
 
-const _offline = DeepgramException(
-  "Internet aloqasi yo'q. Iltimos qayta urinib ko'ring.",
-);
+const _offline = DeepgramException(DeepgramFailure.offline);
 
 /// Reads `transcript` from a `transcribe_audio` response. Silence comes
 /// back as an empty transcript, which is an error here: there is nothing
@@ -104,14 +118,9 @@ String parseTranscript(Object? data) {
   if (data case {'transcript': final String transcript}) {
     final text = transcript.trim();
     if (text.isEmpty) {
-      throw const DeepgramException(
-        "Ovozingiz aniqlanmadi. Mikrofonga yaqinroq gapirib, qayta urinib "
-        "ko'ring.",
-      );
+      throw const DeepgramException(DeepgramFailure.noSpeech);
     }
     return text;
   }
-  throw const DeepgramException(
-    "Nutqni matnga aylantirib bo'lmadi. Iltimos qayta urinib ko'ring.",
-  );
+  throw const DeepgramException(DeepgramFailure.failed);
 }

@@ -7,11 +7,13 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../constants/universities.dart';
+import '../l10n/l10n.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 
 enum _AuthMode { signIn, signUp }
 
+/// The entry in [uzbekUniversities] that reveals a free-text field.
 const _otherUniversity = 'Boshqa / Other';
 
 class AuthScreen extends ConsumerStatefulWidget {
@@ -33,7 +35,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   _AuthMode _mode = _AuthMode.signIn;
   UserRole _role = UserRole.student;
   String? _university;
-  String? _universityError;
+
+  /// Set when sign-up was tried without picking a university.
+  bool _universityMissing = false;
   bool _obscurePassword = true;
   bool _loading = false;
 
@@ -49,7 +53,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         .read(supabaseServiceProvider)
         .authLinkErrors
         .listen((error) {
-          if (mounted) _showMessage(authErrorMessage(error), isError: true);
+          if (mounted) {
+            _showMessage(authErrorMessage(error, context.l10n), isError: true);
+          }
         });
   }
 
@@ -67,7 +73,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           (_) =>
               _ForgotPasswordSheet(initialEmail: _emailController.text.trim()),
     );
-    if (sent == true && mounted) _showMessage(passwordResetSentMessage);
+    if (sent == true && mounted) _showMessage(context.l10n.authResetSent);
   }
 
   @override
@@ -86,19 +92,16 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     if (_loading || mode == _mode) return;
     setState(() {
       _mode = mode;
-      _universityError = null;
+      _universityMissing = false;
     });
   }
 
   Future<void> _submit() async {
     final formValid = _formKey.currentState!.validate();
     if (_isSignUp) {
-      setState(() {
-        _universityError =
-            _university == null ? 'Universitetingizni tanlang' : null;
-      });
+      setState(() => _universityMissing = _university == null);
     }
-    if (!formValid || (_isSignUp && _universityError != null)) return;
+    if (!formValid || (_isSignUp && _universityMissing)) return;
 
     FocusScope.of(context).unfocus();
     setState(() => _loading = true);
@@ -112,7 +115,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         final username = _usernameController.text.trim().toLowerCase();
 
         if (await service.isUsernameTaken(username)) {
-          if (mounted) _showMessage(usernameTakenMessage, isError: true);
+          if (mounted) {
+            _showMessage(context.l10n.authUsernameTaken, isError: true);
+          }
           return;
         }
 
@@ -129,10 +134,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         );
         // No session: the project requires email confirmation first.
         if (response.session == null && mounted) {
-          _showMessage(
-            "Tasdiqlash havolasi emailingizga yuborildi. "
-            "Uni bosib, so'ng tizimga kiring.",
-          );
+          _showMessage(context.l10n.authConfirmEmailSent);
           setState(() => _mode = _AuthMode.signIn);
         }
       } else {
@@ -144,7 +146,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       // classified by authErrorMessage; only real connectivity failures get
       // the "no internet" message.
       logAuthError(_isSignUp ? 'Sign-up' : 'Sign-in', error, stackTrace);
-      if (mounted) _showMessage(authErrorMessage(error), isError: true);
+      if (mounted) {
+        _showMessage(authErrorMessage(error, context.l10n), isError: true);
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -201,6 +205,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   Widget _buildFormCard() {
+    final l10n = context.l10n;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -243,7 +249,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   children: _isSignUp ? _buildSignUpFields() : const [],
                 ),
               ),
-              const _FieldLabel('Email'),
+              _FieldLabel(l10n.authEmail),
               TextFormField(
                 key: const ValueKey('auth-email'),
                 controller: _emailController,
@@ -255,10 +261,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   hintText: 'you@example.com',
                   prefixIcon: Icon(LucideIcons.mail, size: 20),
                 ),
-                validator: _validateEmail,
+                validator: (value) => _validateEmail(value, l10n),
               ),
               const SizedBox(height: 18),
-              const _FieldLabel('Password'),
+              _FieldLabel(l10n.authPassword),
               TextFormField(
                 key: const ValueKey('auth-password'),
                 controller: _passwordController,
@@ -272,11 +278,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 onFieldSubmitted: (_) => _loading ? null : _submit(),
                 decoration: InputDecoration(
                   hintText:
-                      _isSignUp ? 'At least 6 characters' : 'Your password',
+                      _isSignUp
+                          ? l10n.authPasswordHintNew
+                          : l10n.authPasswordHint,
                   prefixIcon: const Icon(LucideIcons.lock, size: 20),
                   suffixIcon: IconButton(
                     tooltip:
-                        _obscurePassword ? 'Show password' : 'Hide password',
+                        _obscurePassword
+                            ? l10n.authShowPassword
+                            : l10n.authHidePassword,
                     icon: Icon(
                       _obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
                       size: 20,
@@ -289,9 +299,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 ),
                 validator: (value) {
                   final password = value ?? '';
-                  if (password.isEmpty) return 'Parolni kiriting';
+                  if (password.isEmpty) return l10n.authPasswordRequired;
                   if (_isSignUp && password.length < 6) {
-                    return "Parol kamida 6 ta belgidan iborat bo'lsin";
+                    return l10n.authPasswordTooShort;
                   }
                   return null;
                 },
@@ -316,7 +326,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      child: const Text('Parolni unutdingizmi?'),
+                      child: Text(l10n.authForgotPassword),
                     ),
                   ),
                 ),
@@ -335,7 +345,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         : Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(_isSignUp ? 'Create account' : 'Sign In'),
+                            Text(
+                              _isSignUp
+                                  ? l10n.authCreateAccount
+                                  : l10n.authSignIn,
+                            ),
                             const SizedBox(width: 8),
                             const Icon(LucideIcons.arrowRight, size: 20),
                           ],
@@ -349,46 +363,48 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   List<Widget> _buildSignUpFields() {
+    final l10n = context.l10n;
+
     return [
-      const _FieldLabel('Full Name'),
+      _FieldLabel(l10n.authFullName),
       TextFormField(
         key: const ValueKey('auth-full-name'),
         controller: _fullNameController,
         textCapitalization: TextCapitalization.words,
         textInputAction: TextInputAction.next,
         autofillHints: const [AutofillHints.name],
-        decoration: const InputDecoration(
-          hintText: 'Your full name',
-          prefixIcon: Icon(LucideIcons.user, size: 20),
+        decoration: InputDecoration(
+          hintText: l10n.authFullNameHint,
+          prefixIcon: const Icon(LucideIcons.user, size: 20),
         ),
         validator:
             (value) =>
                 (value?.trim().length ?? 0) < 3
-                    ? "To'liq ismingizni kiriting"
+                    ? l10n.authFullNameRequired
                     : null,
       ),
       const SizedBox(height: 18),
-      const _FieldLabel('Username'),
+      _FieldLabel(l10n.authUsername),
       TextFormField(
         key: const ValueKey('auth-username'),
         controller: _usernameController,
         textInputAction: TextInputAction.next,
         autocorrect: false,
         autofillHints: const [AutofillHints.newUsername],
-        decoration: const InputDecoration(
-          hintText: 'e.g. learner_01',
-          prefixIcon: Icon(LucideIcons.atSign, size: 20),
+        decoration: InputDecoration(
+          hintText: l10n.authUsernameHint,
+          prefixIcon: const Icon(LucideIcons.atSign, size: 20),
         ),
         validator: (value) {
           final username = value?.trim() ?? '';
           if (!RegExp(r'^[a-zA-Z0-9_.]{3,30}$').hasMatch(username)) {
-            return "3–30 ta belgi: harflar, raqamlar, _ yoki .";
+            return l10n.authUsernameInvalid;
           }
           return null;
         },
       ),
       const SizedBox(height: 18),
-      const _FieldLabel('University'),
+      _FieldLabel(l10n.authUniversity),
       DropdownMenu<String>(
         key: const ValueKey('auth-university'),
         controller: _universityController,
@@ -396,7 +412,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         enableFilter: true,
         requestFocusOnTap: true,
         menuHeight: 320,
-        hintText: 'Search your university',
+        hintText: l10n.authUniversityHint,
         textStyle: GoogleFonts.manrope(
           fontSize: 15,
           fontWeight: FontWeight.w500,
@@ -405,7 +421,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         leadingIcon: const Icon(LucideIcons.graduationCap, size: 20),
         trailingIcon: const Icon(LucideIcons.chevronDown, size: 20),
         selectedTrailingIcon: const Icon(LucideIcons.search, size: 20),
-        errorText: _universityError,
+        errorText: _universityMissing ? l10n.authUniversityRequired : null,
         menuStyle: MenuStyle(
           backgroundColor: const WidgetStatePropertyAll(AppColors.surface),
           surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -427,7 +443,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           for (final university in uzbekUniversities)
             DropdownMenuEntry(
               value: university,
-              label: university,
+              label:
+                  university == _otherUniversity
+                      ? l10n.authOtherUniversity
+                      : university,
               style: MenuItemButton.styleFrom(
                 foregroundColor: AppColors.textPrimary,
                 padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -441,25 +460,25 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         onSelected:
             (value) => setState(() {
               _university = value;
-              if (value != null) _universityError = null;
+              if (value != null) _universityMissing = false;
             }),
       ),
       if (_university == _otherUniversity) ...[
         const SizedBox(height: 18),
-        const _FieldLabel('University name'),
+        _FieldLabel(l10n.authUniversityName),
         TextFormField(
           key: const ValueKey('auth-other-university'),
           controller: _otherUniversityController,
           textCapitalization: TextCapitalization.words,
           textInputAction: TextInputAction.next,
-          decoration: const InputDecoration(
-            hintText: 'Type your university name',
-            prefixIcon: Icon(LucideIcons.pencil, size: 20),
+          decoration: InputDecoration(
+            hintText: l10n.authUniversityNameHint,
+            prefixIcon: const Icon(LucideIcons.pencil, size: 20),
           ),
           validator:
               (value) =>
                   (value?.trim().isEmpty ?? true)
-                      ? 'Universitet nomini kiriting'
+                      ? l10n.authUniversityNameRequired
                       : null,
         ),
       ],
@@ -473,13 +492,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       fontWeight: FontWeight.w500,
       color: AppColors.textMuted,
     );
+    final l10n = context.l10n;
 
     return Wrap(
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Text(
-          _isSignUp ? 'Already have an account?' : 'New to Learnist?',
+          _isSignUp ? l10n.authHaveAccount : l10n.authNewToLearnist,
           style: style,
         ),
         TextButton(
@@ -488,18 +508,20 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ? null
                   : () =>
                       _setMode(_isSignUp ? _AuthMode.signIn : _AuthMode.signUp),
-          child: Text(_isSignUp ? 'Sign in instead' : 'Create an account'),
+          child: Text(
+            _isSignUp ? l10n.authSignInInstead : l10n.authCreateAnAccount,
+          ),
         ),
       ],
     );
   }
 }
 
-String? _validateEmail(String? value) {
+String? _validateEmail(String? value, AppLocalizations l10n) {
   final email = value?.trim() ?? '';
-  if (email.isEmpty) return 'Emailingizni kiriting';
+  if (email.isEmpty) return l10n.authEmailRequired;
   if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
-    return "Email manzili noto'g'ri";
+    return l10n.authEmailInvalid;
   }
   return null;
 }
@@ -547,7 +569,7 @@ class _ForgotPasswordSheetState extends ConsumerState<_ForgotPasswordSheet> {
       logAuthError('Password reset email', error, stackTrace);
       if (mounted) {
         setState(() {
-          _error = authErrorMessage(error);
+          _error = authErrorMessage(error, context.l10n);
           _sending = false;
         });
       }
@@ -556,6 +578,8 @@ class _ForgotPasswordSheetState extends ConsumerState<_ForgotPasswordSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Padding(
       padding: EdgeInsets.fromLTRB(
         24,
@@ -587,7 +611,7 @@ class _ForgotPasswordSheetState extends ConsumerState<_ForgotPasswordSheet> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Parolni tiklash',
+              l10n.authResetTitle,
               style: GoogleFonts.manrope(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
@@ -597,8 +621,7 @@ class _ForgotPasswordSheetState extends ConsumerState<_ForgotPasswordSheet> {
             ),
             const SizedBox(height: 6),
             Text(
-              "Hisobingizga bog'langan emailni kiriting — parolni tiklash "
-              "havolasini yuboramiz.",
+              l10n.authResetBody,
               style: GoogleFonts.manrope(
                 fontSize: 15,
                 height: 1.45,
@@ -607,7 +630,7 @@ class _ForgotPasswordSheetState extends ConsumerState<_ForgotPasswordSheet> {
               ),
             ),
             const SizedBox(height: 24),
-            const _FieldLabel('Email'),
+            _FieldLabel(l10n.authEmail),
             TextFormField(
               key: const ValueKey('forgot-email'),
               controller: _emailController,
@@ -621,7 +644,7 @@ class _ForgotPasswordSheetState extends ConsumerState<_ForgotPasswordSheet> {
                 hintText: 'you@example.com',
                 prefixIcon: Icon(LucideIcons.mail, size: 20),
               ),
-              validator: _validateEmail,
+              validator: (value) => _validateEmail(value, l10n),
             ),
             if (_error != null) ...[
               const SizedBox(height: 12),
@@ -660,7 +683,7 @@ class _ForgotPasswordSheetState extends ConsumerState<_ForgotPasswordSheet> {
                           color: Colors.white,
                         ),
                       )
-                      : const Text('Havolani yuborish'),
+                      : Text(l10n.authResetSend),
             ),
           ],
         ),
@@ -718,11 +741,13 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          isSignUp ? 'START YOUR ENGLISH JOURNEY' : 'WELCOME BACK',
+          isSignUp ? l10n.authEyebrowSignUp : l10n.authEyebrowSignIn,
           style: GoogleFonts.manrope(
             fontSize: 13,
             fontWeight: FontWeight.w800,
@@ -732,7 +757,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          isSignUp ? 'Create your account' : 'Sign in to Learnist',
+          isSignUp ? l10n.authTitleSignUp : l10n.authTitleSignIn,
           style: GoogleFonts.manrope(
             fontSize: 30,
             height: 1.15,
@@ -743,9 +768,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          isSignUp
-              ? 'Join thousands of students preparing for their CEFR certificate.'
-              : 'Pick up right where you left off.',
+          isSignUp ? l10n.authSubtitleSignUp : l10n.authSubtitleSignIn,
           style: GoogleFonts.manrope(
             fontSize: 15,
             height: 1.45,
@@ -776,9 +799,9 @@ class _AuthModeToggle extends StatelessWidget {
       ),
       child: Row(
         children: [
-          for (final (value, label) in const [
-            (_AuthMode.signIn, 'Sign In'),
-            (_AuthMode.signUp, 'Sign Up'),
+          for (final (value, label) in [
+            (_AuthMode.signIn, context.l10n.authSignIn),
+            (_AuthMode.signUp, context.l10n.authSignUp),
           ])
             Expanded(
               child: _ToggleSegment(
@@ -813,9 +836,17 @@ class _RoleToggle extends StatelessWidget {
       ),
       child: Row(
         children: [
-          for (final (value, label, icon) in const [
-            (UserRole.student, 'Talaba', LucideIcons.graduationCap),
-            (UserRole.teacher, "O'qituvchi", LucideIcons.presentation),
+          for (final (value, label, icon) in [
+            (
+              UserRole.student,
+              context.l10n.roleStudent,
+              LucideIcons.graduationCap,
+            ),
+            (
+              UserRole.teacher,
+              context.l10n.roleTeacher,
+              LucideIcons.presentation,
+            ),
           ])
             Expanded(
               child: Semantics(

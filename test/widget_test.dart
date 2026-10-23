@@ -247,6 +247,9 @@ Future<void> _fillCommonSignUpFields(
   await tester.enterText(_byKey('auth-password'), 'secret123');
 }
 
+/// User-facing messages are checked in the app's default language.
+final _uz = lookupAppLocalizations(const Locale('uz'));
+
 void main() {
   // Tests have no network; skip fetching Google Fonts.
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
@@ -349,7 +352,7 @@ void main() {
       find.ancestor(of: label, matching: find.byType(AnimatedContainer)).first,
     );
     final role = pill(find.text('Talaba'));
-    final mode = pill(find.text('Sign In').first);
+    final mode = pill(find.text(_uz.authSignIn).first);
     expect(role.height, mode.height);
   });
 
@@ -360,11 +363,11 @@ void main() {
     await tester.pumpWidget(_app(auth));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Sign Up'));
+    await tester.tap(find.text(_uz.authSignUp));
     await tester.pumpAndSettle();
     expect(_byKey('auth-other-university'), findsNothing);
 
-    await _selectUniversity(tester, 'Boshqa', 'Boshqa / Other');
+    await _selectUniversity(tester, 'Boshqa', _uz.authOtherUniversity);
     expect(_byKey('auth-other-university'), findsOneWidget);
 
     await _fillCommonSignUpFields(tester, username: 'Learner_01');
@@ -392,13 +395,13 @@ void main() {
     await tester.pumpWidget(_app(auth));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Sign Up'));
+    await tester.tap(find.text(_uz.authSignUp));
     await tester.pumpAndSettle();
     await _selectUniversity(tester, 'Inha', 'Inha University in Tashkent');
     await _fillCommonSignUpFields(tester, username: 'Learner_01');
     await _tapVisible(tester, _byKey('auth-submit'));
 
-    expect(find.text(usernameTakenMessage), findsOneWidget);
+    expect(find.text(_uz.authUsernameTaken), findsOneWidget);
     expect(auth.lastSignUp, isNull);
     // Still on the sign-up form so the user can pick another name.
     expect(_byKey('auth-full-name'), findsOneWidget);
@@ -411,13 +414,47 @@ void main() {
     await tester.pumpAndSettle();
     expect(_byKey('auth-forgot-password'), findsOneWidget);
 
-    await _tapVisible(tester, find.text('Create an account'));
+    await _tapVisible(tester, find.text(_uz.authCreateAnAccount));
     expect(_byKey('auth-full-name'), findsOneWidget);
     expect(_byKey('auth-forgot-password'), findsNothing);
 
-    await _tapVisible(tester, find.text('Sign in instead'));
+    await _tapVisible(tester, find.text(_uz.authSignInInstead));
     expect(_byKey('auth-full-name'), findsNothing);
     expect(_byKey('auth-forgot-password'), findsOneWidget);
+  });
+
+  testWidgets('the auth screen and its validation follow the language', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({selectedLanguageKey: 'ru'});
+    final preferences = await SharedPreferences.getInstance();
+    await tester.pumpWidget(
+      _app(_FakeSupabaseService(signedIn: false), preferences: preferences),
+    );
+    await tester.pumpAndSettle();
+
+    for (final text in [
+      'С ВОЗВРАЩЕНИЕМ',
+      'Войдите в Learnist',
+      'Студент',
+      'Преподаватель',
+      'Регистрация',
+      'Эл. почта',
+      'Пароль',
+      'Забыли пароль?',
+      'Впервые в Learnist?',
+    ]) {
+      expect(find.text(text), findsWidgets, reason: text);
+    }
+
+    await _tapVisible(tester, _byKey('auth-submit'));
+    expect(find.text('Введите адрес эл. почты'), findsOneWidget);
+    expect(find.text('Введите пароль'), findsOneWidget);
+
+    await _tapVisible(tester, find.text('Создать аккаунт'));
+    expect(find.text('Полное имя'), findsOneWidget);
+    expect(find.text('Имя пользователя'), findsOneWidget);
+    expect(find.text('Университет'), findsOneWidget);
   });
 
   testWidgets('forgot password sheet sends the reset email', (tester) async {
@@ -439,7 +476,7 @@ void main() {
 
     expect(auth.lastResetEmail, 'a@b.uz');
     expect(_byKey('forgot-email'), findsNothing);
-    expect(find.text(passwordResetSentMessage), findsOneWidget);
+    expect(find.text(_uz.authResetSent), findsOneWidget);
   });
 
   testWidgets('recovery event opens update screen; saving returns home', (
@@ -468,7 +505,7 @@ void main() {
     expect(auth.lastNewPassword, 'newSecret1');
     expect(find.byType(UpdatePasswordScreen), findsNothing);
     expect(find.byType(LearnistNavBar), findsOneWidget);
-    expect(find.text(passwordUpdatedMessage), findsOneWidget);
+    expect(find.text(_uz.passwordUpdated), findsOneWidget);
   });
 
   testWidgets('cancelling recovery signs out to the auth screen', (
@@ -862,8 +899,8 @@ void main() {
 
       testWidgets('valid credentials join and show a snackbar', (tester) async {
         await openJoinDialog(tester);
-        expect(find.text('Class login'), findsOneWidget);
-        expect(find.text('Password'), findsOneWidget);
+        expect(find.text('Sinf logini'), findsOneWidget);
+        expect(find.text('Parol'), findsOneWidget);
 
         // Logins are case-insensitive.
         await submit(tester, 'elt301', 'elt301');
@@ -1055,8 +1092,8 @@ void main() {
         AppColors.danger,
       );
       expect(dotColor(tester, 'Vocabulary: orientation'), AppColors.warning);
-      expect(find.text('Reading: 1-savol'), findsNothing);
-      expect(find.text('Listening: 1-savol'), findsNothing);
+      expect(find.text("O'qish: 1-savol"), findsNothing);
+      expect(find.text('Tinglab tushunish: 1-savol'), findsNothing);
 
       await _tapVisible(tester, find.text('Subject pronouns: am / is / are'));
       expect(find.byType(LessonDetailScreen), findsOneWidget);
@@ -1079,10 +1116,10 @@ void main() {
         FakeProgressService(mistakes: [row(3, 'listening', 2, 5)]),
       );
 
-      expect(find.text('Listening: 3-savol'), findsOneWidget);
-      expect(find.text('Lesson 3'), findsOneWidget);
+      expect(find.text('Tinglab tushunish: 3-savol'), findsOneWidget);
+      expect(find.text(_uz.lessonLabel(3)), findsOneWidget);
       expect(find.byIcon(LucideIcons.x), findsNothing);
-      expect(dotColor(tester, 'Listening: 3-savol'), AppColors.danger);
+      expect(dotColor(tester, 'Tinglab tushunish: 3-savol'), AppColors.danger);
     });
 
     testWidgets('no recurring mistakes shows the empty state', (tester) async {
@@ -1219,7 +1256,7 @@ void main() {
       await tester.enterText(_byKey('edit-username'), 'Taken_Name');
       await _tapVisible(tester, _byKey('edit-save'));
 
-      expect(find.text(profileUsernameTakenMessage), findsOneWidget);
+      expect(find.text(_uz.profileUsernameTaken), findsOneWidget);
       expect(auth.lastProfileUpdate, isNull);
       expect(find.byType(EditProfileScreen), findsOneWidget);
     });
@@ -1251,7 +1288,7 @@ void main() {
         'username': 'aziz_k',
         'university': 'My College',
       });
-      expect(find.text(profileSavedMessage), findsOneWidget);
+      expect(find.text(_uz.profileSaved), findsOneWidget);
       expect(find.byType(EditProfileScreen), findsNothing);
       expect(find.text('@aziz_k'), findsOneWidget);
       expect(find.text('My College'), findsOneWidget);
@@ -1270,7 +1307,7 @@ void main() {
 
       await tester.enterText(_byKey('edit-username'), 'aziz_new');
       await _tapVisible(tester, _byKey('edit-save'));
-      expect(find.text(profileUsernameTakenMessage), findsOneWidget);
+      expect(find.text(_uz.profileUsernameTaken), findsOneWidget);
 
       auth.updateProfileError = ClientException('offline');
       await tester.enterText(_byKey('edit-full-name'), 'Aziz Karimov II');
@@ -1281,12 +1318,13 @@ void main() {
 
     test('profile errors map to Uzbek messages', () {
       expect(
-        profileUpdateErrorMessage(const ProfileNotFoundException()),
+        profileUpdateErrorMessage(const ProfileNotFoundException(), _uz),
         contains('Profilingiz topilmadi'),
       );
       expect(
         profileUpdateErrorMessage(
           const PostgrestException(message: 'denied', code: '42501'),
+          _uz,
         ),
         contains('ruxsat'),
       );
@@ -1487,12 +1525,12 @@ void main() {
       await tester.pumpWidget(_app(auth));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Sign Up'));
+      await tester.tap(find.text(_uz.authSignUp));
       await tester.pumpAndSettle();
       await tester.tap(_byKey('auth-role-teacher'));
       await tester.pumpAndSettle();
 
-      await _selectUniversity(tester, 'Boshqa', 'Boshqa / Other');
+      await _selectUniversity(tester, 'Boshqa', _uz.authOtherUniversity);
       await _fillCommonSignUpFields(tester, username: 'teacher_01');
       await tester.enterText(_byKey('auth-other-university'), 'My College');
       await _tapVisible(tester, _byKey('auth-submit'));
@@ -1593,11 +1631,11 @@ void main() {
       expect(find.text('English group 301'), findsOneWidget);
       expect(find.text('Common issues'), findsNothing);
 
-      await _tapVisible(tester, find.text('View'));
+      await _tapVisible(tester, find.text("Ko'rish"));
       expect(find.byType(StudentDetailDialog), findsOneWidget);
-      expect(find.text('@redscorpnoir • current Lesson 2'), findsOneWidget);
-      expect(find.textContaining('Grammar 85%'), findsOneWidget);
-      expect(find.textContaining('Reading 100%'), findsOneWidget);
+      expect(find.text('@redscorpnoir • joriy dars: 2'), findsOneWidget);
+      expect(find.textContaining('Grammatika 85%'), findsOneWidget);
+      expect(find.textContaining("O'qish 100%"), findsOneWidget);
 
       await tester.tap(_byKey('student-detail-close'));
       await tester.pumpAndSettle();
@@ -1813,14 +1851,18 @@ void main() {
       expect(
         authErrorMessage(
           AuthRetryableFetchException(message: 'Failed host lookup'),
+          _uz,
         ),
         contains(internet),
       );
       expect(
-        authErrorMessage(ClientException('Connection refused')),
+        authErrorMessage(ClientException('Connection refused'), _uz),
         contains(internet),
       );
-      expect(authErrorMessage(TimeoutException('slow')), contains(internet));
+      expect(
+        authErrorMessage(TimeoutException('slow'), _uz),
+        contains(internet),
+      );
     });
 
     test('trigger failure (HTTP 500) means the username is taken', () {
@@ -1830,7 +1872,7 @@ void main() {
             '"msg":"Database error saving new user"}',
         statusCode: '500',
       );
-      expect(authErrorMessage(error), usernameTakenMessage);
+      expect(authErrorMessage(error, _uz), _uz.authUsernameTaken);
     });
 
     test('server and database errors are not reported as network errors', () {
@@ -1840,11 +1882,12 @@ void main() {
             message: 'Bad gateway',
             statusCode: '502',
           ),
+          _uz,
         ),
         allOf(isNot(contains(internet)), contains('Serverda')),
       );
       expect(
-        authErrorMessage(const PostgrestException(message: 'boom')),
+        authErrorMessage(const PostgrestException(message: 'boom'), _uz),
         isNot(contains(internet)),
       );
       expect(
@@ -1854,6 +1897,7 @@ void main() {
             statusCode: '400',
             code: 'invalid_credentials',
           ),
+          _uz,
         ),
         "Email yoki parol noto'g'ri.",
       );
@@ -1867,11 +1911,12 @@ void main() {
             statusCode: '422',
             code: 'same_password',
           ),
+          _uz,
         ),
         contains('eskisidan farq'),
       );
       expect(
-        authErrorMessage(AuthPKCEGrantCodeExchangeError('no verifier')),
+        authErrorMessage(AuthPKCEGrantCodeExchangeError('no verifier'), _uz),
         contains("so'ragan qurilmada"),
       );
     });

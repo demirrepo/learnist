@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../l10n/l10n.dart';
 import '../models/teacher_dashboard.dart';
 import '../services/teacher_service.dart';
 import '../theme/app_theme.dart';
@@ -28,7 +29,9 @@ class TeacherPanelScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text("«$name» guruhi yaratildi.")));
+      ..showSnackBar(
+        SnackBar(content: Text(context.l10n.teacherGroupCreated(name))),
+      );
   }
 
   @override
@@ -52,7 +55,9 @@ class TeacherPanelScreen extends ConsumerWidget {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
-                  SnackBar(content: Text(teacherLoadErrorMessage(error))),
+                  SnackBar(
+                    content: Text(teacherLoadErrorMessage(error, context.l10n)),
+                  ),
                 );
             }
           },
@@ -80,7 +85,7 @@ class TeacherPanelScreen extends ConsumerWidget {
                       AsyncError(:final error) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 24),
                         child: LoadProblemView(
-                          message: teacherLoadErrorMessage(error),
+                          message: teacherLoadErrorMessage(error, context.l10n),
                           onRetry:
                               () => ref.invalidate(teacherDashboardProvider),
                         ),
@@ -108,36 +113,31 @@ class _DashboardBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final groups = dashboard.groups;
-
-    String plural(int n, String word) => n == 1 ? '1 $word' : '$n ${word}s';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TeacherSectionTitle(
-          'Class overview',
+          l10n.teacherClassOverview,
           caption:
-              '${plural(dashboard.totalGroups, 'group')} • '
-              '${plural(dashboard.totalStudents, 'connected student')}',
+              '${l10n.teacherGroupCount(dashboard.totalGroups)} • '
+              '${l10n.teacherConnectedStudentCount(dashboard.totalStudents)}',
         ),
         const SizedBox(height: 12),
         ClassOverviewGrid(
           stats: [
-            ('Students active', '${dashboard.totalStudents}'),
-            ('Average mastery', '${dashboard.averageMastery}%'),
-            ('Groups', '${dashboard.totalGroups}'),
+            (l10n.teacherStudentsActive, '${dashboard.totalStudents}'),
+            (l10n.teacherAverageMastery, '${dashboard.averageMastery}%'),
+            (l10n.teacherGroups, '${dashboard.totalGroups}'),
           ],
         ),
         const SizedBox(height: 28),
-        const TeacherSectionTitle('Groups & students'),
+        TeacherSectionTitle(l10n.teacherGroupsAndStudents),
         const SizedBox(height: 12),
         if (groups.isEmpty)
-          const TeacherCard(
-            child: TeacherEmptyText(
-              'No groups yet. Create one to connect students.',
-            ),
-          )
+          TeacherCard(child: TeacherEmptyText(l10n.teacherNoGroups))
         else
           for (final (i, group) in groups.indexed) ...[
             if (i > 0) const SizedBox(height: 12),
@@ -161,7 +161,7 @@ class _Header extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'CLASS ANALYTICS',
+          context.l10n.teacherEyebrow,
           style: GoogleFonts.manrope(
             fontSize: 12,
             fontWeight: FontWeight.w800,
@@ -171,7 +171,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          "O'qituvchi paneli",
+          context.l10n.navTeacherPanelFull,
           style: GoogleFonts.manrope(
             fontSize: 26,
             height: 1.2,

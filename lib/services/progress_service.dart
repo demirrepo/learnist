@@ -326,12 +326,12 @@ class CheckupCooldownException implements Exception {
   String toString() => 'CheckupCooldownException(next: $nextAllowed)';
 }
 
-/// User-facing Uzbek message for a failed check-up load or submission.
+/// User-facing message for a failed check-up load or submission.
 ///
 /// Debug builds append the Postgres/PostgREST code and message, so a
 /// permission or schema problem is visible on screen, not only in the log.
-String checkupErrorMessage(Object error) {
-  final message = _userMessage(error);
+String checkupErrorMessage(Object error, AppLocalizations l10n) {
+  final message = _userMessage(error, l10n);
   if (kDebugMode && error is PostgrestException) {
     return '$message\n\n[debug] ${error.code ?? 'no code'}: ${error.message}';
   }
@@ -355,17 +355,13 @@ String lessonCompletionErrorMessage(Object error, AppLocalizations l10n) {
   return message;
 }
 
-String _userMessage(Object error) {
-  if (isNetworkError(error)) {
-    return "Internet aloqasi yo'q. Tarmoqni tekshirib, qayta urinib ko'ring.";
-  }
-  if (error is CheckupCooldownException) {
-    return "Keyingi daraja tekshiruvi hali ochilmagan.";
-  }
+String _userMessage(Object error, AppLocalizations l10n) {
+  if (isNetworkError(error)) return l10n.errorOffline;
+  if (error is CheckupCooldownException) return l10n.checkupCooldownError;
   if (error is PostgrestException && error.message == 'invalid_answers') {
-    return "Barcha savollarga javob berib, qayta yuboring.";
+    return l10n.checkupInvalidAnswers;
   }
-  return "Nimadir xato ketdi. Iltimos, qayta urinib ko'ring.";
+  return l10n.errorGeneric;
 }
 
 /// Prints every field of a [PostgrestException] on its own line; the

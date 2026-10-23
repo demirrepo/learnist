@@ -531,7 +531,9 @@ class _SignOutButtonState extends State<_SignOutButton> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(authErrorMessage(error))));
+        ..showSnackBar(
+          SnackBar(content: Text(authErrorMessage(error, context.l10n))),
+        );
     } finally {
       if (mounted) setState(() => _busy = false);
     }

@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:learnist/l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:learnist/services/deepgram_service.dart';
@@ -28,9 +30,12 @@ http.Response _json(Object body, [int status = 200]) => http.Response(
   headers: {'content-type': 'application/json'},
 );
 
+/// Messages are checked in the app's default language.
+final _uz = lookupAppLocalizations(const Locale('uz'));
+
 Matcher _deepgramError(String message, {int? statusCode}) => throwsA(
   isA<DeepgramException>()
-      .having((e) => e.message, 'message', message)
+      .having((e) => e.message(_uz), 'message', message)
       .having((e) => e.statusCode, 'statusCode', statusCode),
 );
 
@@ -139,7 +144,7 @@ void main() {
 
       await expectLater(
         service.transcribeAudio(audioPath),
-        _deepgramError("Internet aloqasi yo'q. Iltimos qayta urinib ko'ring."),
+        _deepgramError(_uz.errorOffline),
       );
     });
 

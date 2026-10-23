@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../l10n/l10n.dart';
 import '../services/supabase_service.dart';
 import '../theme/app_theme.dart';
 
@@ -35,35 +36,39 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
     // Captured up front: on success the router replaces this screen before
     // the SnackBar is shown.
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     setState(() => _saving = true);
 
     try {
       await ref
           .read(supabaseServiceProvider)
           .updatePassword(_passwordController.text);
-      _showSnackBar(messenger, passwordUpdatedMessage);
+      _showSnackBar(messenger, l10n.passwordUpdated);
     } catch (error, stackTrace) {
       logAuthError('Password update', error, stackTrace);
-      _showSnackBar(messenger, authErrorMessage(error), isError: true);
+      _showSnackBar(messenger, authErrorMessage(error, l10n), isError: true);
       if (mounted) setState(() => _saving = false);
     }
   }
 
   Future<void> _cancel() async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     setState(() => _saving = true);
 
     try {
       await ref.read(supabaseServiceProvider).cancelPasswordRecovery();
     } catch (error, stackTrace) {
       logAuthError('Cancel password recovery', error, stackTrace);
-      _showSnackBar(messenger, authErrorMessage(error), isError: true);
+      _showSnackBar(messenger, authErrorMessage(error, l10n), isError: true);
       if (mounted) setState(() => _saving = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -93,7 +98,7 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'HISOBNI TIKLASH',
+                    l10n.passwordEyebrow,
                     style: GoogleFonts.manrope(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
@@ -103,7 +108,7 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    "Yangi parol o'rnating",
+                    l10n.passwordTitle,
                     style: GoogleFonts.manrope(
                       fontSize: 30,
                       height: 1.15,
@@ -114,8 +119,7 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Hisobingiz uchun yangi va xavfsiz parol kiriting. "
-                    "Keyingi safar shu parol bilan kirasiz.",
+                    l10n.passwordBody,
                     style: GoogleFonts.manrope(
                       fontSize: 15,
                       height: 1.45,
@@ -130,7 +134,7 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
                     child: TextButton(
                       key: const ValueKey('update-password-cancel'),
                       onPressed: _saving ? null : _cancel,
-                      child: const Text('Bekor qilish'),
+                      child: Text(l10n.cancel),
                     ),
                   ),
                 ],
@@ -143,6 +147,8 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
   }
 
   Widget _buildFormCard() {
+    final l10n = context.l10n;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -165,7 +171,7 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 8),
               child: Text(
-                'Yangi parol',
+                l10n.passwordNew,
                 style: GoogleFonts.manrope(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
@@ -182,13 +188,13 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
               autofillHints: const [AutofillHints.newPassword],
               onFieldSubmitted: (_) => _saving ? null : _save(),
               decoration: InputDecoration(
-                hintText: 'Kamida 6 ta belgi',
+                hintText: l10n.authPasswordHintNew,
                 prefixIcon: const Icon(LucideIcons.lock, size: 20),
                 suffixIcon: IconButton(
                   tooltip:
                       _obscurePassword
-                          ? "Parolni ko'rsatish"
-                          : 'Parolni yashirish',
+                          ? l10n.authShowPassword
+                          : l10n.authHidePassword,
                   icon: Icon(
                     _obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
                     size: 20,
@@ -200,10 +206,8 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
               ),
               validator: (value) {
                 final password = value ?? '';
-                if (password.isEmpty) return 'Yangi parolni kiriting';
-                if (password.length < 6) {
-                  return "Parol kamida 6 ta belgidan iborat bo'lsin";
-                }
+                if (password.isEmpty) return l10n.passwordNewRequired;
+                if (password.length < 6) return l10n.authPasswordTooShort;
                 return null;
               },
             ),
@@ -220,12 +224,12 @@ class _UpdatePasswordScreenState extends ConsumerState<UpdatePasswordScreen> {
                           color: Colors.white,
                         ),
                       )
-                      : const Row(
+                      : Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Parolni saqlash'),
-                          SizedBox(width: 8),
-                          Icon(LucideIcons.arrowRight, size: 20),
+                          Text(l10n.passwordSave),
+                          const SizedBox(width: 8),
+                          const Icon(LucideIcons.arrowRight, size: 20),
                         ],
                       ),
             ),

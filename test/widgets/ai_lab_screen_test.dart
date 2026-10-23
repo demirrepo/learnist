@@ -82,7 +82,7 @@ void main() {
   testWidgets('checking an empty prompt asks for one first', (tester) async {
     final ai =
         FakeOpenAIService()
-          ..error = const OpenAIException('Avval promptingizni yozing.');
+          ..error = const OpenAIException(AiFailure.emptyPrompt);
     await tester.pumpWidget(_aiLab(ai));
 
     await tester.enterText(find.byType(TextField), '   ');

@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/tracked_mistake.dart';
 import '../../theme/app_theme.dart';
 
 enum ErrorSeverity {
-  high(AppColors.danger, 'yuqori'),
-  medium(AppColors.warning, "o'rta");
+  high(AppColors.danger),
+  medium(AppColors.warning);
 
-  const ErrorSeverity(this.color, this.label);
+  const ErrorSeverity(this.color);
 
   final Color color;
-  final String label;
+
+  String label(AppLocalizations l10n) => switch (this) {
+    high => l10n.errorSeverityHigh,
+    medium => l10n.errorSeverityMedium,
+  };
 }
 
 /// One weakness: every mistake of the same kind across recent tests,
@@ -66,14 +71,15 @@ class ErrorPatternCard extends StatelessWidget {
   Widget build(BuildContext context) {
     const radius = BorderRadius.all(Radius.circular(16));
     final severity = pattern.severity;
+    final l10n = context.l10n;
 
     return Semantics(
       button: true,
       label:
           '${pattern.rule}. '
-          "So'nggi testlarda ${pattern.mistakeCount} marta xato qilingan. "
-          'Ustuvorlik: ${severity.label}. '
-          'Darsni takrorlash: ${pattern.lessonLabel}',
+          '${l10n.errorMistakeCount(pattern.mistakeCount)}. '
+          '${l10n.errorPriority(severity.label(l10n))}. '
+          '${l10n.errorReviewLesson}: ${pattern.lessonLabel}',
       excludeSemantics: true,
       child: Material(
         color: AppColors.surface,
@@ -129,8 +135,7 @@ class ErrorPatternCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  "So'nggi testlarda ${pattern.mistakeCount} marta "
-                  'xato qilingan',
+                  l10n.errorMistakeCount(pattern.mistakeCount),
                   style: GoogleFonts.manrope(
                     fontSize: 13.5,
                     height: 1.35,
@@ -155,7 +160,7 @@ class ErrorPatternCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Darsni takrorlash',
+                            l10n.errorReviewLesson,
                             style: GoogleFonts.manrope(
                               fontSize: 14,
                               fontWeight: FontWeight.w800,

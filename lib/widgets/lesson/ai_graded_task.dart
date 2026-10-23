@@ -181,7 +181,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
     try {
       final path = await recorder.stop();
       if (path == null) {
-        throw DeepgramException(l10n.taskRecordingMissing);
+        throw const DeepgramException(DeepgramFailure.recordingMissing);
       }
       if (!mounted) {
         unawaited(recorder.delete(path));
@@ -200,7 +200,7 @@ class _AiGradedTaskState extends ConsumerState<AiGradedTask>
       showLessonError(
         messenger,
         error is DeepgramException
-            ? error.message
+            ? error.message(l10n)
             : l10n.taskTranscriptionError,
       );
     } finally {
@@ -385,11 +385,11 @@ class _MicRecorderState extends State<_MicRecorder>
     final recording = _recording;
     final accent = recording ? AppColors.danger : AppColors.primary;
     final limit = AiGradedTask.maxRecording;
+    final l10n = context.l10n;
     final label = switch (widget.state) {
-      _MicState.idle || _MicState.starting =>
-        'Tap the mic and speak (up to ${limit.inMinutes} minutes)',
-      _MicState.recording => 'Recording… Tap to stop',
-      _MicState.transcribing => 'Transcribing…',
+      _MicState.idle || _MicState.starting => l10n.micIdle(limit.inMinutes),
+      _MicState.recording => l10n.micRecording,
+      _MicState.transcribing => l10n.micTranscribing,
     };
 
     return Container(
@@ -433,7 +433,7 @@ class _MicRecorderState extends State<_MicRecorder>
                   )
                 else
                   IconButton(
-                    tooltip: recording ? 'Stop recording' : 'Start recording',
+                    tooltip: recording ? l10n.micStop : l10n.micStart,
                     onPressed:
                         widget.state == _MicState.starting
                             ? null
@@ -515,7 +515,7 @@ class _EvaluationResult extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Mastery reached: ${result.score}%',
+                  context.l10n.taskMasteryReached(result.score),
                   style: GoogleFonts.manrope(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,

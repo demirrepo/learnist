@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:learnist/l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learnist/screens/lesson_detail_screen.dart';
 import 'package:learnist/services/lesson_service.dart';
@@ -22,6 +23,9 @@ Widget _host(Widget child) => MaterialApp(
   home: Scaffold(body: SingleChildScrollView(child: child)),
 );
 
+/// UI text is checked in the app's default language.
+final _uz = lookupAppLocalizations(testLocale);
+
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
@@ -31,10 +35,7 @@ void main() {
     await tester.tap(find.text('Natijani tekshirish'));
     await tester.pumpAndSettle();
 
-    expect(
-      find.text('Answer all 2 questions to check your results.'),
-      findsOneWidget,
-    );
+    expect(find.text(_uz.quizAnswerAll(2)), findsOneWidget);
     expect(find.byType(AlertDialog), findsNothing);
   });
 
@@ -62,7 +63,7 @@ void main() {
     await tester.tap(find.text('b2'));
     await tester.tap(find.text('Natijani tekshirish'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('OK'));
+    await tester.tap(find.text(_uz.ok));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('a2'));
@@ -90,8 +91,8 @@ void main() {
     await tester.tap(find.text('Natijani tekshirish'));
     await tester.pumpAndSettle();
 
-    expect(find.text('1/2 correct'), findsOneWidget);
-    await tester.tap(find.text('OK'));
+    expect(find.text(_uz.quizScore(1, 2)), findsOneWidget);
+    await tester.tap(find.text(_uz.ok));
     await tester.pumpAndSettle();
 
     // Option styling is unchanged after checking — nothing reveals answers.

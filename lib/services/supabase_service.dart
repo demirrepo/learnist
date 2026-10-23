@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/app_localizations.dart';
+
 /// Account type chosen at sign-up and stored as `role` in the user metadata.
 enum UserRole {
   student,
@@ -245,13 +247,9 @@ class RoleMismatchException implements Exception {
   final UserRole savedRole;
 
   /// Tells the user which tab to pick instead.
-  String get message => switch (savedRole) {
-    UserRole.student =>
-      "Siz talaba sifatida ro'yxatdan o'tgansiz. "
-          "Iltimos, 'Talaba' bo'limini tanlang.",
-    UserRole.teacher =>
-      "Siz o'qituvchi sifatida ro'yxatdan o'tgansiz. "
-          "Iltimos, 'O'qituvchi' bo'limini tanlang.",
+  String message(AppLocalizations l10n) => switch (savedRole) {
+    UserRole.student => l10n.authRoleMismatchStudent,
+    UserRole.teacher => l10n.authRoleMismatchTeacher,
   };
 
   @override
@@ -262,17 +260,6 @@ class RoleMismatchException implements Exception {
 class ProfileNotFoundException implements Exception {
   const ProfileNotFoundException();
 }
-
-const usernameTakenMessage =
-    "Bu foydalanuvchi nomi allaqachon band. Iltimos, boshqa nom tanlang.";
-const passwordResetSentMessage =
-    "Parolni tiklash havolasi pochtangizga yuborildi.";
-const passwordUpdatedMessage = "Parolingiz muvaffaqiyatli yangilandi.";
-const _networkMessage =
-    "Internet aloqasi yo'q. Tarmoqni tekshirib, qayta urinib ko'ring.";
-const _serverMessage =
-    "Serverda xatolik yuz berdi. Birozdan so'ng qayta urinib ko'ring.";
-const _genericMessage = "Nimadir xato ketdi. Iltimos, qayta urinib ko'ring.";
 
 const _expiredLinkCodes = {
   'otp_expired',
@@ -290,74 +277,70 @@ bool isNetworkError(Object error) =>
     error is TimeoutException ||
     (error is AuthRetryableFetchException && error.statusCode == null);
 
-/// User-facing Uzbek message for any auth failure.
-String authErrorMessage(Object error) {
-  if (error is RoleMismatchException) return error.message;
-  if (isNetworkError(error)) return _networkMessage;
-  if (error is AuthException) return _authExceptionMessage(error);
-  return _genericMessage;
+/// User-facing message for any auth failure.
+String authErrorMessage(Object error, AppLocalizations l10n) {
+  if (error is RoleMismatchException) return error.message(l10n);
+  if (isNetworkError(error)) return l10n.errorOffline;
+  if (error is AuthException) return _authExceptionMessage(error, l10n);
+  return l10n.errorGeneric;
 }
 
-const profileUsernameTakenMessage = "Bu foydalanuvchi nomi band.";
+/// True when a profile update failed because someone took the username
+/// after our pre-check (unique_violation).
+bool isProfileUsernameTaken(Object error) =>
+    error is PostgrestException && error.code == '23505';
 
-/// User-facing Uzbek message for a failed profile update.
-String profileUpdateErrorMessage(Object error) {
-  if (isNetworkError(error)) return _networkMessage;
-  if (error is ProfileNotFoundException) {
-    return "Profilingiz topilmadi. Tizimdan chiqib, qayta kiring.";
-  }
+/// User-facing message for a failed profile update.
+String profileUpdateErrorMessage(Object error, AppLocalizations l10n) {
+  if (isNetworkError(error)) return l10n.errorOffline;
+  if (error is ProfileNotFoundException) return l10n.profileNotFound;
+  if (isProfileUsernameTaken(error)) return l10n.profileUsernameTaken;
   if (error is PostgrestException) {
-    return switch (error.code) {
-      // unique_violation: someone took the username after our pre-check.
-      '23505' => profileUsernameTakenMessage,
-      // insufficient_privilege, or an RLS policy rejected the row.
-      '42501' => "Profilni o'zgartirishga ruxsat yo'q.",
-      _ => _serverMessage,
-    };
+    // insufficient_privilege, or an RLS policy rejected the row.
+    return error.code == '42501'
+        ? l10n.profileUpdateForbidden
+        : l10n.errorServer;
   }
-  if (error is AuthException) return _authExceptionMessage(error);
-  return _genericMessage;
+  if (error is AuthException) return _authExceptionMessage(error, l10n);
+  return l10n.errorGeneric;
 }
 
-String _authExceptionMessage(AuthException error) {
+String _authExceptionMessage(AuthException error, AppLocalizations l10n) {
   // A failing handle_new_user trigger returns HTTP 500 with this text. With
   // the pre-check in place, the only realistic cause is another user taking
   // the same username between the check and the sign-up.
   if (error.message.contains('Database error saving new user')) {
-    return usernameTakenMessage;
+    return l10n.authUsernameTaken;
   }
-  if (error is AuthRetryableFetchException) return _serverMessage;
+  if (error is AuthRetryableFetchException) return l10n.errorServer;
 
   // PKCE: the link was opened on a different device (or after reinstalling),
   // so the locally stored code verifier is missing.
   if (error is AuthPKCEGrantCodeExchangeError ||
       error.code == 'bad_code_verifier') {
-    return "Havolani parolni tiklashni so'ragan qurilmada oching.";
+    return l10n.authResetOtherDevice;
   }
   // Errors carried in a redirect URL put `error_code` into statusCode.
   if (_expiredLinkCodes.contains(error.code) ||
       _expiredLinkCodes.contains(error.statusCode)) {
-    return "Havola eskirgan yoki allaqachon ishlatilgan. "
-        "Iltimos, yangi havola so'rang.";
+    return l10n.authLinkExpired;
   }
 
   return switch (error.code) {
-    'email_exists' || 'user_already_exists' =>
-      "Bu email bilan allaqachon ro'yxatdan o'tilgan. Tizimga kiring.",
-    'invalid_credentials' => "Email yoki parol noto'g'ri.",
-    'email_not_confirmed' =>
-      "Emailingiz hali tasdiqlanmagan. Pochtangizdagi havolani bosing.",
-    'weak_password' =>
-      "Parol juda oddiy. Kamida 6 ta belgidan iborat kuchliroq parol kiriting.",
-    'same_password' => "Yangi parol eskisidan farq qilishi kerak.",
-    'session_not_found' || 'session_expired' || 'reauthentication_needed' =>
-      "Sessiya muddati tugagan. Iltimos, yangi tiklash havolasini so'rang.",
+    'email_exists' || 'user_already_exists' => l10n.authEmailExists,
+    'invalid_credentials' => l10n.authInvalidCredentials,
+    'email_not_confirmed' => l10n.authEmailNotConfirmed,
+    'weak_password' => l10n.authWeakPassword,
+    'same_password' => l10n.authSamePassword,
+    'session_not_found' ||
+    'session_expired' ||
+    'reauthentication_needed' => l10n.authSessionExpired,
     'email_address_invalid' ||
-    'validation_failed' => "Email manzili noto'g'ri kiritilgan.",
-    'over_email_send_rate_limit' || 'over_request_rate_limit' =>
-      "Juda ko'p urinish bo'ldi. Birozdan so'ng qayta urinib ko'ring.",
-    'signup_disabled' => "Ro'yxatdan o'tish hozircha o'chirilgan.",
-    _ => _genericMessage,
+    'validation_failed' => l10n.authEmailAddressInvalid,
+    'over_email_send_rate_limit' ||
+    'over_request_rate_limit' => l10n.authRateLimited,
+    'signup_disabled' => l10n.authSignupDisabled,
+    _ => l10n.errorGeneric,
   };
 }
 

@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../services/speech_recorder.dart';
 import '../../theme/app_theme.dart';
 import 'lesson_common.dart';
@@ -106,7 +107,7 @@ class _RecordingPlaybackState extends ConsumerState<RecordingPlayback> {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                "Your recording can't be played back.",
+                context.l10n.recordingUnplayable,
                 style: labelStyle.copyWith(color: AppColors.danger),
               ),
             ),
@@ -164,7 +165,7 @@ class _RecordingPlaybackState extends ConsumerState<RecordingPlayback> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  'Your recording',
+                                  context.l10n.recordingTitle,
                                   style: labelStyle,
                                 ),
                               ),
@@ -236,7 +237,10 @@ class _PlayButton extends StatelessWidget {
         final playing = snapshot.data?.playing ?? false;
 
         return IconButton(
-          tooltip: playing ? 'Pause recording' : 'Play recording',
+          tooltip:
+              playing
+                  ? context.l10n.recordingPause
+                  : context.l10n.recordingPlay,
           onPressed: onPressed,
           color: Colors.white,
           style: IconButton.styleFrom(

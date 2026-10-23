@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:learnist/l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:learnist/services/openai_service.dart';
@@ -34,9 +36,12 @@ http.Response _functionError(int status, String code) => http.Response(
   headers: {'content-type': 'application/json'},
 );
 
+/// Messages are checked in the app's default language.
+final _uz = lookupAppLocalizations(const Locale('uz'));
+
 Matcher _openAIError(String message, {int? statusCode}) => throwsA(
   isA<OpenAIException>()
-      .having((e) => e.message, 'message', message)
+      .having((e) => e.message(_uz), 'message', message)
       .having((e) => e.statusCode, 'statusCode', statusCode),
 );
 
@@ -189,7 +194,7 @@ void main() {
       final ai = _service((_) async => throw http.ClientException('offline'));
       await expectLater(
         ai.evaluatePrompt('Hi'),
-        _openAIError("Internetga ulanib bo'lmadi. Qaytadan urinib ko'ring."),
+        _openAIError(_uz.errorOffline),
       );
     });
 

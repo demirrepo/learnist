@@ -1,11 +1,16 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:learnist/l10n/app_localizations.dart';
 import 'package:learnist/models/teacher_dashboard.dart';
 import 'package:learnist/services/teacher_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+/// User-facing messages are checked in the app's default language.
+final _uz = lookupAppLocalizations(const Locale('uz'));
 
 /// An unsigned JWT that expires in an hour; gotrue only decodes it.
 String _accessToken() {
@@ -201,13 +206,17 @@ void main() {
       expect(jsonDecode(requests.single.body), {'p_student_id': 's1'});
       expect(lessons, hasLength(2));
       expect(lessons.first.isCurrent, isTrue);
-      expect(lessons.first.skills, [
-        ('Grammar', 0),
-        ('Reading', 100),
-        ('Listening', 40),
-        ('Writing', 0),
-        ('Speaking', 0),
-      ]);
+      final first = lessons.first;
+      expect(
+        [
+          first.grammar,
+          first.reading,
+          first.listening,
+          first.writing,
+          first.speaking,
+        ],
+        [0, 100, 40, 0, 0],
+      );
       expect(lessons.last.title, 'Lesson 1');
       expect(lessons.last.grammar, 85);
     });
@@ -245,7 +254,7 @@ void main() {
       expect(result.groupName, 'English group 301');
       expect(result.alreadyMember, isFalse);
       expect(
-        joinGroupSuccessMessage(result),
+        joinGroupSuccessMessage(result, _uz),
         "«English group 301» guruhiga qo'shildingiz.",
       );
     });
@@ -259,7 +268,7 @@ void main() {
 
       expect(result.alreadyMember, isTrue);
       expect(
-        joinGroupSuccessMessage(result),
+        joinGroupSuccessMessage(result, _uz),
         'Siz allaqachon «Evening» guruhidasiz.',
       );
     });
@@ -277,7 +286,7 @@ void main() {
         throwsA(isA<InvalidGroupCredentialsException>()),
       );
       expect(
-        joinGroupErrorMessage(const InvalidGroupCredentialsException()),
+        joinGroupErrorMessage(const InvalidGroupCredentialsException(), _uz),
         "Login yoki parol noto'g'ri.",
       );
     });
@@ -304,7 +313,7 @@ void main() {
         throwsA(isA<PostgrestException>()),
       );
       expect(
-        joinGroupErrorMessage(const PostgrestException(message: 'x')),
+        joinGroupErrorMessage(const PostgrestException(message: 'x'), _uz),
         "Guruhga qo'shilib bo'lmadi. Iltimos, qayta urinib ko'ring.",
       );
     });
@@ -344,7 +353,7 @@ void main() {
         throwsA(isA<GroupLoginTakenException>()),
       );
       expect(
-        createGroupErrorMessage(const GroupLoginTakenException()),
+        createGroupErrorMessage(const GroupLoginTakenException(), _uz),
         'Bu login band. Iltimos, boshqa login tanlang.',
       );
     });

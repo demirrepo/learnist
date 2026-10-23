@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../l10n/l10n.dart';
 import '../../services/teacher_service.dart';
 import '../../theme/app_theme.dart';
 
@@ -55,7 +56,9 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
           );
       if (mounted) Navigator.of(context).pop(_name.text.trim());
     } catch (error) {
-      if (mounted) setState(() => _error = createGroupErrorMessage(error));
+      if (mounted) {
+        setState(() => _error = createGroupErrorMessage(error, context.l10n));
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -63,11 +66,13 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return AlertDialog(
       backgroundColor: AppColors.surface,
       surfaceTintColor: Colors.transparent,
       title: Text(
-        'Create group',
+        l10n.teacherCreateGroup,
         style: GoogleFonts.manrope(
           fontSize: 20,
           fontWeight: FontWeight.w800,
@@ -87,11 +92,11 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
                 enabled: !_busy,
                 maxLength: 80,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'Group name'),
+                decoration: InputDecoration(labelText: l10n.teacherGroupName),
                 validator:
                     (value) =>
                         (value ?? '').trim().isEmpty
-                            ? "Guruh nomini kiriting."
+                            ? l10n.teacherGroupNameRequired
                             : null,
               ),
               const SizedBox(height: 8),
@@ -101,9 +106,9 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
                 enabled: !_busy,
                 textCapitalization: TextCapitalization.characters,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelText: 'Class login',
-                  helperText: '3–32 characters: A–Z, 0–9, _ or -',
+                decoration: InputDecoration(
+                  labelText: l10n.groupClassLogin,
+                  helperText: l10n.teacherLoginHelper,
                 ),
                 validator:
                     (value) =>
@@ -111,7 +116,7 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
                               TeacherService.normalizeLogin(value ?? ''),
                             )
                             ? null
-                            : "Login 3–32 ta harf, raqam, _ yoki - bo'lsin.",
+                            : l10n.teacherLoginInvalid,
               ),
               const SizedBox(height: 8),
               TextFormField(
@@ -120,11 +125,11 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
                 enabled: !_busy,
                 textInputAction: TextInputAction.done,
                 onFieldSubmitted: (_) => _submit(),
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration: InputDecoration(labelText: l10n.groupPassword),
                 validator: (value) {
                   final length = (value ?? '').trim().length;
                   return length < 4 || length > 64
-                      ? "Parol 4–64 ta belgidan iborat bo'lsin."
+                      ? l10n.teacherPasswordInvalid
                       : null;
                 },
               ),
@@ -146,7 +151,7 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           key: const ValueKey('create-group-submit'),
@@ -163,7 +168,7 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
                       color: Colors.white,
                     ),
                   )
-                  : const Text('Create'),
+                  : Text(l10n.teacherCreate),
         ),
       ],
     );

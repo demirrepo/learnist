@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 
 /// Dark "TEACHER WORKSPACE" banner with the create-group action and the
@@ -73,11 +74,13 @@ class _BannerText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'TEACHER WORKSPACE',
+          l10n.teacherWorkspaceEyebrow,
           style: GoogleFonts.manrope(
             fontSize: 11.5,
             fontWeight: FontWeight.w800,
@@ -87,7 +90,7 @@ class _BannerText extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          'See who is learning — and where they struggle.',
+          l10n.teacherWorkspaceHeadline,
           style: GoogleFonts.manrope(
             fontSize: wide ? 34 : 25,
             height: 1.15,
@@ -98,9 +101,7 @@ class _BannerText extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Create classes, connect students through a class login/password, '
-          'and monitor lesson progress, CEFR history and recurring error '
-          'categories.',
+          l10n.teacherWorkspaceBody,
           style: GoogleFonts.manrope(
             fontSize: 14,
             height: 1.55,
@@ -113,7 +114,7 @@ class _BannerText extends StatelessWidget {
           key: const ValueKey('teacher-create-group'),
           onPressed: onCreateGroup,
           icon: const Icon(LucideIcons.plus, size: 18),
-          label: const Text('Create group'),
+          label: Text(l10n.teacherCreateGroup),
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.teacherAccent,
             minimumSize: const Size(0, 46),
@@ -140,7 +141,7 @@ class _StudentsCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: '$count connected students',
+      label: context.l10n.teacherConnectedStudentCount(count),
       excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -161,7 +162,7 @@ class _StudentsCounter extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'CONNECTED STUDENTS',
+              context.l10n.teacherConnectedStudents,
               textAlign: TextAlign.center,
               style: GoogleFonts.manrope(
                 fontSize: 10.5,

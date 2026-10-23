@@ -9,13 +9,6 @@ import 'ai_graded_task.dart';
 import 'ask_ai_dialog.dart';
 import 'lesson_common.dart';
 
-const _lenses = [
-  (level: 'A1', focus: "Short, correct sentences using the lesson's grammar."),
-  (level: 'A2', focus: 'Link ideas with and, but and because.'),
-  (level: 'B1', focus: 'Add details and reasons in clear paragraphs.'),
-  (level: 'B2', focus: 'Vary your vocabulary and sentence structure.'),
-];
-
 /// Used when the instruction names no "(80–100 words)" range.
 const _defaultWords = (min: 80, max: 120);
 
@@ -52,7 +45,7 @@ class WritingTab extends StatelessWidget {
             children: [
               LessonPrompt(
                 tagIcon: LucideIcons.pencil,
-                tag: 'Writing task',
+                tag: context.l10n.lessonTagWritingTask,
                 title: lesson.writingTitle ?? lesson.title,
                 body: prompt,
               ),
@@ -60,8 +53,8 @@ class WritingTab extends StatelessWidget {
               AiGradedTask(
                 lessonNumber: lesson.lessonNumber,
                 section: 'writing',
-                buttonLabel: 'Assess my writing',
-                hint: 'Write your text here…',
+                buttonLabel: context.l10n.lessonAssessWriting,
+                hint: context.l10n.lessonWritingHint,
                 minLines: 10,
                 maxLines: 20,
                 evaluate: (ai, answer) => ai.evaluateWriting(answer, prompt),
@@ -95,7 +88,7 @@ class _WordCount extends StatelessWidget {
     final inRange = count >= range.min && count <= range.max;
 
     return Text(
-      '$count / ${range.min}–${range.max} words',
+      context.l10n.lessonWordCount(count, range.min, range.max),
       textAlign: TextAlign.end,
       style: GoogleFonts.manrope(
         fontSize: 12.5,
@@ -111,6 +104,14 @@ class _CefrLenses extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final lenses = [
+      (level: 'A1', focus: l10n.lessonLensA1),
+      (level: 'A2', focus: l10n.lessonLensA2),
+      (level: 'B1', focus: l10n.lessonLensB1),
+      (level: 'B2', focus: l10n.lessonLensB2),
+    ];
+
     return LessonCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -121,7 +122,7 @@ class _CefrLenses extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'CEFR lenses',
+                  l10n.lessonCefrLenses,
                   style: GoogleFonts.manrope(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
@@ -133,14 +134,14 @@ class _CefrLenses extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Your writing is assessed through these levels.',
+            l10n.lessonCefrLensesCaption,
             style: GoogleFonts.manrope(
               fontSize: 13.5,
               fontWeight: FontWeight.w500,
               color: AppColors.hint,
             ),
           ),
-          for (final lens in _lenses) ...[
+          for (final lens in lenses) ...[
             const SizedBox(height: 12),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,

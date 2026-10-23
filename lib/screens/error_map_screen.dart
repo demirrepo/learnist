@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../data/mistakes_metadata.dart';
+import '../l10n/l10n.dart';
 import '../models/tracked_mistake.dart';
 import '../router.dart';
 import '../services/progress_service.dart';
@@ -12,24 +13,28 @@ import '../theme/app_theme.dart';
 import '../widgets/error_map/error_pattern_card.dart';
 import '../widgets/load_problem_view.dart';
 
-const _sectionNames = {'reading': 'Reading', 'listening': 'Listening'};
-
 /// Card content for a tracked mistake, from [mistakesMetadata]. Mistakes
 /// without an entry are named after their quiz question instead.
 @visibleForTesting
-ErrorPattern errorPatternFrom(TrackedMistake mistake) {
+ErrorPattern errorPatternFrom(TrackedMistake mistake, AppLocalizations l10n) {
   final metadata = mistakeMetadataFor(
     mistake.lessonNumber,
     mistake.section,
     mistake.questionIndex,
   );
-  final section = _sectionNames[mistake.section] ?? mistake.section;
+  final section = switch (mistake.section) {
+    'reading' => l10n.lessonTabReading,
+    'listening' => l10n.lessonTabListening,
+    final other => other,
+  };
   return ErrorPattern(
-    rule: metadata?.title ?? '$section: ${mistake.questionIndex + 1}-savol',
+    rule:
+        metadata?.title ??
+        l10n.errorMapQuestion(section, mistake.questionIndex + 1),
     example: metadata?.wrongText,
     correction: metadata?.rightText,
     mistakeCount: mistake.frequency,
-    lessonLabel: 'Lesson ${mistake.lessonNumber}',
+    lessonLabel: l10n.lessonLabel(mistake.lessonNumber),
     lessonNumber: mistake.lessonNumber,
   );
 }
@@ -56,7 +61,7 @@ class ErrorMapScreen extends ConsumerWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-          'Xatolar xaritasi',
+          context.l10n.profileErrorMap,
           style: GoogleFonts.manrope(
             fontSize: 18,
             fontWeight: FontWeight.w800,
@@ -80,7 +85,7 @@ class ErrorMapScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: LoadProblemView(
-                  message: checkupErrorMessage(error),
+                  message: checkupErrorMessage(error, context.l10n),
                   onRetry: () => ref.invalidate(recurringMistakesProvider),
                 ),
               ),
@@ -99,7 +104,7 @@ class ErrorMapScreen extends ConsumerWidget {
 
   List<Widget> _cards(BuildContext context, List<TrackedMistake> mistakes) {
     final patterns = recurringPatterns([
-      for (final mistake in mistakes) errorPatternFrom(mistake),
+      for (final mistake in mistakes) errorPatternFrom(mistake, context.l10n),
     ]);
     if (patterns.isEmpty) return const [_EmptyState()];
     return [
@@ -148,9 +153,7 @@ class _Intro extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Testlarda qayta-qayta xato qilayotgan savollaringiz. '
-          'Kamida ${TrackedMistake.recurringThreshold} marta takrorlangan '
-          "xatolar ko'rsatiladi — mavzuni qayta o'rganish uchun kartani bosing.",
+          context.l10n.errorMapIntro(TrackedMistake.recurringThreshold),
           style: GoogleFonts.manrope(
             fontSize: 14,
             height: 1.5,
@@ -163,8 +166,8 @@ class _Intro extends StatelessWidget {
           spacing: 16,
           runSpacing: 6,
           children: [
-            legend(ErrorSeverity.high, "Ko'p takrorlangan (4+)"),
-            legend(ErrorSeverity.medium, "O'rtacha (2–3)"),
+            legend(ErrorSeverity.high, context.l10n.errorLegendHigh),
+            legend(ErrorSeverity.medium, context.l10n.errorLegendMedium),
           ],
         ),
       ],
@@ -188,7 +191,7 @@ class _EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            "Ajoyib! Hozircha takrorlangan xatolar yo'q",
+            context.l10n.errorMapEmptyTitle,
             textAlign: TextAlign.center,
             style: GoogleFonts.manrope(
               fontSize: 15,
@@ -198,8 +201,7 @@ class _EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            "Testlarda bir xil savolda ikki marta xato qilsangiz, "
-            "u shu yerda paydo bo'ladi.",
+            context.l10n.errorMapEmptyBody,
             textAlign: TextAlign.center,
             style: GoogleFonts.manrope(
               fontSize: 13.5,

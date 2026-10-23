@@ -57,13 +57,13 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
         // Checked first so a retry shows the spinner, not the old error.
         if (snapshot.connectionState != ConnectionState.done) {
           return _StatusScaffold(
-            title: 'Lesson ${widget.lessonId}',
+            title: context.l10n.lessonLabel(widget.lessonId),
             child: const CircularProgressIndicator(color: AppColors.deepPurple),
           );
         }
         if (snapshot.hasError) {
           return _StatusScaffold(
-            title: 'Lesson ${widget.lessonId}',
+            title: context.l10n.lessonLabel(widget.lessonId),
             child: LoadProblemView(
               message: lessonLoadErrorMessage(snapshot.error!, context.l10n),
               onRetry: _retry,
@@ -132,7 +132,10 @@ class _LessonView extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  'Lesson ${lesson.lessonNumber}: ${lesson.title}',
+                  context.l10n.lessonTitleWithNumber(
+                    lesson.lessonNumber,
+                    lesson.title,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: _titleStyle,
@@ -170,7 +173,7 @@ class _CefrPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'CEFR level $level',
+      label: context.l10n.homeCefrBadge(level),
       excludeSemantics: true,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

@@ -85,9 +85,7 @@ class _LessonQuizState extends State<LessonQuiz> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(
-            content: Text('Answer all $total questions to check your results.'),
-          ),
+          SnackBar(content: Text(context.l10n.quizAnswerAll(total))),
         );
       return;
     }
@@ -294,7 +292,7 @@ class _ScoreDialog extends StatelessWidget {
         ),
       ),
       title: Text(
-        '$correct/$total correct',
+        context.l10n.quizScore(correct, total),
         textAlign: TextAlign.center,
         style: GoogleFonts.manrope(
           fontSize: 24,
@@ -303,14 +301,14 @@ class _ScoreDialog extends StatelessWidget {
         ),
       ),
       content: Text(
-        'Review the text and try again to improve your score.',
+        context.l10n.quizReviewHint,
         textAlign: TextAlign.center,
         style: lessonBodyStyle,
       ),
       actions: [
         FilledButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('OK'),
+          child: Text(context.l10n.ok),
         ),
       ],
     );

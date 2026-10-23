@@ -33,7 +33,8 @@ class _PromptCheckerCardState extends ConsumerState<PromptCheckerCard> {
   Future<void> _check() async {
     if (_isLoading) return;
     final ai = ref.read(openaiServiceProvider);
-    final unexpected = context.l10n.promptCheckerUnexpected;
+    final l10n = context.l10n;
+    final unexpected = l10n.promptCheckerUnexpected;
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -46,7 +47,7 @@ class _PromptCheckerCardState extends ConsumerState<PromptCheckerCard> {
     try {
       feedback = await ai.evaluatePrompt(_controller.text);
     } on OpenAIException catch (e) {
-      error = e.message;
+      error = e.message(l10n);
     } catch (_) {
       error = unexpected;
     }

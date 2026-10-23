@@ -6,22 +6,47 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/app_localizations.dart';
+
 /// The shared [OpenAIService]; overridden with a fake in tests.
 final openaiServiceProvider = Provider<OpenAIService>((ref) => OpenAIService());
 
-/// Thrown when an AI request can't be completed. [message] is already
-/// user-facing (Uzbek), so the UI can show it as-is. [statusCode] is set when
-/// the `evaluate_task` function answered with an error.
-class OpenAIException implements Exception {
-  const OpenAIException(this.message, {this.statusCode});
+/// Why an AI request couldn't be completed.
+enum AiFailure {
+  emptyPrompt,
+  emptyAnswer,
+  busy,
+  failed,
+  timeout,
+  offline,
+  emptyReply,
+  unreadableReply,
+}
 
-  final String message;
+/// Thrown when an AI request can't be completed. [message] gives the
+/// user-facing reason in the app's language. [statusCode] is set when the
+/// `evaluate_task` function answered with an error.
+class OpenAIException implements Exception {
+  const OpenAIException(this.failure, {this.statusCode});
+
+  final AiFailure failure;
   final int? statusCode;
+
+  String message(AppLocalizations l10n) => switch (failure) {
+    AiFailure.emptyPrompt => l10n.aiEmptyPrompt,
+    AiFailure.emptyAnswer => l10n.taskEmptyAnswer,
+    AiFailure.busy => l10n.aiBusy,
+    AiFailure.failed => l10n.aiFailed,
+    AiFailure.timeout => l10n.aiTimeout,
+    AiFailure.offline => l10n.errorOffline,
+    AiFailure.emptyReply => l10n.aiEmptyReply,
+    AiFailure.unreadableReply => l10n.aiUnreadableReply,
+  };
 
   @override
   String toString() =>
       'OpenAIException${statusCode == null ? '' : ' ($statusCode)'}: '
-      '$message';
+      '${failure.name}';
 }
 
 /// A graded answer's score (0–100) and Uzbek feedback.
@@ -51,7 +76,7 @@ class OpenAIService {
   Future<String> evaluatePrompt(String userPrompt) async {
     final trimmed = userPrompt.trim();
     if (trimmed.isEmpty) {
-      throw const OpenAIException('Avval promptingizni yozing.');
+      throw const OpenAIException(AiFailure.emptyPrompt);
     }
     return _invoke({'kind': 'prompt', 'text': trimmed});
   }
@@ -84,7 +109,7 @@ class OpenAIService {
   ) async {
     final trimmed = studentText.trim();
     if (trimmed.isEmpty) {
-      throw const OpenAIException('Avval javobingizni yozing.');
+      throw const OpenAIException(AiFailure.emptyAnswer);
     }
     final reply = await _invoke({
       'kind': kind,
@@ -103,15 +128,11 @@ class OpenAIService {
           .timeout(_timeout);
     } on FunctionException catch (error) {
       throw OpenAIException(
-        error.status == 429
-            ? 'AI hozir band. Birozdan so\'ng qaytadan urinib ko\'ring.'
-            : 'AI javob bera olmadi. Qaytadan urinib ko\'ring.',
+        error.status == 429 ? AiFailure.busy : AiFailure.failed,
         statusCode: error.status,
       );
     } on TimeoutException {
-      throw const OpenAIException(
-        'AI javob bermadi. Qaytadan urinib ko\'ring.',
-      );
+      throw const OpenAIException(AiFailure.timeout);
     } on ClientException {
       throw _offline;
     } on SocketException {
@@ -121,9 +142,7 @@ class OpenAIService {
   }
 }
 
-const _offline = OpenAIException(
-  'Internetga ulanib bo\'lmadi. Qaytadan urinib ko\'ring.',
-);
+const _offline = OpenAIException(AiFailure.offline);
 
 /// Reads `content` from an `evaluate_task` response. Throws an
 /// [OpenAIException] if it is missing or blank.
@@ -133,9 +152,7 @@ String parseFunctionReply(Object? data) {
   } when content.trim().isNotEmpty) {
     return content.trim();
   }
-  throw const OpenAIException(
-    'AI bo\'sh javob qaytardi. Qaytadan urinib ko\'ring.',
-  );
+  throw const OpenAIException(AiFailure.emptyReply);
 }
 
 /// Reads `{"score": 85, "feedback": "..."}` from a grading reply.
@@ -143,9 +160,7 @@ String parseFunctionReply(Object? data) {
 /// Tolerates a stray code fence and a fractional score; clamps the score
 /// to 0–100. Throws a [OpenAIException] for anything else.
 AiEvaluation parseEvaluation(String reply) {
-  const invalid = OpenAIException(
-    'AI javobini o\'qib bo\'lmadi. Qaytadan urinib ko\'ring.',
-  );
+  const invalid = OpenAIException(AiFailure.unreadableReply);
   final json = reply
       .trim()
       .replaceFirst(RegExp(r'^```(?:json)?\s*'), '')

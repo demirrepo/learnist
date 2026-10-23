@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:learnist/l10n/app_localizations.dart';
 import 'package:learnist/services/supabase_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -60,6 +62,8 @@ String _accessToken() {
   return (service: service, client: client, paths: paths);
 }
 
+final _uz = lookupAppLocalizations(const Locale('uz'));
+
 void main() {
   for (final (saved, picked) in [
     ('student', UserRole.teacher),
@@ -114,12 +118,12 @@ void main() {
 
   test('the mismatch messages name the tab to pick', () {
     expect(
-      authErrorMessage(const RoleMismatchException(UserRole.student)),
+      authErrorMessage(const RoleMismatchException(UserRole.student), _uz),
       "Siz talaba sifatida ro'yxatdan o'tgansiz. "
       "Iltimos, 'Talaba' bo'limini tanlang.",
     );
     expect(
-      authErrorMessage(const RoleMismatchException(UserRole.teacher)),
+      authErrorMessage(const RoleMismatchException(UserRole.teacher), _uz),
       "Siz o'qituvchi sifatida ro'yxatdan o'tgansiz. "
       "Iltimos, 'O'qituvchi' bo'limini tanlang.",
     );

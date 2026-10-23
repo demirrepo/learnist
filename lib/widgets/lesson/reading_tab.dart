@@ -38,7 +38,10 @@ class ReadingTab extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const LessonTag(icon: LucideIcons.bookOpen, label: 'Reading'),
+                LessonTag(
+                  icon: LucideIcons.bookOpen,
+                  label: context.l10n.lessonTabReading,
+                ),
                 const SizedBox(height: 14),
                 Text(lesson.title, style: lessonHeadingStyle),
                 const SizedBox(height: 10),

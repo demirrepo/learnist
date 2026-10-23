@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/teacher_dashboard.dart';
 import 'progress_service.dart' show noRetry, refetchOnAuthChange;
 import 'supabase_service.dart' show isNetworkError;
@@ -152,35 +153,32 @@ class GroupLoginTakenException implements Exception {
   const GroupLoginTakenException();
 }
 
-const _networkMessage =
-    "Internet aloqasi yo'q. Tarmoqni tekshirib, qayta urinib ko'ring.";
-
-/// User-facing Uzbek message for a successful [TeacherService.joinGroup].
-String joinGroupSuccessMessage(JoinGroupResult result) =>
+/// User-facing message for a successful [TeacherService.joinGroup].
+String joinGroupSuccessMessage(JoinGroupResult result, AppLocalizations l10n) =>
     result.alreadyMember
-        ? "Siz allaqachon «${result.groupName}» guruhidasiz."
-        : "«${result.groupName}» guruhiga qo'shildingiz.";
+        ? l10n.joinGroupAlreadyMember(result.groupName)
+        : l10n.joinGroupJoined(result.groupName);
 
-/// User-facing Uzbek message for a failed [TeacherService.joinGroup].
-String joinGroupErrorMessage(Object error) => switch (error) {
-  InvalidGroupCredentialsException() => "Login yoki parol noto'g'ri.",
-  OwnGroupException() => "O'zingiz yaratgan guruhga qo'shila olmaysiz.",
-  _ when isNetworkError(error) => _networkMessage,
-  _ => "Guruhga qo'shilib bo'lmadi. Iltimos, qayta urinib ko'ring.",
-};
+/// User-facing message for a failed [TeacherService.joinGroup].
+String joinGroupErrorMessage(Object error, AppLocalizations l10n) =>
+    switch (error) {
+      InvalidGroupCredentialsException() => l10n.joinGroupInvalidCredentials,
+      OwnGroupException() => l10n.joinGroupOwnGroup,
+      _ when isNetworkError(error) => l10n.errorOffline,
+      _ => l10n.joinGroupFailed,
+    };
 
-/// User-facing Uzbek message for a failed [TeacherService.createGroup].
-String createGroupErrorMessage(Object error) => switch (error) {
-  GroupLoginTakenException() => "Bu login band. Iltimos, boshqa login tanlang.",
-  _ when isNetworkError(error) => _networkMessage,
-  _ => "Guruh yaratilmadi. Iltimos, qayta urinib ko'ring.",
-};
+/// User-facing message for a failed [TeacherService.createGroup].
+String createGroupErrorMessage(Object error, AppLocalizations l10n) =>
+    switch (error) {
+      GroupLoginTakenException() => l10n.teacherLoginTaken,
+      _ when isNetworkError(error) => l10n.errorOffline,
+      _ => l10n.teacherCreateGroupFailed,
+    };
 
-/// User-facing Uzbek message for a failed dashboard or student load.
-String teacherLoadErrorMessage(Object error) =>
-    isNetworkError(error)
-        ? _networkMessage
-        : "Ma'lumotlarni yuklab bo'lmadi. Iltimos, qayta urinib ko'ring.";
+/// User-facing message for a failed dashboard or student load.
+String teacherLoadErrorMessage(Object error, AppLocalizations l10n) =>
+    isNetworkError(error) ? l10n.errorOffline : l10n.teacherLoadFailed;
 
 void _log(String action, Object error, StackTrace stackTrace) {
   if (!kDebugMode) return;

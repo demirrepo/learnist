@@ -68,7 +68,7 @@ class CheckUpScreen extends ConsumerWidget {
                 error:
                     (error, _) => [
                       _ProblemCard(
-                        message: checkupErrorMessage(error),
+                        message: checkupErrorMessage(error, context.l10n),
                         onRetry: () => ref.invalidate(userProgressProvider),
                       ),
                     ],
@@ -173,11 +173,13 @@ class _CheckupTestState extends ConsumerState<_CheckupTest> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(checkupErrorMessage(error))));
+        ..showSnackBar(
+          SnackBar(content: Text(checkupErrorMessage(error, context.l10n))),
+        );
       _refreshProgress();
     } catch (error) {
       if (!mounted) return;
-      _showError(checkupErrorMessage(error));
+      _showError(checkupErrorMessage(error, context.l10n));
     } finally {
       if (mounted) {
         setState(() {
@@ -200,7 +202,7 @@ class _CheckupTestState extends ConsumerState<_CheckupTest> {
       loading: () => const _LoadingCard(),
       error:
           (error, _) => _ProblemCard(
-            message: checkupErrorMessage(error),
+            message: checkupErrorMessage(error, context.l10n),
             onRetry: () => ref.invalidate(checkupQuestionsProvider),
           ),
       data: (questions) {
@@ -499,7 +501,7 @@ class _GrowthHistory extends ConsumerWidget {
           loading: () => const _LoadingCard(),
           error:
               (error, _) => _ProblemCard(
-                message: checkupErrorMessage(error),
+                message: checkupErrorMessage(error, context.l10n),
                 onRetry: () => ref.invalidate(checkupHistoryProvider),
               ),
           data: (history) {

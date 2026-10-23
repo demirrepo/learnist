@@ -87,9 +87,12 @@ class _AudioCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
-            child: LessonTag(icon: LucideIcons.headphones, label: 'Listening'),
+            child: LessonTag(
+              icon: LucideIcons.headphones,
+              label: context.l10n.lessonTabListening,
+            ),
           ),
           const SizedBox(height: 14),
           Text(title, style: lessonHeadingStyle),
@@ -303,7 +306,7 @@ class _AudioControlsState extends State<_AudioControls> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
-              tooltip: 'Restart',
+              tooltip: context.l10n.audioRestart,
               onPressed: _loading ? null : () => _player.seek(Duration.zero),
               icon: const Icon(LucideIcons.rotateCcw),
               color: AppColors.textMuted,
@@ -367,7 +370,7 @@ class _PlayButton extends StatelessWidget {
             state?.processingState == ProcessingState.buffering;
 
         return IconButton(
-          tooltip: playing ? 'Pause' : 'Play',
+          tooltip: playing ? context.l10n.audioPause : context.l10n.audioPlay,
           onPressed: onPressed,
           iconSize: 28,
           color: Colors.white,
@@ -460,7 +463,7 @@ class _TranscriptCardState extends State<_TranscriptCard> {
             children: [
               Expanded(
                 child: Text(
-                  'Transcript',
+                  context.l10n.lessonTranscript,
                   style: GoogleFonts.manrope(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
@@ -474,7 +477,11 @@ class _TranscriptCardState extends State<_TranscriptCard> {
                   _visible ? LucideIcons.eyeOff : LucideIcons.eye,
                   size: 18,
                 ),
-                label: Text(_visible ? 'Hide' : 'Show'),
+                label: Text(
+                  _visible
+                      ? context.l10n.transcriptHide
+                      : context.l10n.transcriptShow,
+                ),
               ),
             ],
           ),
